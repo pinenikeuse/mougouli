@@ -1,18 +1,119 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Lecture vidéo Google Drive</title>
-</head>
-<body>
-    <h1>Exemple de lecture vidéo depuis Google Drive</h1>
 
-    <video width="640" height="360" controls>
-        <source src="https://drive.google.com/uc?export=download&id=1Nd3QNnWbqWykmplSML6tTM2PIv55qFt9" type="video/mp4" />
-        Votre navigateur ne supporte pas la lecture vidéo.
-    </video>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mougouli.fr - Lecteur Vidéo</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="#">Mougouli.fr</a>
+            </div>
+            <div class="search-language">
+                <input type="text" placeholder="Rechercher une vidéo..." id="search">
+            </div>
+            <div class="language-selector">
+                <select id="language-select" onchange="changeLanguage()">
+                    <option value="fr">Français</option>
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                    <option value="de">Deutsch</option>
+                    <option value="it">Italiano</option>
+                    <option value="pt">Português</option>
+                    <option value="ru">Русский</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="content">
+            <h2 id="video-title">Regardez cette vidéo exclusive :</h2>
+
+            <!-- Video Thumbnails (Vignettes) -->
+            <div class="video-thumbnails">
+                <div class="thumbnail" onclick="openModal('1Nd3QNnWbqWykmplSML6tTM2PIv55qFt9')">
+                    <img src="https://via.placeholder.com/300x200" alt="Vidéo 1">
+                    <p>Vidéo 1</p>
+                </div>
+                <div class="thumbnail" onclick="openModal('2OdQMnNBqZY1zPQ10zG4U9G3BxQ4oZxw')">
+                    <img src="https://via.placeholder.com/300x200" alt="Vidéo 2">
+                    <p>Vidéo 2</p>
+                </div>
+                <!-- Ajoutez d'autres vignettes pour chaque vidéo -->
+            </div>
+
+            <!-- Modal (pour agrandir la vidéo) -->
+            <div id="video-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal()">&times;</span>
+                    <iframe id="video-frame" width="100%" height="500" allow="autoplay" allowfullscreen></iframe>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>© 2025 Mougouli.fr - Tous droits réservés</p>
+        </div>
+    </footer>
+
+    <script>
+        // Fonction pour changer la langue
+        function changeLanguage() {
+            var language = document.getElementById("language-select").value;
+            var videoTitle = document.getElementById("video-title");
+
+            // Mettre à jour le titre en fonction de la langue choisie
+            if (language === "fr") {
+                videoTitle.innerHTML = "Regardez cette vidéo exclusive :";
+            } else if (language === "en") {
+                videoTitle.innerHTML = "Watch this exclusive video:";
+            } else if (language === "es") {
+                videoTitle.innerHTML = "Mira este video exclusivo:";
+            } else if (language === "de") {
+                videoTitle.innerHTML = "Schau dieses exklusive Video:";
+            } else if (language === "it") {
+                videoTitle.innerHTML = "Guarda questo video esclusivo:";
+            } else if (language === "pt") {
+                videoTitle.innerHTML = "Assista a este vídeo exclusivo:";
+            } else if (language === "ru") {
+                videoTitle.innerHTML = "Смотрите это эксклюзивное видео:";
+            }
+        }
+
+        // Ouvrir le modal avec la vidéo spécifique
+        function openModal(videoId) {
+            var modal = document.getElementById("video-modal");
+            var iframe = document.getElementById("video-frame");
+
+            // Générer l'URL de la vidéo dans l'iframe
+            iframe.src = "https://drive.google.com/file/d/" + videoId + "/preview";
+            modal.style.display = "block"; // Afficher le modal
+        }
+
+        // Fermer le modal et arrêter la vidéo
+        function closeModal() {
+            var modal = document.getElementById("video-modal");
+            var iframe = document.getElementById("video-frame");
+
+            iframe.src = ""; // Arrêter la vidéo
+            modal.style.display = "none"; // Cacher le modal
+        }
+    </script>
 
 </body>
-</html>
 
+</html>
