@@ -1,119 +1,328 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mougouli.fr - Lecteur Vidéo</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Mougouli - Vidéos Privées</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-</head>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        header {
+            background-color: #333;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        header h1 {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            font-size: 24px;
+        }
+        #logo {
+            width: 120px;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+        }
+        .header-right input {
+            padding: 10px;
+            margin-right: 15px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        .header-right select {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+        }
+        .video-container {
+            text-align: center;
+            margin: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .video-item {
+            width: 100%;
+            max-width: 800px; /* Largeur maximale pour que la vidéo ne dépasse pas cette taille */
+            height: 450px; /* Hauteur de la vidéo ajustée */
+            margin: 15px;
+            border: none;
+            transition: height 0.3s ease, width 0.3s ease; /* Transition fluide pour agrandissement */
+            cursor: pointer;
+        }
+        .video-item.clicked {
+            width: 100%;
+            height: 600px; /* Hauteur agrandie pour la vidéo */
+        }
+        .button-container {
+            margin-top: 10px;
+        }
+        .expand-btn {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .expand-btn:hover {
+            background-color: #218838;
+        }
+        .language-container {
+            text-align: center;
+            margin-top: 10px;
+        }
+        select {
+            font-size: 14px;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        h2 {
+            font-size: 22px;
+            color: #333;
+        }
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .videos-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
 
+        /* Section "Retirer votre argent" */
+        .money-section {
+            background-color: #f4f4f9;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+        .money-section h3 {
+            font-size: 20px;
+            color: #333;
+        }
+        .money-section button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .money-section button:hover {
+            background-color: #218838;
+        }
+        .details {
+            display: none;
+            margin-top: 20px;
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .details p {
+            font-size: 16px;
+            color: #333;
+        }
+
+        /* Section "Publicité" */
+        .advertising-section {
+            background-color: #f4f4f9;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+        .advertising-section h3 {
+            font-size: 20px;
+            color: #333;
+        }
+        .advertising-section button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .advertising-section button:hover {
+            background-color: #0056b3;
+        }
+        .advertising-details {
+            display: none;
+            margin-top: 20px;
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .advertising-details p {
+            font-size: 16px;
+            color: #333;
+        }
+    </style>
+</head>
 <body>
 
-    <!-- Navbar -->
+    <!-- En-tête avec logo, recherche et sélection de langue -->
     <header>
-        <div class="container">
-            <div class="logo">
-                <a href="#">Mougouli.fr</a>
-            </div>
-            <div class="search-language">
-                <input type="text" placeholder="Rechercher une vidéo..." id="search">
-            </div>
-            <div class="language-selector">
-                <select id="language-select" onchange="changeLanguage()">
-                    <option value="fr">Français</option>
-                    <option value="en">English</option>
-                    <option value="es">Español</option>
-                    <option value="de">Deutsch</option>
-                    <option value="it">Italiano</option>
-                    <option value="pt">Português</option>
-                    <option value="ru">Русский</option>
-                </select>
-            </div>
+        <img id="logo" src="https://raw.githubusercontent.com/pinenikeuse/mougouli/refs/heads/main/1747616058238.jpg" alt="Logo">
+        <div class="header-right">
+            <input type="text" placeholder="Rechercher...">
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main>
-        <div class="content">
-            <h2 id="video-title">Regardez cette vidéo exclusive :</h2>
+    <!-- Sélecteur de langue déplacé en dessous -->
+    <div class="language-container">
+        <select id="language-select">
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="de">Deutsch</option>
+            <option value="it">Italiano</option>
+            <option value="pt">Português</option>
+            <option value="ar">عربي</option> <!-- Arabe -->
+            <option value="zh">中文</option> <!-- Chinois -->
+        </select>
+    </div>
 
-            <!-- Video Thumbnails (Vignettes) -->
-            <div class="video-thumbnails">
-                <div class="thumbnail" onclick="openModal('1Nd3QNnWbqWykmplSML6tTM2PIv55qFt9')">
-                    <img src="https://via.placeholder.com/300x200" alt="Vidéo 1">
-                    <p>Vidéo 1</p>
-                </div>
-                <div class="thumbnail" onclick="openModal('2OdQMnNBqZY1zPQ10zG4U9G3BxQ4oZxw')">
-                    <img src="https://via.placeholder.com/300x200" alt="Vidéo 2">
-                    <p>Vidéo 2</p>
-                </div>
-                <!-- Ajoutez d'autres vignettes pour chaque vidéo -->
-            </div>
+    <!-- Section pour retirer de l'argent -->
+    <div class="money-section">
+        <h3>Retirer votre argent</h3>
+        <button id="showDetailsBtn">Cliquez ici pour en savoir plus</button>
 
-            <!-- Modal (pour agrandir la vidéo) -->
-            <div id="video-modal" class="modal">
-                <div class="modal-content">
-                    <span class="close" onclick="closeModal()">&times;</span>
-                    <iframe id="video-frame" width="100%" height="500" allow="autoplay" allowfullscreen></iframe>
-                </div>
-            </div>
-
+        <div class="details">
+            <p><strong>Publiez des vidéos sur Mougouli.fr et gagnez de l'argent !</strong></p>
+            <p>Si vous êtes intéressé à avoir un compte pour publier vos vidéos, envoyez un email à <a href="mailto:baizemi0039@gmail.com">baizemi0039@gmail.com</a>.</p>
+            <p>Nous examinerons votre demande et vous fournirons les détails pour commencer à publier des vidéos et générer des revenus.</p>
         </div>
-    </main>
+    </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>© 2025 Mougouli.fr - Tous droits réservés</p>
+    <!-- Section "Publicité" -->
+    <div class="advertising-section">
+        <h3>Faire la promotion de vos produits</h3>
+        <button id="showAdvertisingBtn">Cliquez ici pour plus d'infos</button>
+
+        <div class="advertising-details">
+            <p><strong>Vous souhaitez faire la promotion de votre produit, service ou autre ?</strong></p>
+            <p>Si vous êtes intéressé, écrivez à <a href="mailto:baizemi0039@gmail.com">baizemi0039@gmail.com</a> pour discuter des opportunités de publicité.</p>
         </div>
-    </footer>
+    </div>
+
+    <!-- Conteneur pour les vidéos multiples -->
+    <div class="videos-grid">
+        <!-- Vidéo ajoutée -->
+        <div class="video-container">
+            <h2>Regardez cette vidéo</h2>
+            <iframe class="video-item" src="https://drive.google.com/file/d/1Nd3QNnWbqWykmplSML6tTM2PIv55qFt9/preview" allow="autoplay"></iframe>
+            <div class="button-container">
+                <button class="expand-btn" onclick="expandVideo(this)">Agrandir la vidéo</button>
+            </div>
+        </div>
+
+        <!-- Autres vidéos -->
+        <div class="video-container">
+            <h2>Une autre vidéo</h2>
+            <iframe class="video-item" src="https://drive.google.com/file/d/1OBwDYs516MpY2TDyuNuw5UoeVvVEWcTl/preview" allow="autoplay"></iframe>
+            <div class="button-container">
+                <button class="expand-btn" onclick="expandVideo(this)">Agrandir la vidéo</button>
+            </div>
+        </div>
+        <div class="video-container">
+            <h2>Encore une vidéo</h2>
+            <iframe class="video-item" src="https://drive.google.com/file/d/1O3RYH3PivC8kDXYS6P-ByN_VFWcGCbxd/preview" allow="autoplay"></iframe>
+            <div class="button-container">
+                <button class="expand-btn" onclick="expandVideo(this)">Agrandir la vidéo</button>
+            </div>
+        </div>
+        <div class="video-container">
+            <h2>Autre vidéo</h2>
+            <iframe class="video-item" src="https://drive.google.com/file/d/1O89657nGNedAl0CMognOXPgRe4fcijTW/preview" allow="autoplay"></iframe>
+            <div class="button-container">
+                <button class="expand-btn" onclick="expandVideo(this)">Agrandir la vidéo</button>
+            </div>
+        </div>
+        <div class="video-container">
+            <h2>Encore une vidéo</h2>
+            <iframe class="video-item" src="https://drive.google.com/file/d/1OOqr5_jkCKffEolkoXJFHVBQzm703fhP/preview" allow="autoplay"></iframe>
+            <div class="button-container">
+                <button class="expand-btn" onclick="expandVideo(this)">Agrandir la vidéo</button>
+            </div>
+        </div>
+        <div class="video-container">
+            <h2>Dernière vidéo</h2>
+            <iframe class="video-item" src="https://drive.google.com/file/d/1OFHvCsTC438H9cqDoQLuRdw4zgsLLnJZ/preview" allow="autoplay"></iframe>
+            <div class="button-container">
+                <button class="expand-btn" onclick="expandVideo(this)">Agrandir la vidéo</button>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // Fonction pour changer la langue
-        function changeLanguage() {
-            var language = document.getElementById("language-select").value;
-            var videoTitle = document.getElementById("video-title");
-
-            // Mettre à jour le titre en fonction de la langue choisie
-            if (language === "fr") {
-                videoTitle.innerHTML = "Regardez cette vidéo exclusive :";
-            } else if (language === "en") {
-                videoTitle.innerHTML = "Watch this exclusive video:";
-            } else if (language === "es") {
-                videoTitle.innerHTML = "Mira este video exclusivo:";
-            } else if (language === "de") {
-                videoTitle.innerHTML = "Schau dieses exklusive Video:";
-            } else if (language === "it") {
-                videoTitle.innerHTML = "Guarda questo video esclusivo:";
-            } else if (language === "pt") {
-                videoTitle.innerHTML = "Assista a este vídeo exclusivo:";
-            } else if (language === "ru") {
-                videoTitle.innerHTML = "Смотрите это эксклюзивное видео:";
+        // Changer la langue selon la sélection
+        document.getElementById('language-select').addEventListener('change', function() {
+            const lang = this.value;
+            if (lang === 'fr') {
+                alert("Le site a été changé en Français");
+            } else if (lang === 'en') {
+                alert("The site has been changed to English");
+            } else if (lang === 'es') {
+                alert("El sitio ha sido cambiado a Español");
+            } else if (lang === 'de') {
+                alert("Die Seite wurde auf Deutsch geändert");
+            } else if (lang === 'it') {
+                alert("Il sito è stato cambiato in Italiano");
+            } else if (lang === 'pt') {
+                alert("O site foi alterado para Português");
+            } else if (lang === 'ar') {
+                alert("تم تغيير الموقع إلى العربية");
+            } else if (lang === 'zh') {
+                alert("网站已更改为中文");
             }
+        });
+
+        // Fonction pour agrandir la vidéo
+        function expandVideo(button) {
+            const iframe = button.closest('.video-container').querySelector('iframe');
+            iframe.classList.toggle('clicked'); // Ajoute ou enlève la classe 'clicked' pour agrandir la vidéo
         }
 
-        // Ouvrir le modal avec la vidéo spécifique
-        function openModal(videoId) {
-            var modal = document.getElementById("video-modal");
-            var iframe = document.getElementById("video-frame");
+        // Afficher les détails pour retirer l'argent
+        const showDetailsBtn = document.getElementById('showDetailsBtn');
+        const detailsSection = document.querySelector('.details');
 
-            // Générer l'URL de la vidéo dans l'iframe
-            iframe.src = "https://drive.google.com/file/d/" + videoId + "/preview";
-            modal.style.display = "block"; // Afficher le modal
-        }
+        showDetailsBtn.addEventListener('click', function() {
+            detailsSection.style.display = detailsSection.style.display === 'block' ? 'none' : 'block';
+        });
 
-        // Fermer le modal et arrêter la vidéo
-        function closeModal() {
-            var modal = document.getElementById("video-modal");
-            var iframe = document.getElementById("video-frame");
+        // Afficher les détails pour la publicité
+        const showAdvertisingBtn = document.getElementById('showAdvertisingBtn');
+        const advertisingSection = document.querySelector('.advertising-details');
 
-            iframe.src = ""; // Arrêter la vidéo
-            modal.style.display = "none"; // Cacher le modal
-        }
+        showAdvertisingBtn.addEventListener('click', function() {
+            advertisingSection.style.display = advertisingSection.style.display === 'block' ? 'none' : 'block';
+        });
     </script>
-
 </body>
-
 </html>
