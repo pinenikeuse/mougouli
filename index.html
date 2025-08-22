@@ -3,431 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mougouli - Plateforme de Vidéos Privées</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>Mougouli - Vidéos Privées</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
-        :root {
-            --primary-color: #4a6bff;
-            --secondary-color: #ff6b4a;
-            --dark-color: #333;
-            --light-color: #f4f4f9;
-            --success-color: #28a745;
-            --info-color: #17a2b8;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
-            --gray-color: #6c757d;
-            --white-color: #ffffff;
-            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            --border-radius: 8px;
-            --transition: all 0.3s ease;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: var(--light-color);
-            color: var(--dark-color);
-            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
         }
 
-        a {
-            text-decoration: none;
-            color: var(--primary-color);
-            transition: var(--transition);
-        }
-
-        a:hover {
-            color: var(--secondary-color);
-        }
-
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-
-        /* Header Styles */
         header {
-            background-color: var(--dark-color);
-            padding: 15px 0;
-            box-shadow: var(--box-shadow);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .header-container {
+            background-color: #333;
+            padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .logo-container {
-            display: flex;
-            align-items: center;
+        header h1 {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            font-size: 24px;
         }
 
         #logo {
             width: 120px;
-            height: auto;
         }
 
-        .search-container {
+        .header-right {
             display: flex;
             align-items: center;
         }
 
-        .search-container input {
-            padding: 10px 15px;
+        .header-right input {
+            padding: 10px;
+            margin-right: 15px;
             font-size: 16px;
-            border-radius: var(--border-radius) 0 0 var(--border-radius);
+            border-radius: 4px;
             border: 1px solid #ccc;
-            width: 300px;
-            outline: none;
         }
 
-        .search-container button {
-            padding: 10px 15px;
-            background-color: var(--primary-color);
-            color: var(--white-color);
-            border: none;
-            border-radius: 0 var(--border-radius) var(--border-radius) 0;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .search-container button:hover {
-            background-color: var(--secondary-color);
-        }
-
-        /* Language Selector */
-        .language-selector {
+        .language-container {
             text-align: center;
-            margin: 20px 0;
-        }
-
-        #language-select {
-            padding: 10px 15px;
-            font-size: 16px;
-            border-radius: var(--border-radius);
-            border: 1px solid #ccc;
-            background-color: var(--white-color);
-            cursor: pointer;
-        }
-
-        /* Main Content */
-        .main-content {
-            display: grid;
-            grid-template-columns: 3fr 1fr;
-            gap: 20px;
-            margin: 30px 0;
-        }
-
-        /* Video Grid */
-        .videos-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .video-card {
-            background-color: var(--white-color);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--box-shadow);
-            transition: var(--transition);
-        }
-
-        .video-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            margin-top: 10px;
         }
 
         .video-container {
-            position: relative;
-            width: 100%;
-            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            text-align: center;
+            margin: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .video-item {
-            position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
-            height: 100%;
+            max-width: 800px;
+            height: 450px;
+            margin: 15px;
             border: none;
+            transition: height 0.3s ease, width 0.3s ease;
+            cursor: pointer;
         }
 
-        .video-info {
-            padding: 15px;
+        .video-item.clicked {
+            height: 600px;
         }
 
-        .video-info h3 {
-            font-family: 'Poppins', sans-serif;
-            margin-bottom: 10px;
-            font-size: 18px;
-        }
-
-        .video-info p {
-            color: var(--gray-color);
-            font-size: 14px;
+        .button-container {
+            margin-top: 10px;
         }
 
         .expand-btn {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            background-color: var(--primary-color);
-            color: var(--white-color);
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
             border: none;
-            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            border-radius: 4px;
             cursor: pointer;
-            transition: var(--transition);
-            text-align: center;
-            font-weight: 500;
+            font-size: 16px;
         }
 
         .expand-btn:hover {
-            background-color: var(--secondary-color);
+            background-color: #218838;
         }
 
-        /* Sidebar */
-        .sidebar {
-            background-color: var(--white-color);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            box-shadow: var(--box-shadow);
-        }
-
-        .sidebar-section {
-            margin-bottom: 30px;
-        }
-
-        .sidebar-section h3 {
-            font-family: 'Poppins', sans-serif;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--primary-color);
-        }
-
-        .sidebar-btn {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 10px;
-            background-color: var(--primary-color);
-            color: var(--white-color);
-            border: none;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            transition: var(--transition);
-            text-align: center;
-            font-weight: 500;
-        }
-
-        .sidebar-btn:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .details {
-            display: none;
-            margin-top: 15px;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: var(--border-radius);
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .details p {
-            margin-bottom: 10px;
-        }
-
-        .payment-methods {
+        .videos-grid {
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .payment-method {
-            width: 60px;
-            height: 40px;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            background-color: var(--white-color);
-            border-radius: 5px;
-            padding: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            flex-wrap: wrap;
         }
 
-        .payment-method img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-
-        /* Advertising Banner */
+        /* Bannière pubs */
         .ad-banner {
+            text-align: center;
             margin: 20px 0;
-            text-align: center;
+            background: #fff;
             padding: 10px;
-            background-color: var(--white-color);
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
 
-        /* Footer */
-        footer {
-            background-color: var(--dark-color);
-            color: var(--white-color);
-            padding: 30px 0;
-            margin-top: 50px;
-        }
-
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
-
-        .footer-section {
-            flex: 1;
-            min-width: 250px;
-            margin-bottom: 20px;
-        }
-
-        .footer-section h3 {
-            font-family: 'Poppins', sans-serif;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--gray-color);
-        }
-
-        .footer-section p, .footer-section a {
-            margin-bottom: 10px;
-            display: block;
-            color: #ccc;
-        }
-
-        .footer-section a:hover {
-            color: var(--white-color);
-        }
-
-        .copyright {
-            text-align: center;
-            padding-top: 20px;
-            margin-top: 20px;
-            border-top: 1px solid var(--gray-color);
-            color: #ccc;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background-color: var(--white-color);
+        /* Section "Retirer votre argent" */
+        .money-section, .advertising-section {
+            background-color: #f4f4f9;
             padding: 20px;
-            border-radius: var(--border-radius);
-            max-width: 800px;
-            width: 90%;
-            position: relative;
+            margin: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #ccc;
         }
 
-        .close-modal {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--gray-color);
+        .money-section h3, .advertising-section h3 {
+            font-size: 20px;
+            color: #333;
         }
 
-        .modal-video-container {
-            position: relative;
-            width: 100%;
-            padding-top: 56.25%;
-        }
-
-        .modal-video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+        .money-section button, .advertising-section button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
             border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
         }
 
-        /* Responsive Design */
-        @media (max-width: 992px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .search-container input {
-                width: 200px;
-            }
+        .advertising-section button {
+            background-color: #007bff;
         }
 
-        @media (max-width: 768px) {
-            .header-container {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .search-container {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .search-container input {
-                width: 70%;
-            }
-            
-            .videos-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .footer-content {
-                flex-direction: column;
-            }
+        .advertising-section button:hover {
+            background-color: #0056b3;
+        }
+
+        .details, .advertising-details {
+            display: none;
+            margin-top: 20px;
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        /* Paiements */
+        .payment-methods {
+            text-align: center;
+            padding: 20px;
+            background-color: #fff;
+            margin-top: 30px;
+            border-top: 1px solid #ccc;
+        }
+
+        .payment-methods h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .payment-logos img {
+            height: 40px;
+            margin: 0 10px;
+            vertical-align: middle;
+            transition: transform 0.3s ease;
+        }
+
+        .payment-logos img:hover {
+            transform: scale(1.1);
         }
     </style>
+
+    <!-- Script pub avant </head> -->
+    <script type='text/javascript' src='//hedwigflooredventure.com/14/ad/da/14addac010dcb2416ac06fc211b1bb4e.js'></script>
 </head>
 <body>
 
-    <!-- En-tête avec logo et recherche -->
+    <!-- En-tête -->
     <header>
-        <div class="container header-container">
-            <div class="logo-container">
-                <img id="logo" src="https://raw.githubusercontent.com/pinenikeuse/mougouli/refs/heads/main/1747616058238.jpg" alt="Mougouli Logo">
-            </div>
-            <div class="search-container">
-                <input type="text" placeholder="Rechercher des vidéos...">
-                <button>Rechercher</button>
-            </div>
+        <img id="logo" src="https://raw.githubusercontent.com/pinenikeuse/mougouli/refs/heads/main/1747616058238.jpg" alt="Logo">
+        <div class="header-right">
+            <input type="text" placeholder="Rechercher...">
         </div>
     </header>
 
+    <!-- Bannière haute -->
+    <div class="ad-banner">
+        <script type="text/javascript">
+            atOptions = {
+                'key': 'f7ee59b1763bc24f396d6b5896098193',
+                'format': 'iframe',
+                'height': 90,
+                'width': 728,
+                'params': {}
+            };
+        </script>
+        <script type="text/javascript" src="//hedwigflooredventure.com/f7ee59b1763bc24f396d6b5896098193/invoke.js"></script>
+    </div>
+
     <!-- Sélecteur de langue -->
-    <div class="container language-selector">
+    <div class="language-container">
         <select id="language-select">
             <option value="fr">Français</option>
             <option value="en">English</option>
@@ -440,264 +219,109 @@
         </select>
     </div>
 
-    <!-- Bannière publicitaire -->
-    <div class="container ad-banner">
-        <script async="async" data-cfasync="false" src="//hedwigflooredventure.com/499cc934c0d8016c48fd6dc2075a6c2e/invoke.js"></script>
-        <div id="container-499cc934c0d8016c48fd6dc2075a6c2e"></div>
-    </div>
-
-    <!-- Contenu principal -->
-    <div class="container main-content">
-        <!-- Grille de vidéos -->
-        <div class="videos-grid">
-            <!-- Vidéo 1 -->
-            <div class="video-card">
-                <div class="video-container">
-                    <iframe class="video-item" src="https://drive.google.com/file/d/1Nd3QNnWbqWykmplSML6tTM2PIv55qFt9/preview" allow="autoplay" allowfullscreen></iframe>
-                </div>
-                <div class="video-info">
-                    <h3>Titre de la vidéo 1</h3>
-                    <p>Description de la vidéo 1. Cette vidéo présente du contenu exclusif.</p>
-                </div>
-                <button class="expand-btn" onclick="openVideoModal('https://drive.google.com/file/d/1Nd3QNnWbqWykmplSML6tTM2PIv55qFt9/preview')">Regarder en plein écran</button>
-            </div>
-
-            <!-- Vidéo 2 -->
-            <div class="video-card">
-                <div class="video-container">
-                    <iframe class="video-item" src="https://drive.google.com/file/d/1OBwDYs516MpY2TDyuNuw5UoeVvVEWcTl/preview" allow="autoplay" allowfullscreen></iframe>
-                </div>
-                <div class="video-info">
-                    <h3>Titre de la vidéo 2</h3>
-                    <p>Description de la vidéo 2. Cette vidéo présente du contenu exclusif.</p>
-                </div>
-                <button class="expand-btn" onclick="openVideoModal('https://drive.google.com/file/d/1OBwDYs516MpY2TDyuNuw5UoeVvVEWcTl/preview')">Regarder en plein écran</button>
-            </div>
-
-            <!-- Vidéo 3 -->
-            <div class="video-card">
-                <div class="video-container">
-                    <iframe class="video-item" src="https://drive.google.com/file/d/1O3RYH3PivC8kDXYS6P-ByN_VFWcGCbxd/preview" allow="autoplay" allowfullscreen></iframe>
-                </div>
-                <div class="video-info">
-                    <h3>Titre de la vidéo 3</h3>
-                    <p>Description de la vidéo 3. Cette vidéo présente du contenu exclusif.</p>
-                </div>
-                <button class="expand-btn" onclick="openVideoModal('https://drive.google.com/file/d/1O3RYH3PivC8kDXYS6P-ByN_VFWcGCbxd/preview')">Regarder en plein écran</button>
-            </div>
-
-            <!-- Vidéo 4 -->
-            <div class="video-card">
-                <div class="video-container">
-                    <iframe class="video-item" src="https://drive.google.com/file/d/1O89657nGNedAl0CMognOXPgRe4fcijTW/preview" allow="autoplay" allowfullscreen></iframe>
-                </div>
-                <div class="video-info">
-                    <h3>Titre de la vidéo 4</h3>
-                    <p>Description de la vidéo 4. Cette vidéo présente du contenu exclusif.</p>
-                </div>
-                <button class="expand-btn" onclick="openVideoModal('https://drive.google.com/file/d/1O89657nGNedAl0CMognOXPgRe4fcijTW/preview')">Regarder en plein écran</button>
-            </div>
-
-            <!-- Vidéo 5 -->
-            <div class="video-card">
-                <div class="video-container">
-                    <iframe class="video-item" src="https://drive.google.com/file/d/1OOqr5_jkCKffEolkoXJFHVBQzm703fhP/preview" allow="autoplay" allowfullscreen></iframe>
-                </div>
-                <div class="video-info">
-                    <h3>Titre de la vidéo 5</h3>
-                    <p>Description de la vidéo 5. Cette vidéo présente du contenu exclusif.</p>
-                </div>
-                <button class="expand-btn" onclick="openVideoModal('https://drive.google.com/file/d/1OOqr5_jkCKffEolkoXJFHVBQzm703fhP/preview')">Regarder en plein écran</button>
-            </div>
-
-            <!-- Vidéo 6 -->
-            <div class="video-card">
-                <div class="video-container">
-                    <iframe class="video-item" src="https://drive.google.com/file/d/1OFHvCsTC438H9cqDoQLuRdw4zgsLLnJZ/preview" allow="autoplay" allowfullscreen></iframe>
-                </div>
-                <div class="video-info">
-                    <h3>Titre de la vidéo 6</h3>
-                    <p>Description de la vidéo 6. Cette vidéo présente du contenu exclusif.</p>
-                </div>
-                <button class="expand-btn" onclick="openVideoModal('https://drive.google.com/file/d/1OFHvCsTC438H9cqDoQLuRdw4zgsLLnJZ/preview')">Regarder en plein écran</button>
-            </div>
-        </div>
-
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <!-- Section Retirer de l'argent -->
-            <div class="sidebar-section">
-                <h3>Gagner de l'argent</h3>
-                <button class="sidebar-btn" id="showMoneyDetailsBtn">Comment retirer votre argent</button>
-                <div class="details" id="moneyDetails">
-                    <p><strong>Publiez des vidéos sur Mougouli et gagnez de l'argent !</strong></p>
-                    <p>Si vous êtes intéressé à avoir un compte pour publier vos vidéos, envoyez un email à <a href="mailto:baizemi0039@gmail.com">baizemi0039@gmail.com</a>.</p>
-                    <p>Nous examinerons votre demande et vous fournirons les détails pour commencer à publier des vidéos et générer des revenus.</p>
-                    
-                    <div class="payment-methods">
-                        <div class="payment-method">
-                            <img src="https://raw.githubusercontent.com/Walyy578/MULTI-GAMES/main/t%C3%A9l%C3%A9chargement.png" alt="Orange Money">
-                        </div>
-                        <div class="payment-method">
-                            <img src="https://raw.githubusercontent.com/Walyy578/MULTI-GAMES/main/t%C3%A9l%C3%A9chargement%20(1).png" alt="Moov Money">
-                        </div>
-                        <div class="payment-method">
-                            <img src="https://raw.githubusercontent.com/Walyy578/MULTI-GAMES/main/t%C3%A9l%C3%A9chargement.jpeg" alt="Wave">
-                        </div>
-                        <div class="payment-method">
-                            <img src="https://raw.githubusercontent.com/Walyy578/MULTI-GAMES/main/t%C3%A9l%C3%A9chargement%20(1).jpeg" alt="MTN Money">
-                        </div>
-                        <div class="payment-method">
-                            <img src="https://raw.githubusercontent.com/Walyy578/MULTI-GAMES/main/paypal.png" alt="PayPal">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Section Publicité -->
-            <div class="sidebar-section">
-                <h3>Publicité</h3>
-                <button class="sidebar-btn" id="showAdvertisingBtn">Promouvoir vos produits</button>
-                <div class="details" id="advertisingDetails">
-                    <p><strong>Vous souhaitez faire la promotion de votre produit, service ou autre ?</strong></p>
-                    <p>Si vous êtes intéressé, écrivez à <a href="mailto:baizemi0039@gmail.com">baizemi0039@gmail.com</a> pour discuter des opportunités de publicité.</p>
-                </div>
-            </div>
-
-            <!-- Bannière publicitaire verticale -->
-            <div class="sidebar-section">
-                <h3>Publicité</h3>
-                <script type='text/javascript'>
-                    atOptions = {
-                        'key' : 'd5f9d382d8a2e0c5a80f17bed210222b',
-                        'format' : 'iframe',
-                        'height' : 250,
-                        'width' : 300,
-                        'params' : {}
-                    };
-                </script>
-                <script type='text/javascript' src='//hedwigflooredventure.com/d5f9d382d8a2e0c5a80f17bed210222b/invoke.js'></script>
-            </div>
+    <!-- Section argent -->
+    <div class="money-section">
+        <h3>Retirer votre argent</h3>
+        <button id="showDetailsBtn">Cliquez ici pour en savoir plus</button>
+        <div class="details">
+            <p><strong>Publiez des vidéos sur Mougouli.fr et gagnez de l'argent !</strong></p>
+            <p>Envoyez un email à <a href="mailto:baizemi0039@gmail.com">baizemi0039@gmail.com</a> pour ouvrir un compte.</p>
         </div>
     </div>
 
-    <!-- Modal pour vidéo en plein écran -->
-    <div class="modal" id="videoModal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeVideoModal()">&times;</span>
-            <div class="modal-video-container">
-                <iframe class="modal-video" id="modalVideoIframe" src="" allow="autoplay" allowfullscreen></iframe>
-            </div>
+    <!-- Section publicité -->
+    <div class="advertising-section">
+        <h3>Faire la promotion de vos produits</h3>
+        <button id="showAdvertisingBtn">Cliquez ici pour plus d'infos</button>
+        <div class="advertising-details">
+            <p><strong>Vous souhaitez faire la promotion de votre produit, service ou autre ?</strong></p>
+            <p>Écrivez à <a href="mailto:baizemi0039@gmail.com">baizemi0039@gmail.com</a>.</p>
         </div>
     </div>
 
-    <!-- Pied de page -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>À propos de Mougouli</h3>
-                    <p>Plateforme de partage de vidéos privées et exclusives.</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Liens rapides</h3>
-                    <a href="#">Accueil</a>
-                    <a href="#">Conditions d'utilisation</a>
-                    <a href="#">Politique de confidentialité</a>
-                </div>
-                <div class="footer-section">
-                    <h3>Contact</h3>
-                    <a href="mailto:baizemi0039@gmail.com">baizemi0039@gmail.com</a>
-                    <p>Support technique</p>
-                </div>
+    <!-- Vidéos -->
+    <div class="videos-grid">
+
+        <!-- Vidéo 1 -->
+        <div class="video-container">
+            <h2>Regardez cette vidéo</h2>
+            <iframe class="video-item" src="https://drive.google.com/file/d/1Nd3QNnWbqWykmplSML6tTM2PIv55qFt9/preview" allow="autoplay"></iframe>
+            <div class="button-container">
+                <button class="expand-btn" onclick="expandVideo(this)">Agrandir la vidéo</button>
             </div>
-            <div class="copyright">
-                <p>&copy; 2023 Mougouli. Tous droits réservés.</p>
+        </div>
+
+        <!-- Bannière après 1ère vidéo -->
+        <div class="ad-banner">
+            <script type="text/javascript">
+                atOptions = {
+                    'key': 'ec8a122370809254d0799e5b220bfa3f',
+                    'format': 'iframe',
+                    'height': 50,
+                    'width': 320,
+                    'params': {}
+                };
+            </script>
+            <script type="text/javascript" src="//hedwigflooredventure.com/ec8a122370809254d0799e5b220bfa3f/invoke.js"></script>
+        </div>
+
+        <!-- Vidéo 2 -->
+        <div class="video-container">
+            <h2>Une autre vidéo</h2>
+            <iframe class="video-item" src="https://drive.google.com/file/d/1OBwDYs516MpY2TDyuNuw5UoeVvVEWcTl/preview" allow="autoplay"></iframe>
+            <div class="button-container">
+                <button class="expand-btn" onclick="expandVideo(this)">Agrandir la vidéo</button>
             </div>
+        </div>
+
+        <!-- ... autres vidéos ... -->
+    </div>
+
+    <!-- Bannière basse -->
+    <div class="ad-banner">
+        <script type="text/javascript">
+            atOptions = {
+                'key': 'f7ee59b1763bc24f396d6b5896098193',
+                'format': 'iframe',
+                'height': 90,
+                'width': 728,
+                'params': {}
+            };
+        </script>
+        <script type="text/javascript" src="//hedwigflooredventure.com/f7ee59b1763bc24f396d6b5896098193/invoke.js"></script>
+    </div>
+
+    <!-- Paiements -->
+    <footer class="payment-methods">
+        <h3>Paiements acceptés</h3>
+        <div class="payment-logos">
+            <img src="https://github.com/Walyy578/MULTI-GAMES/blob/main/t%C3%A9l%C3%A9chargement.png?raw=true" alt="Orange Money">
+            <img src="https://github.com/Walyy578/MULTI-GAMES/blob/main/t%C3%A9l%C3%A9chargement%20(1).png?raw=true" alt="Moov Money">
+            <img src="https://github.com/Walyy578/MULTI-GAMES/blob/main/t%C3%A9l%C3%A9chargement.jpeg?raw=true" alt="Wave">
+            <img src="https://github.com/Walyy578/MULTI-GAMES/blob/main/t%C3%A9l%C3%A9chargement%20(1).jpeg?raw=true" alt="MTN">
+            <img src="https://github.com/Walyy578/MULTI-GAMES/blob/main/paypal.png?raw=true" alt="PayPal">
         </div>
     </footer>
 
+    <!-- Script pub avant </body> -->
+    <script type='text/javascript' src='//hedwigflooredventure.com/29/72/ee/2972ee2783b72e2a7074b0f1df8be81f.js'></script>
+
     <script>
-        // Changer la langue selon la sélection
-        document.getElementById('language-select').addEventListener('change', function() {
-            const lang = this.value;
-            const messages = {
-                'fr': "Le site a été changé en Français",
-                'en': "The site has been changed to English",
-                'es': "El sitio ha sido cambiado a Español",
-                'de': "Die Seite wurde auf Deutsch geändert",
-                'it': "Il sito è stato cambiato in Italiano",
-                'pt': "O site foi alterado para Português",
-                'ar': "تم تغيير الموقع إلى العربية",
-                'zh': "网站已更改为中文"
-            };
-            alert(messages[lang]);
-        });
-
-        // Afficher les détails pour retirer l'argent
-        const showMoneyDetailsBtn = document.getElementById('showMoneyDetailsBtn');
-        const moneyDetails = document.getElementById('moneyDetails');
-
-        showMoneyDetailsBtn.addEventListener('click', function() {
-            moneyDetails.style.display = moneyDetails.style.display === 'block' ? 'none' : 'block';
-            // Masquer les autres sections dépliées
-            if (advertisingDetails.style.display === 'block' && moneyDetails.style.display === 'block') {
-                advertisingDetails.style.display = 'none';
-            }
-        });
-
-        // Afficher les détails pour la publicité
-        const showAdvertisingBtn = document.getElementById('showAdvertisingBtn');
-        const advertisingDetails = document.getElementById('advertisingDetails');
-
-        showAdvertisingBtn.addEventListener('click', function() {
-            advertisingDetails.style.display = advertisingDetails.style.display === 'block' ? 'none' : 'block';
-            // Masquer les autres sections dépliées
-            if (moneyDetails.style.display === 'block' && advertisingDetails.style.display === 'block') {
-                moneyDetails.style.display = 'none';
-            }
-        });
-
-        // Modal pour vidéo en plein écran
-        function openVideoModal(videoUrl) {
-            // Charger la publicité popunder avant d'ouvrir la vidéo
-            loadPopunderAd();
-            
-            const modal = document.getElementById('videoModal');
-            const iframe = document.getElementById('modalVideoIframe');
-            iframe.src = videoUrl;
-            modal.style.display = 'flex';
+        // Fonction pour agrandir les vidéos
+        function expandVideo(button) {
+            const iframe = button.closest('.video-container').querySelector('iframe');
+            iframe.classList.toggle('clicked');
         }
 
-        function closeVideoModal() {
-            const modal = document.getElementById('videoModal');
-            const iframe = document.getElementById('modalVideoIframe');
-            iframe.src = '';
-            modal.style.display = 'none';
-        }
-
-        // Fermer le modal en cliquant à l'extérieur
-        window.addEventListener('click', function(event) {
-            const modal = document.getElementById('videoModal');
-            if (event.target === modal) {
-                closeVideoModal();
-            }
+        // Toggle sections
+        document.getElementById('showDetailsBtn').addEventListener('click', () => {
+            document.querySelector('.details').style.display =
+                document.querySelector('.details').style.display === 'block' ? 'none' : 'block';
         });
 
-        // Charger la publicité popunder
-        function loadPopunderAd() {
-            // Créer un élément script pour charger la publicité
-            const script = document.createElement('script');
-            script.type = 'text/javascript';
-            script.src = '//hedwigflooredventure.com/0f/b6/1d/0fb61ddf9eda965c255b99f4a4067be6.js';
-            document.body.appendChild(script);
-        }
-
-        // Ajouter un événement de clic à chaque vidéo pour déclencher la publicité
-        document.querySelectorAll('.expand-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                loadPopunderAd();
-            });
+        document.getElementById('showAdvertisingBtn').addEventListener('click', () => {
+            document.querySelector('.advertising-details').style.display =
+                document.querySelector('.advertising-details').style.display === 'block' ? 'none' : 'block';
         });
     </script>
 </body>
