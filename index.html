@@ -2,8 +2,8 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mougouli - Plateforme de Vidéos Privées</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mougouli - Plateforme porno xx</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <script type='text/javascript' src='//hedwigflooredventure.com/14/ad/da/14addac010dcb2416ac06fc211b1bb4e.js'></script>
     <style>
@@ -29,6 +29,16 @@
             line-height: 1.6;
             color: #333;
             background-color: #f4f4f9;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Désactiver le zoom */
+        html, body {
+            touch-action: manipulation;
+            overflow-x: hidden;
+            width: 100%;
+            position: relative;
         }
         
         .container {
@@ -194,7 +204,7 @@
         }
         
         /* Money Section */
-        .money-section, .advertising-section {
+        .money-section {
             background-color: white;
             padding: 20px;
             border-radius: var(--border-radius);
@@ -342,6 +352,36 @@
             border-top: 1px solid #555;
         }
         
+        /* Style pour l'annonce centrée */
+        .centered-ad {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            max-width: 90%;
+            max-height: 90%;
+            overflow: auto;
+        }
+        
+        .close-ad {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
         /* Responsive Design */
         @media (max-width: 992px) {
             .main-content {
@@ -450,18 +490,6 @@
                                 <span>PayPal</span>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Advertising Section -->
-                <div class="advertising-section">
-                    <div class="section-header">
-                        <h3>Faites la promotion de vos produits</h3>
-                        <button class="toggle-btn" id="showAdvertisingBtn">Plus d'infos</button>
-                    </div>
-                    <div class="advertising-details">
-                        <p><strong>Vous souhaitez promouvoir votre produit, service ou marque ?</strong></p>
-                        <p>Contactez-nous à <a href="mailto:baizemi0039@gmail.com">baizemi0039@gmail.com</a> pour discuter des opportunités sur notre plateforme.</p>
                     </div>
                 </div>
 
@@ -677,6 +705,22 @@
         </div>
     </footer>
 
+    <!-- Annonce centrée -->
+    <div id="centeredAd" class="centered-ad" style="display: none;">
+        <button class="close-ad" onclick="closeAd()">X</button>
+        <div class="ad-title">Annonce importante</div>
+        <script type="text/javascript">
+            atOptions = {
+                'key' : '29d9e5d1a2b7b9e5d1a2b7b9e5d1a2b7',
+                'format' : 'iframe',
+                'height' : 250,
+                'width' : 300,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="//hedwigflooredventure.com/29d9e5d1a2b7b9e5d1a2b7b9e5d1a2b7/invoke.js"></script>
+    </div>
+
     <script>
         // Language selection
         document.getElementById('language-select').addEventListener('change', function() {
@@ -729,28 +773,23 @@
         const detailsSection = document.querySelector('.money-section .details');
 
         showDetailsBtn.addEventListener('click', function() {
-            // Redirect to the link first
-            window.open('https://hedwigflooredventure.com/bvwm8i8n0?key=8d98ecbedc6b9369775d23bf978b91d8', '_blank');
-            
-            // Then toggle the details section
+            // Toggle the details section
             const isVisible = detailsSection.style.display === 'block';
             detailsSection.style.display = isVisible ? 'none' : 'block';
-            showDetailsBtn.textContent = isVisible ? 'RETRAIT D\'ARGENT' : 'Moins d\'infos';
+            showDetailsBtn.textContent = isVisible ? 'RETRAIT D\'ARGENT' : 'Masquer les détails';
         });
 
-        // Toggle details for advertising section
-        const showAdvertisingBtn = document.getElementById('showAdvertisingBtn');
-        const advertisingSection = document.querySelector('.advertising-details');
-
-        showAdvertisingBtn.addEventListener('click', function() {
-            // Redirect to the link first
-            window.open('https://hedwigflooredventure.com/bvwm8i8n0?key=8d98ecbedc6b9369775d23bf978b91d8', '_blank');
-            
-            // Then toggle the advertising section
-            const isVisible = advertisingSection.style.display === 'block';
-            advertisingSection.style.display = isVisible ? 'none' : 'block';
-            showAdvertisingBtn.textContent = isVisible ? 'Plus d\'infos' : 'Moins d\'infos';
+        // Afficher l'annonce centrée au chargement de la page
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('centeredAd').style.display = 'block';
+            }, 2000);
         });
+
+        // Fermer l'annonce centrée
+        function closeAd() {
+            document.getElementById('centeredAd').style.display = 'none';
+        }
     </script>
     <script type='text/javascript' src='//hedwigflooredventure.com/29/72/ee/2972ee2783b72e2a7074b0f1df8be81f.js'></script>
 </body>
