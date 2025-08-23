@@ -76,20 +76,34 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
         
         .profile-card:hover {
             transform: translateY(-5px);
         }
         
+        .profile-img-container {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
         .profile-img {
             width: 100%;
-            height: 200px;
+            height: 100%;
             object-fit: cover;
         }
         
         .profile-info {
             padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
         
         .profile-name {
@@ -102,6 +116,7 @@
             color: #7f8c8d;
             font-size: 0.9rem;
             margin-bottom: 15px;
+            flex-grow: 1;
         }
         
         .cta-text {
@@ -295,10 +310,12 @@
             
             <div class="profile-grid">
                 <div class="profile-card">
-                    <img src="https://raw.githubusercontent.com/pinenikeuse/mougouli/main/1755985158588.jpg" alt="Profil 1" class="profile-img">
+                    <div class="profile-img-container">
+                        <img src="https://raw.githubusercontent.com/pinenikeuse/mougouli/main/1755985158588.jpg" alt="Sophie, 28 ans" class="profile-img">
+                    </div>
                     <div class="profile-info">
-                        <div class="profile-name">Sophie, 28 ans</div>
-                        <div class="profile-desc">Passionnée de voyage et de gastronomie</div>
+                        <div class="profile-name">Sarah, 28 ans</div>
+                        <div class="profile-desc">Passionnée de voyage et de gastronomie. J'aime les soirées entre amis et faire de nouvelles rencontres.</div>
                         <button class="secondary-button" onclick="redirectToAd()">
                             <i class="fas fa-comment"></i> Envoyer un message
                         </button>
@@ -306,10 +323,12 @@
                 </div>
                 
                 <div class="profile-card">
-                    <img src="https://raw.githubusercontent.com/pinenikeuse/mougouli/main/1755962808160.jpg" alt="Profil 2" class="profile-img">
+                    <div class="profile-img-container">
+                        <img src="https://raw.githubusercontent.com/pinenikeuse/mougouli/main/1755962808160.jpg" alt="Clara, 26 ans" class="profile-img">
+                    </div>
                     <div class="profile-info">
                         <div class="profile-name">Clara, 26 ans</div>
-                        <div class="profile-desc">Aime le cinéma et les sorties entre amis</div>
+                        <div class="profile-desc">Aime le cinéma et les sorties entre amis. Je recherche une personne sincère pour partager de bons moments.</div>
                         <button class="secondary-button" onclick="redirectToAd()">
                             <i class="fas fa-comment"></i> Envoyer un message
                         </button>
@@ -317,12 +336,14 @@
                 </div>
                 
                 <div class="profile-card">
-                    <img src="https://raw.githubusercontent.com/pinenikeuse/mougouli/main/IMG-20250823-WA0040.jpg" alt="Profil 3" class="profile-img">
+                    <div class="profile-img-container">
+                        <img src="https://raw.githubusercontent.com/pinenikeuse/mougouli/main/IMG-20250823-WA0083.jpg" alt="Julie, 31 ans" class="profile-img">
+                    </div>
                     <div class="profile-info">
-                        <div class="profile-name">Marie, 32 ans</div>
-                        <div class="profile-desc">Amateur de sport et de nature</div>
+                        <div class="profile-name">Julie, 21 ans</div>
+                        <div class="profile-desc">Sportive et dynamique, j'aime la nature et les sensations fortes. Prête pour de nouvelles aventures.</div>
                         <button class="sex-button" onclick="redirectToSexy()">
-                            <i class="fas fa-fire"></i> JE VEUX JUSTE BAISER
+                            <i class="fas fa-fire"></i> Faire l'amour
                         </button>
                     </div>
                 </div>
