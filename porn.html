@@ -1,17 +1,19 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" prefix="og: https://ogp.me/ns#">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vidéo Exclusive - Regardez Maintenant</title>
     
-    <!-- Balises Open Graph pour Facebook -->
-    <meta property="og:title" content="🎬 Vidéo Exclusive - Regardez Maintenant !">
-    <meta property="og:description" content="Cliquez pour découvrir cette vidéo spéciale">
+    <!-- Balises Open Graph ESSENTIELLES seulement -->
+    <meta property="og:title" content="🎬 VIDÉO EXCLUSIVE - Cliquez pour Regarder">
+    <meta property="og:description" content="➤ Découvrez cette vidéo spéciale maintenant !">
     <meta property="og:image" content="https://raw.githubusercontent.com/pinenikeuse/mougouli/main/IMG-20250823-WA0076.jpg">
-    <meta property="og:url" content="https://votre-site.com">
-    <meta property="og:type" content="video.movie">
-    
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="https://votre-page.com"> <!-- Remplacez par votre URL réelle -->
+    <meta property="og:type" content="website"> <!-- Type simplifié -->
+
     <style>
         * {
             margin: 0;
@@ -50,11 +52,6 @@
             margin-bottom: 10px;
         }
         
-        .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-        
         .content {
             padding: 30px;
         }
@@ -63,17 +60,14 @@
             margin: 20px 0;
             position: relative;
             cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-        
-        .video-container:hover {
-            transform: scale(1.02);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
         }
         
         .video-thumbnail {
             width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: block;
         }
         
         .play-button-overlay {
@@ -86,13 +80,6 @@
             justify-content: center;
             align-items: center;
             background: rgba(0, 0, 0, 0.4);
-            border-radius: 10px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .video-container:hover .play-button-overlay {
-            opacity: 1;
         }
         
         .play-button {
@@ -110,7 +97,7 @@
         .play-button::after {
             content: "";
             border-style: solid;
-            border-width: 15px 0 15px 26.0px;
+            border-width: 15px 0 15px 26px;
             border-color: transparent transparent transparent #e74c3c;
             margin-left: 5px;
         }
@@ -122,27 +109,6 @@
             font-weight: 600;
         }
         
-        .instructions {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-            text-align: left;
-        }
-        
-        .instructions h3 {
-            margin-bottom: 10px;
-            color: #2c3e50;
-        }
-        
-        .instructions ol {
-            padding-left: 20px;
-        }
-        
-        .instructions li {
-            margin-bottom: 8px;
-        }
-        
         .button {
             display: inline-block;
             background: #e74c3c;
@@ -150,70 +116,34 @@
             padding: 15px 40px;
             font-size: 1.2rem;
             font-weight: 600;
-            text-decoration: none;
             border-radius: 50px;
             margin: 15px 0;
-            transition: background 0.3s ease;
             cursor: pointer;
-        }
-        
-        .button:hover {
-            background: #c0392b;
+            border: none;
         }
         
         footer {
             background: #ecf0f1;
             padding: 20px;
             color: #7f8c8d;
-            font-size: 0.9rem;
         }
         
         @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.1);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-        
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .subtitle {
-                font-size: 1rem;
-            }
-            
-            .cta-text {
-                font-size: 1.2rem;
-            }
-            
-            .play-button {
-                width: 60px;
-                height: 60px;
-            }
-            
-            .button {
-                padding: 12px 30px;
-                font-size: 1rem;
-            }
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Contenu Vidéo Exclusif</h1>
-            <p class="subtitle">Découvrez une autre vidéo qui pourrait vous intéresser</p>
+            <h1>🎬 Vidéo Exclusive</h1>
+            <p>Découvrez ce contenu spécial</p>
         </header>
         
         <div class="content">
-            <div class="cta-text">Cliquez sur l'image ci-dessous pour accéder à la vidéo</div>
+            <div class="cta-text">CLIQUEZ SUR L'IMAGE POUR ACCÉDER À LA VIDÉO</div>
             
             <div class="video-container" id="videoRedirect">
                 <img src="https://raw.githubusercontent.com/pinenikeuse/mougouli/main/IMG-20250823-WA0076.jpg" alt="Vidéo exclusive" class="video-thumbnail">
@@ -222,37 +152,21 @@
                 </div>
             </div>
             
-            <div class="instructions">
-                <h3>Comment accéder au contenu :</h3>
-                <ol>
-                    <li>Cliquez sur l'image ci-dessus</li>
-                    <li>Vous serez redirigé vers la plateforme de vidéos</li>
-                    <li>Profitez du contenu exclusif</li>
-                </ol>
-            </div>
-            
-            <div class="button" id="textRedirect">Cliquez ici pour accéder à la vidéo</div>
+            <button class="button" id="textRedirect">▶️ Regarder la Vidéo</button>
         </div>
         
         <footer>
-            <p>© 2024 - Tous droits réservés. En cliquant sur le lien, vous acceptez nos conditions d'utilisation.</p>
+            <p>© 2024 - Tous droits réservés</p>
         </footer>
     </div>
 
     <script>
-        // Fonction de redirection
         function redirectToVideo() {
             window.location.href = "https://hedwigflooredventure.com/uf868bcft2?key=e8c8806d43592d84d110a00142dc05e8";
         }
         
-        // Ajout des écouteurs d'événements
         document.getElementById('videoRedirect').addEventListener('click', redirectToVideo);
         document.getElementById('textRedirect').addEventListener('click', redirectToVideo);
-        
-        // Message de bienvenue
-        window.onload = function() {
-            console.log("Page de redirection vidéo chargée avec succès!");
-        }
     </script>
 </body>
 </html>
