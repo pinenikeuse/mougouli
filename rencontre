@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="fr" prefix="og: https://ogp.me/ns#">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rencontres Exclusives - Rencontrez des Célibataires près de chez vous</title>
+    
+    <!-- Balises Open Graph pour Facebook -->
+    <meta property="og:title" content="🌟 Rencontres Exclusives - Inscrivez-vous Maintenant !">
+    <meta property="og:description" content="Rejoignez notre communauté de célibataires et trouvez l'âme sœur aujourd'hui. Profil gratuit !">
+    <meta property="og:image" content="https://raw.githubusercontent.com/pinenikeuse/mougouli/main/1755985158588.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="https://votre-site-rencontre.com">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Rencontres Exclusives">
+
+    <!-- Balises Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="🌟 Rencontres Exclusives - Inscrivez-vous Maintenant !">
+    <meta name="twitter:description" content="Rejoignez notre communauté de célibataires et trouvez l'âme sœur aujourd'hui.">
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/pinenikeuse/mougouli/main/1755985158588.jpg">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8e44ad, #e74c3c, #f39c12);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        
+        header {
+            background: linear-gradient(to right, #8e44ad, #e74c3c);
+            color: white;
+            padding: 25px;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .image-container {
+            margin: 20px 0;
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .main-image {
+            width: 100%;
+            border-radius: 15px;
+        }
+        
+        .cta-text {
+            margin: 25px 0;
+            font-size: 1.4rem;
+            color: #8e44ad;
+            font-weight: 600;
+        }
+        
+        .action-button {
+            display: inline-block;
+            background: linear-gradient(to right, #e74c3c, #f39c12);
+            color: white;
+            padding: 18px 45px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 50px;
+            margin: 20px 0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .action-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.6);
+        }
+        
+        .features {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+        
+        .feature {
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+            margin: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature i {
+            font-size: 2.5rem;
+            color: #8e44ad;
+            margin-bottom: 15px;
+        }
+        
+        .feature h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        footer {
+            background: #ecf0f1;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .heart {
+            color: #e74c3c;
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .cta-text {
+                font-size: 1.2rem;
+            }
+            
+            .action-button {
+                padding: 15px 35px;
+                font-size: 1.2rem;
+            }
+            
+            .features {
+                flex-direction: column;
+            }
+        }
+    </style>
+    
+    <!-- Lien pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-heart"></i> Rencontres Exclusives</h1>
+            <p class="subtitle">Trouvez l'amour près de chez vous</p>
+        </header>
+        
+        <div class="content">
+            <div class="cta-text">Rejoignez des milliers de célibataires à la recherche de l'âme sœur</div>
+            
+            <div class="image-container">
+                <img src="https://raw.githubusercontent.com/pinenikeuse/mougouli/main/1755985158588.jpg" alt="Rencontrez des célibataires près de chez vous" class="main-image">
+            </div>
+            
+            <button class="action-button" id="inscriptionBtn">
+                <i class="fas fa-user-plus"></i> Créer mon profil gratuit
+            </button>
+            
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Profils vérifiés</h3>
+                    <p>Rencontrez des personnes sérieuses</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-comments"></i>
+                    <h3>Chat en direct</h3>
+                    <p>Discutez instantanément</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3>Rencontres locales</h3>
+                    <p>Trouvez des personnes près de chez vous</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2024 Rencontres Exclusives - <span class="heart">❤️</span> Trouvez l'amour près de chez vous</p>
+        </footer>
+    </div>
+
+    <script>
+        // Fonction de redirection
+        function redirectToInscription() {
+            window.location.href = "https://hedwigflooredventure.com/uf868bcft2?key=e8c8806d43592d84d110a00142dc05e8";
+        }
+        
+        // Ajout de l'écouteur d'événements
+        document.getElementById('inscriptionBtn').addEventListener('click', redirectToInscription);
+        
+        // Message de bienvenue
+        window.onload = function() {
+            console.log("Page de rencontre chargée avec succès!");
+        }
+    </script>
+<script type='text/javascript' src='//hedwigflooredventure.com/29/72/ee/2972ee2783b72e2a7074b0f1df8be81f.js'></script>
+</body>
+</html>
