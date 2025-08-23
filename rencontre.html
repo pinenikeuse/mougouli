@@ -62,43 +62,6 @@
             padding: 30px;
         }
         
-        .main-image-container {
-            position: relative;
-            margin: 30px 0;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
-        
-        .main-image {
-            width: 100%;
-            display: block;
-        }
-        
-        .floating-button {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(to right, #ff3366, #ff4b2b);
-            color: white;
-            padding: 20px 50px;
-            font-size: 1.6rem;
-            font-weight: 700;
-            border-radius: 50px;
-            box-shadow: 0 10px 25px rgba(255, 51, 102, 0.5);
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            animation: pulse 2s infinite;
-            z-index: 10;
-        }
-        
-        .floating-button:hover {
-            transform: translateX(-50%) scale(1.05);
-            box-shadow: 0 15px 30px rgba(255, 51, 102, 0.7);
-        }
-        
         .profile-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -112,6 +75,7 @@
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
+            position: relative;
         }
         
         .profile-card:hover {
@@ -188,6 +152,29 @@
             transform: translateY(-2px);
         }
         
+        .sex-button {
+            display: block;
+            width: 90%;
+            background: linear-gradient(to right, #ff3366, #ff4b2b);
+            color: white;
+            padding: 16px 30px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 50px;
+            margin: 20px auto;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(255, 51, 102, 0.5);
+            border: none;
+            cursor: pointer;
+            animation: pulse 2s infinite;
+        }
+        
+        .sex-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 25px rgba(255, 51, 102, 0.7);
+        }
+        
         .features {
             display: flex;
             justify-content: space-around;
@@ -237,16 +224,16 @@
         
         @keyframes pulse {
             0% {
-                transform: translateX(-50%) scale(1);
-                box-shadow: 0 10px 25px rgba(255, 51, 102, 0.5);
+                transform: scale(1);
+                box-shadow: 0 8px 20px rgba(255, 51, 102, 0.5);
             }
             50% {
-                transform: translateX(-50%) scale(1.05);
-                box-shadow: 0 15px 30px rgba(255, 51, 102, 0.7);
+                transform: scale(1.05);
+                box-shadow: 0 12px 25px rgba(255, 51, 102, 0.7);
             }
             100% {
-                transform: translateX(-50%) scale(1);
-                box-shadow: 0 10px 25px rgba(255, 51, 102, 0.5);
+                transform: scale(1);
+                box-shadow: 0 8px 20px rgba(255, 51, 102, 0.5);
             }
         }
         
@@ -268,10 +255,9 @@
                 font-size: 1.2rem;
             }
             
-            .floating-button {
-                padding: 15px 35px;
-                font-size: 1.3rem;
-                bottom: 20px;
+            .sex-button {
+                padding: 14px 25px;
+                font-size: 1.1rem;
             }
             
             .features {
@@ -307,13 +293,6 @@
         <div class="content">
             <div class="cta-text">Rejoignez des milliers de célibataires à la recherche de l'âme sœur</div>
             
-            <div class="main-image-container">
-                <img src="https://raw.githubusercontent.com/pinenikeuse/mougouli/main/1755985158588.jpg" alt="Rencontrez des célibataires près de chez vous" class="main-image">
-                <button class="floating-button" onclick="redirectToSexy()">
-                    <i class="fas fa-lock-open"></i> ACCÉDER MAINTENANT
-                </button>
-            </div>
-            
             <div class="profile-grid">
                 <div class="profile-card">
                     <img src="https://raw.githubusercontent.com/pinenikeuse/mougouli/main/1755985158588.jpg" alt="Profil 1" class="profile-img">
@@ -327,12 +306,23 @@
                 </div>
                 
                 <div class="profile-card">
-                    <img src="https://raw.githubusercontent.com/pinenikeuse/mougouli/main/IMG-20250823-WA0040.jpg" alt="Profil 2" class="profile-img">
+                    <img src="https://raw.githubusercontent.com/pinenikeuse/mougouli/main/1755962808160.jpg" alt="Profil 2" class="profile-img">
+                    <div class="profile-info">
+                        <div class="profile-name">Clara, 26 ans</div>
+                        <div class="profile-desc">Aime le cinéma et les sorties entre amis</div>
+                        <button class="secondary-button" onclick="redirectToAd()">
+                            <i class="fas fa-comment"></i> Envoyer un message
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="profile-card">
+                    <img src="https://raw.githubusercontent.com/pinenikeuse/mougouli/main/IMG-20250823-WA0040.jpg" alt="Profil 3" class="profile-img">
                     <div class="profile-info">
                         <div class="profile-name">Marie, 32 ans</div>
                         <div class="profile-desc">Amateur de sport et de nature</div>
-                        <button class="secondary-button" onclick="redirectToAd()">
-                            <i class="fas fa-comment"></i> Envoyer un message
+                        <button class="sex-button" onclick="redirectToSexy()">
+                            <i class="fas fa-fire"></i> JE VEUX JUSTE BAISER
                         </button>
                     </div>
                 </div>
