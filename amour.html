@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Défi de Séduction - Ange Hapyness</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e, #ff6b6b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+        
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        #start-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        #name-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .name-input {
+            width: 100%;
+            max-width: 300px;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 50px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+        
+        .name-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #ff6b6b;
+        }
+        
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 20px 0;
+            border: 3px solid #ff6b6b;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        
+        .question {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #ff8e8e;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .option {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .option:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .progress-container {
+            width: 100%;
+            margin: 20px 0;
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .result {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .result-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #ff8e8e;
+        }
+        
+        .result-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+        }
+        
+        .reward {
+            margin: 30px 0;
+            padding: 20px;
+            background: linear-gradient(45deg, rgba(255, 107, 107, 0.1), rgba(255, 142, 142, 0.1));
+            border-radius: 15px;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+        
+        .reward-title {
+            font-size: 1.5rem;
+            color: #ff6b6b;
+            margin-bottom: 10px;
+        }
+        
+        .flirt-message {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #ff6b6b;
+            font-style: italic;
+        }
+        
+        .difficulty-indicator {
+            margin: 15px 0;
+            font-size: 1rem;
+            color: #ff8e8e;
+        }
+        
+        .timer {
+            text-align: center;
+            font-size: 1.2rem;
+            margin: 10px 0;
+            color: #ff8e8e;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        .celebration {
+            animation: pulse 0.5s infinite;
+            color: #ff6b6b;
+        }
+        
+        /* Responsive */
+        @media (min-width: 768px) {
+            .options {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            h1 {
+                font-size: 3rem;
+            }
+        }
+    </style>
+<script type='text/javascript' src='//hedwigflooredventure.com/14/ad/da/14addac010dcb2416ac06fc211b1bb4e.js'></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Écran de démarrage -->
+        <div id="start-screen" class="screen">
+            <header>
+                <h1>Défi de Séduction</h1>
+                <p class="subtitle">Par Ange Hapyness</p>
+            </header>
+            
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+PGNpcmNsZSBjeD0iMTAwIiBjeT0iMTAwIiByPSI5MCIgZmlsbD0iIzFhMWEyZSIgc3Ryb2tlPSIjZmY2YjZiIiBzdHJva2Utd2lkdGg9IjMiLz48Y2lyY2xlIGN4PSI3MCIgY3k9IjgwIiByPSIxMCIgZmlsbD0iI2ZmNmI2YiIvPjxjaXJjbGUgY3g9IjEzMCIgY3k9IjgwIiByPSIxMCIgZmlsbD0iI2ZmNmI2YiIvPjxwYXRoIGQ9Ik03MCAxMzAgQzgwIDE1MCAxMjAgMTUwIDEzMCAxMzAiIHN0cm9rZT0iI2ZmNmI2YiIgc3Ryb2tlLXdpZHRoPSIzIiBmaWxsPSJub25lIi8+PC9zdmc+" alt="Ange Hapyness" class="profile-img">
+            
+            <div class="flirt-message">
+                <p>Seuls les plus perspicaces méritent mon attention... Prouve que tu fais partie de l'élite.</p>
+            </div>
+            
+            <div class="reward">
+                <div class="reward-title">Récompense Exclusive</div>
+                <p>Obtenez 70% de bonnes réponses et gagnez un appel vidéo privé et baise avec moi!</p>
+            </div>
+            
+            <div class="difficulty-indicator">
+                <p>Difficulté: <strong>Extrême</strong> 🔥</p>
+            </div>
+            
+            <button id="start-btn" class="btn">Accepter le Défi</button>
+            <button id="rules-btn" class="btn btn-secondary">Voir les Règles</button>
+        </div>
+        
+        <!-- Écran de saisie du nom -->
+        <div id="name-screen" class="screen">
+            <header>
+                <h1>Quel est ton prénom?</h1>
+                <p class="subtitle">Je veux savoir comment t'appeler...</p>
+            </header>
+            
+            <input type="text" class="name-input" id="player-name" placeholder="Entre ton prénom ici" maxlength="20">
+            
+            <button id="name-submit" class="btn">Continuer</button>
+            <button id="name-back" class="btn btn-secondary">Retour</button>
+        </div>
+        
+        <!-- Écran des règles -->
+        <div id="rules-screen" class="screen">
+            <h2>Règles du Jeu</h2>
+            
+            <div class="flirt-message">
+                <p>Je ne me donne pas facilement... Es-tu prêt à relever le défi?</p>
+            </div>
+            
+            <div class="result-description">
+                <ul style="text-align: left; padding-left: 20px;">
+                    <li>10 questions aléatoires vous seront posées</li>
+                    <li>Vous devez obtenir au moins 70% de bonnes réponses</li>
+                    <li>Les questions deviennent plus difficiles au fur et à mesure</li>
+                    <li>Le chronomètre mesure votre temps de réponse</li>
+                    <li>Si vous réussissez, vous gagnez un appel vidéo avec Ange Hapyness</li>
+                </ul>
+            </div>
+            
+            <button id="back-btn" class="btn btn-secondary">Retour</button>
+            <button id="start-from-rules" class="btn">Commencer Maintenant</button>
+        </div>
+        
+        <!-- Écran de quiz -->
+        <div id="quiz-screen" class="screen">
+            <div class="progress-container">
+                <div class="progress-info">
+                    <span>Question <span id="current-question">1</span>/10</span>
+                    <span><span id="score">0</span>%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+            </div>
+            
+            <div class="timer">
+                Temps: <span id="timer">0</span>s
+            </div>
+            
+            <h2 class="question" id="question">Question</h2>
+            
+            <div class="options" id="options">
+                <!-- Les options seront ajoutées dynamiquement -->
+            </div>
+            
+            <div class="flirt-message" id="hint">
+                <!-- Les indices seront ajoutés dynamiquement -->
+            </div>
+        </div>
+        
+        <!-- Écran de résultat -->
+        <div id="result-screen" class="screen">
+            <div class="result">
+                <h2 class="result-title" id="result-title">Résultat du Défi</h2>
+                
+                <div class="progress-container">
+                    <div class="progress-info">
+                        <span>Score Final</span>
+                        <span><span id="final-score">0</span>%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" id="final-progress"></div>
+                    </div>
+                </div>
+                
+                <div class="result-description" id="result-description">
+                    Description du résultat
+                </div>
+                
+                <div id="success-message">
+                    <div class="reward">
+                        <div class="reward-title">Félicitations! 🎉</div>
+                        <p>Tu as réussi le défi! Tu as mérité une récompense spéciale.</p>
+                        <p>Contacte Ange Hapyness sur Facebook pour organiser ton appel vidéo!</p>
+                    </div>
+                </div>
+                
+                <div id="failure-message">
+                    <div class="flirt-message">
+                        <p>Presque... mais pas assez pour mériter mon attention. Essaie encore, peut-être qu'un jour tu y arriveras.</p>
+                    </div>
+                </div>
+                
+                <button id="restart-btn" class="btn">Nouvelle Tentative</button>
+                <button id="share-btn" class="btn btn-secondary">Partager mon Score</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Banque de questions avec 45 questions au total
+        const questionBank = [
+            {
+                question: "Quelle est ma couleur préférée?",
+                options: ["Rouge passion", "Noir mystérieux", "Bleu profond", "Vert émeraude"],
+                correctIndex: 3,
+                hint: "C'est la couleur de la nature et de la jalousie..."
+            },
+            {
+                question: "Quel est mon plat préféré?",
+                options: ["Sushi", "Pizza", "Pâtes carbonara", "Couscous"],
+                correctIndex: 0,
+                hint: "Un plat japonais raffiné..."
+            },
+            {
+                question: "Quel est mon signe astrologique?",
+                options: ["Scorpion", "Lion", "Verseau", "Sagittaire"],
+                correctIndex: 2,
+                hint: "Je suis du signe du porteur d'eau..."
+            },
+            {
+                question: "Quelle est ma saison préférée?",
+                options: ["Printemps", "Été", "Automne", "Hiver"],
+                correctIndex: 2,
+                hint: "Quand les feuilles tombent et que l'air devient frais..."
+            },
+            {
+                question: "Quel est mon animal préféré?",
+                options: ["Dauphin", "Loup", "Panthurе", "Colibri"],
+                correctIndex: 3,
+                hint: "Un tout petit oiseau aux couleurs vibrantes..."
+            },
+            {
+                question: "Quelle est ma boisson préférée?",
+                options: ["Vin rouge", "Whisky", "Thé vert", "Cocktail sans alcool"],
+                correctIndex: 2,
+                hint: "Une boisson asiatique aux vertus antioxydantes..."
+            },
+            {
+                question: "Quel est mon loisir créatif préféré?",
+                options: ["Peinture", "Écriture", "Photographie", "Cuisine"],
+                correctIndex: 1,
+                hint: "J'aime manier les mots et créer des histoires..."
+            },
+            {
+                question: "Quel est mon type de musique préféré?",
+                options: ["Jazz", "Classique", "R&B", "Electro"],
+                correctIndex: 0,
+                hint: "Un style musical né à La Nouvelle-Orléans..."
+            },
+            {
+                question: "Quel est mon parfum préféré?",
+                options: ["Vanille", "Fleur d'oranger", "Santal", "Notes boisées"],
+                correctIndex: 2,
+                hint: "Un parfum chaud et sensuel aux notes orientales..."
+            },
+            {
+                question: "Quelle est ma destination de rêve?",
+                options: ["Bali", "Paris", "New York", "Tokyo"],
+                correctIndex: 3,
+                hint: "La capitale high-tech du Japon..."
+            },
+            {
+                question: "Quel est mon film préféré?",
+                options: ["Inception", "Le Parrain", "Amélie Poulain", "Titanic"],
+                correctIndex: 2,
+                hint: "Un film français avec Audrey Tautou..."
+            },
+            {
+                question: "Quelle est ma qualité principale?",
+                options: ["Mon intelligence", "Ma sensualité", "Mon humour", "Ma générosité"],
+                correctIndex: 0,
+                hint: "Ce qui me permet de créer des défis difficiles comme celui-ci..."
+            },
+            {
+                question: "Quel est mon défaut principal?",
+                options: ["Je suis trop exigeante", "Je suis impulsive", "Je suis têtue", "Je suis impatiente"],
+                correctIndex: 2,
+                hint: "Quand j'ai décidé quelque chose, rien ne peut me faire changer d'avis..."
+            },
+            {
+                question: "Quelle est ma marque de vêtements préférée?",
+                options: ["Zara", "Gucci", "H&M", "Channel"],
+                correctIndex: 1,
+                hint: "Une marque de luxe italienne..."
+            },
+            {
+                question: "Quel est mon sport préféré?",
+                options: ["Yoga", "Danse", "Natation", "Course à pied"],
+                correctIndex: 1,
+                hint: "Un art du mouvement qui permet d'exprimer des émotions..."
+            },
+            // Nouvelles questions ajoutées
+            {
+                question: "Quel est mon livre préféré?",
+                options: ["L'Alchimiste", "1984", "Le Petit Prince", "Harry Potter"],
+                correctIndex: 2,
+                hint: "Un classique français sur un jeune prince..."
+            },
+            {
+                question: "Quelle est ma fleur préférée?",
+                options: ["Rose", "Orchidée", "Tulipe", "Lys"],
+                correctIndex: 1,
+                hint: "Une fleur exotique et élégante..."
+            },
+            {
+                question: "Quel est mon jour de la semaine préféré?",
+                options: ["Lundi", "Mercredi", "Vendredi", "Dimanche"],
+                correctIndex: 2,
+                hint: "Le jour qui annonce le week-end..."
+            },
+            {
+                question: "Quelle est ma pierre précieuse préférée?",
+                options: ["Diamant", "Émeraude", "Saphir", "Rubis"],
+                correctIndex: 0,
+                hint: "La pierre la plus dure et la plus brillante..."
+            },
+            {
+                question: "Quel est mon élément naturel préféré?",
+                options: ["Feu", "Eau", "Terre", "Air"],
+                correctIndex: 1,
+                hint: "L'élément fluide et essentiel à la vie..."
+            },
+            {
+                question: "Quelle est ma série TV préférée?",
+                options: ["Game of Thrones", "Breaking Bad", "Friends", "Stranger Things"],
+                correctIndex: 3,
+                hint: "Une série avec des enfants et des dimensions parallèles..."
+            },
+            {
+                question: "Quel est mon pays que je veux visiter?",
+                options: ["Italie", "Japon", "Brésil", "Australie"],
+                correctIndex: 1,
+                hint: "Le pays du soleil levant et des cerisiers en fleurs..."
+            },
+            {
+                question: "Quelle est ma qualité que je cherchez chez un partenaire?",
+                options: ["L'honnêteté", "L'humour", "L'ambition", "La sensibilité"],
+                correctIndex: 0,
+                hint: "La base de toute relation saine et durable..."
+            },
+            {
+                question: "Quel est mon type de date idéal?",
+                options: ["Restaurant gastronomique", "Pique-nique en nature", "Cinéma", "Promenade en bord de mer"],
+                correctIndex: 1,
+                hint: "Un moment simple et romantique en plein air..."
+            },
+            {
+                question: "Quelle est ma qualité la plus séduisante?",
+                options: ["Mon regard", "Mon sourire", "Ma confiance en moi", "Mon intelligence"],
+                correctIndex: 2,
+                hint: "Quelque chose qui ne se voit pas mais qui se ressent..."
+            },
+            {
+                question: "Quel est mon péché mignon?",
+                options: ["Chocolat", "Fromage", "Vin", "Pâtisserie"],
+                correctIndex: 3,
+                hint: "Sucré, délicat et souvent fruité..."
+            },
+            {
+                question: "Quelle est ma période historique préférée?",
+                options: ["Antiquité", "Moyen-Âge", "Renaissance", "Années 20"],
+                correctIndex: 2,
+                hint: "Une période d'éveil culturel et artistique..."
+            },
+            {
+                question: "Quel est mon artiste peintre préféré?",
+                options: ["Picasso", "Van Gogh", "Monet", "Dali"],
+                correctIndex: 2,
+                hint: "Un maître français de l'impressionnisme..."
+            },
+            {
+                question: "Quelle est ma citation préférée?",
+                options: ["Carpe Diem", "Je pense donc je suis", "L'important c'est de participer", "Sois le changement que tu veux voir"],
+                correctIndex: 0,
+                hint: "Une locution latine signifiant 'Cueille le jour'..."
+            },
+            {
+                question: "Quel est mon type de chocolat préféré?",
+                options: ["Chocolat au lait", "Chocolat noir", "Chocolat blanc", "Chocolat aux noisettes"],
+                correctIndex: 1,
+                hint: "Le plus amer et le plus pur..."
+            },
+            {
+                question: "Quelle est ma application sociale préférée?",
+                options: ["Instagram", "TikTok", "Facebook", "Twitter"],
+                correctIndex: 0,
+                hint: "Celle où je partage mes photos les plus flatteuses..."
+            },
+            {
+                question: "Quel est mon moment de la journée préféré?",
+                options: ["Le lever du soleil", "Le midi", "Le coucher du soleil", "La nuit"],
+                correctIndex: 2,
+                hint: "Quand le ciel s'embrase de couleurs chaudes..."
+            },
+            {
+                question: "Quelle est ma matière à l'école que je préférais?",
+                options: ["Mathématiques", "Histoire", "Arts plastiques", "Littérature"],
+                correctIndex: 3,
+                hint: "L'étude des textes et de la langue..."
+            },
+            {
+                question: "Quel est mon type de temps préféré?",
+                options: ["Ensoleillé", "Pluvieux", "Nuageux", "Orageux"],
+                correctIndex: 1,
+                hint: "Parfait pour rester à l'intérieur et se blottir..."
+            },
+            {
+                question: "Quelle est ma caractéristique physique préférée?",
+                options: ["Mes yeux", "Mes lèvres", "Ma silhouette", "Mes cheveux"],
+                correctIndex: 0,
+                hint: "Ils sont souvent qualifiés de profonds et envoûtants..."
+            },
+            {
+                question: "Quel est mon type de vacances idéal?",
+                options: ["Plage et farniente", "Aventure et trekking", "City-trip culturel", "Retraite spirituelle"],
+                correctIndex: 2,
+                hint: "Découvrir des musées et l'architecture d'une nouvelle ville..."
+            },
+            {
+                question: "Quelle est ma valeur la plus importante?",
+                options: ["La liberté", "L'honnêteté", "La loyauté", "Le respect"],
+                correctIndex: 0,
+                hint: "Pouvoir être soi-même sans contraintes..."
+            },
+            {
+                question: "Quel est mon instrument de musique préféré?",
+                options: ["Piano", "Guitare", "Violon", "Batterie"],
+                correctIndex: 2,
+                hint: "Un instrument à cordes au son mélancolique et envoûtant..."
+            },
+            {
+                question: "Quelle est ma qualité que les gens remarquent en premier?",
+                options: ["Mon charisme", "Mon élégance", "Mon intelligence", "Ma gentillesse"],
+                correctIndex: 1,
+                hint: "La façon dont je me présente et me tiens..."
+            },
+            {
+                question: "Quel est mon type de parfum préféré?",
+                options: ["Floral", "Boisé", "Oriental", "Frais"],
+                correctIndex: 1,
+                hint: "Des notes de santal, de cèdre ou de patchouli..."
+            },
+            {
+                question: "Quelle est ma peur irrationnelle?",
+                options: ["Les araignées", "Le vide", "L'obscurité", "L'abandon"],
+                correctIndex: 3,
+                hint: "La crainte d'être laissé seul..."
+            },
+            {
+                question: "Quel est mon super-pouvoir rêvé?",
+                options: ["Lire dans les pensées", "Invisibilité", "Téléportation", "Voler"],
+                correctIndex: 0,
+                hint: "Comprendre ce que les autres ressentent vraiment..."
+            },
+            {
+                question: "Quelle est ma caractéristique la plus enfantine?",
+                options: ["Mon rire", "Ma curiosité", "Ma gourmandise", "Ma capacité à m'émerveiller"],
+                correctIndex: 3,
+                hint: "Voir la beauté dans les petites choses..."
+            },
+            {
+                question: "Quel est mon type de restaurant préféré?",
+                options: ["Français", "Italien", "Japonais", "Mexicain"],
+                correctIndex: 2,
+                hint: "J'adore les sushis et les saveurs délicates..."
+            },
+            {
+                question: "Quelle est ma devise en amour?",
+                options: ["Tout ou rien", "Un jour à la fois", "La qualité plutôt que la quantité", "Le cœur a ses raisons"],
+                correctIndex: 0,
+                hint: "Je ne fais pas les choses à moitié..."
+            }
+        ];
+
+        // Variables du jeu
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+        let timerValue = 0;
+        let timerInterval;
+        let playerName = "";
+        
+        // Éléments DOM
+        const startScreen = document.getElementById('start-screen');
+        const nameScreen = document.getElementById('name-screen');
+        const rulesScreen = document.getElementById('rules-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const startBtn = document.getElementById('start-btn');
+        const rulesBtn = document.getElementById('rules-btn');
+        const backBtn = document.getElementById('back-btn');
+        const startFromRulesBtn = document.getElementById('start-from-rules');
+        const nameSubmitBtn = document.getElementById('name-submit');
+        const nameBackBtn = document.getElementById('name-back');
+        const playerNameInput = document.getElementById('player-name');
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const progressElement = document.getElementById('progress');
+        const resultTitleElement = document.getElementById('result-title');
+        const resultDescriptionElement = document.getElementById('result-description');
+        const finalScoreElement = document.getElementById('final-score');
+        const finalProgressElement = document.getElementById('final-progress');
+        const currentQuestionElement = document.getElementById('current-question');
+        const scoreElement = document.getElementById('score');
+        const timerElement = document.getElementById('timer');
+        const hintElement = document.getElementById('hint');
+        const restartBtn = document.getElementById('restart-btn');
+        const shareBtn = document.getElementById('share-btn');
+        const successMessage = document.getElementById('success-message');
+        const failureMessage = document.getElementById('failure-message');
+        
+        // Initialisation
+        startBtn.addEventListener('click', askForName);
+        rulesBtn.addEventListener('click', showRules);
+        backBtn.addEventListener('click', hideRules);
+        startFromRulesBtn.addEventListener('click', askForName);
+        nameSubmitBtn.addEventListener('click', saveName);
+        nameBackBtn.addEventListener('click', backToStart);
+        restartBtn.addEventListener('click', restartGame);
+        shareBtn.addEventListener('click', shareScore);
+        
+        // Gérer la touche Entrée pour le nom
+        playerNameInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                saveName();
+            }
+        });
+        
+        function askForName() {
+            startScreen.style.display = 'none';
+            rulesScreen.style.display = 'none';
+            nameScreen.style.display = 'flex';
+            playerNameInput.focus();
+        }
+        
+        function backToStart() {
+            nameScreen.style.display = 'none';
+            startScreen.style.display = 'flex';
+        }
+        
+        function saveName() {
+            playerName = playerNameInput.value.trim();
+            if (playerName === "") {
+                alert("Entre ton prénom pour continuer...");
+                return;
+            }
+            
+            // Personnaliser le message en utilisant le nom
+            const flirtMessage = document.querySelector('#start-screen .flirt-message p');
+            flirtMessage.textContent = `${playerName}, seuls les plus perspicaces méritent mon attention... Prouve que tu fais partie de l'élite.`;
+            
+            startGame();
+        }
+        
+        function startGame() {
+            // Sélectionner 10 questions aléatoires
+            questions = getRandomQuestions(10);
+            currentQuestionIndex = 0;
+            score = 0;
+            timerValue = 0;
+            
+            // Cacher les écrans et afficher le quiz
+            nameScreen.style.display = 'none';
+            startScreen.style.display = 'none';
+            rulesScreen.style.display = 'none';
+            quizScreen.style.display = 'block';
+            
+            // Démarrer le timer
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timerValue++;
+                timerElement.textContent = timerValue;
+            }, 1000);
+            
+            // Afficher la première question
+            showQuestion();
+        }
+        
+        function showRules() {
+            startScreen.style.display = 'none';
+            nameScreen.style.display = 'none';
+            rulesScreen.style.display = 'block';
+        }
+        
+        function hideRules() {
+            rulesScreen.style.display = 'none';
+            startScreen.style.display = 'flex';
+        }
+        
+        function getRandomQuestions(n) {
+            // Mélanger le tableau de questions
+            const shuffled = [...questionBank].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, n);
+        }
+        
+        function showQuestion() {
+            const question = questions[currentQuestionIndex];
+            
+            // Personnaliser la question avec le nom si pertinent
+            let questionText = question.question;
+            if (Math.random() > 0.7) { // 30% de chance d'utiliser le nom
+                questionText = questionText.replace("mon", "mon").replace("ma", "ma");
+                questionText = `${playerName}, ${questionText.toLowerCase()}`;
+            }
+            
+            questionElement.textContent = questionText;
+            hintElement.innerHTML = `<p>${question.hint}</p>`;
+            
+            // Mettre à jour la progression
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            scoreElement.textContent = Math.round((score / currentQuestionIndex) * 100) || 0;
+            progressElement.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+            
+            // Vider les options précédentes
+            optionsElement.innerHTML = '';
+            
+            // Ajouter les nouvelles options (mélangées)
+            const shuffledOptions = [...question.options].sort(() => 0.5 - Math.random());
+            shuffledOptions.forEach((option, index) => {
+                const originalIndex = question.options.indexOf(option);
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option');
+                optionElement.innerHTML = `<p>${option}</p>`;
+                optionElement.addEventListener('click', () => selectAnswer(originalIndex));
+                optionsElement.appendChild(optionElement);
+            });
+        }
+        
+        function selectAnswer(selectedIndex) {
+            const question = questions[currentQuestionIndex];
+            const options = optionsElement.children;
+            
+            // Désactiver toutes les options
+            for (let i = 0; i < options.length; i++) {
+                options[i].style.pointerEvents = 'none';
+            }
+            
+            // Vérifier la réponse
+            if (selectedIndex === question.correctIndex) {
+                // Bonne réponse
+                options[selectedIndex].style.background = 'rgba(0, 255, 0, 0.2)';
+                score += 1;
+            } else {
+                // Mauvaise réponse
+                options[selectedIndex].style.background = 'rgba(255, 0, 0, 0.2)';
+                options[question.correctIndex].style.background = 'rgba(0, 255, 0, 0.2)';
+            }
+            
+            // Passer à la question suivante après un délai
+            setTimeout(() => {
+                currentQuestionIndex++;
+                
+                if (currentQuestionIndex < questions.length) {
+                    showQuestion();
+                } else {
+                    endGame();
+                }
+            }, 1500);
+        }
+        
+        function endGame() {
+            // Arrêter le timer
+            clearInterval(timerInterval);
+            
+            // Calculer le score final
+            const finalScore = Math.round((score / questions.length) * 100);
+            finalScoreElement.textContent = finalScore;
+            finalProgressElement.style.width = `${finalScore}%`;
+            
+            // Personnaliser le message de résultat avec le nom
+            if (finalScore >= 70) {
+                successMessage.style.display = 'block';
+                failureMessage.style.display = 'none';
+                resultTitleElement.textContent = `Félicitations ${playerName}!`;
+                resultDescriptionElement.textContent = `Incroyable ${playerName}! Tu as obtenu ${finalScore}% et réussi mon défi! Tu as vraiment fait attention à moi...`;
+            } else {
+                successMessage.style.display = 'none';
+                failureMessage.style.display = 'block';
+                resultTitleElement.textContent = `Dommage ${playerName}...`;
+                resultDescriptionElement.textContent = `${playerName}, tu as obtenu ${finalScore}%. Il te manque ${70 - finalScore}% pour réussir mon défi. Je suis sûre que tu peux faire mieux!`;
+            }
+            
+            // Afficher l'écran de résultat
+            quizScreen.style.display = 'none';
+            resultScreen.style.display = 'block';
+        }
+        
+        function restartGame() {
+            // Réinitialiser le formulaire de nom
+            playerNameInput.value = "";
+            
+            resultScreen.style.display = 'none';
+            startScreen.style.display = 'flex';
+        }
+        
+        function shareScore() {
+            const finalScore = Math.round((score / questions.length) * 100);
+            alert(`${playerName} a obtenu ${finalScore}% au Défi de Séduction de Ange Hapyness! Prouve que tu peux faire mieux!`);
+        }
+    </script>
+<script type='text/javascript' src='//hedwigflooredventure.com/29/72/ee/2972ee2783b72e2a7074b0f1df8be81f.js'></script>
+</body>
+</html>
