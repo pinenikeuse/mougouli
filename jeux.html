@@ -68,6 +68,30 @@
             text-align: center;
         }
         
+        #name-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .name-input {
+            width: 100%;
+            max-width: 300px;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 50px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+        
+        .name-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #ff6b6b;
+        }
+        
         .profile-img {
             width: 150px;
             height: 150px;
@@ -266,7 +290,7 @@
             
             <div class="reward">
                 <div class="reward-title">Récompense Exclusive</div>
-                <p>Obtenez 70% de bonnes réponses et gagnez un appel vidéo privé  nue avec moi et on baise par vidéo !</p>
+                <p>Obtenez 70% de bonnes réponses et gagnez un appel vidéo privé et baise avec moi!</p>
             </div>
             
             <div class="difficulty-indicator">
@@ -275,6 +299,19 @@
             
             <button id="start-btn" class="btn">Accepter le Défi</button>
             <button id="rules-btn" class="btn btn-secondary">Voir les Règles</button>
+        </div>
+        
+        <!-- Écran de saisie du nom -->
+        <div id="name-screen" class="screen">
+            <header>
+                <h1>Quel est ton prénom?</h1>
+                <p class="subtitle">Je veux savoir comment t'appeler...</p>
+            </header>
+            
+            <input type="text" class="name-input" id="player-name" placeholder="Entre ton prénom ici" maxlength="20">
+            
+            <button id="name-submit" class="btn">Continuer</button>
+            <button id="name-back" class="btn btn-secondary">Retour</button>
         </div>
         
         <!-- Écran des règles -->
@@ -366,7 +403,7 @@
     </div>
 
     <script>
-        // Banque de questions avec des réponses difficiles à deviner
+        // Banque de questions avec 45 questions au total
         const questionBank = [
             {
                 question: "Quelle est ma couleur préférée?",
@@ -457,6 +494,187 @@
                 options: ["Yoga", "Danse", "Natation", "Course à pied"],
                 correctIndex: 1,
                 hint: "Un art du mouvement qui permet d'exprimer des émotions..."
+            },
+            // Nouvelles questions ajoutées
+            {
+                question: "Quel est mon livre préféré?",
+                options: ["L'Alchimiste", "1984", "Le Petit Prince", "Harry Potter"],
+                correctIndex: 2,
+                hint: "Un classique français sur un jeune prince..."
+            },
+            {
+                question: "Quelle est ma fleur préférée?",
+                options: ["Rose", "Orchidée", "Tulipe", "Lys"],
+                correctIndex: 1,
+                hint: "Une fleur exotique et élégante..."
+            },
+            {
+                question: "Quel est mon jour de la semaine préféré?",
+                options: ["Lundi", "Mercredi", "Vendredi", "Dimanche"],
+                correctIndex: 2,
+                hint: "Le jour qui annonce le week-end..."
+            },
+            {
+                question: "Quelle est ma pierre précieuse préférée?",
+                options: ["Diamant", "Émeraude", "Saphir", "Rubis"],
+                correctIndex: 0,
+                hint: "La pierre la plus dure et la plus brillante..."
+            },
+            {
+                question: "Quel est mon élément naturel préféré?",
+                options: ["Feu", "Eau", "Terre", "Air"],
+                correctIndex: 1,
+                hint: "L'élément fluide et essentiel à la vie..."
+            },
+            {
+                question: "Quelle est ma série TV préférée?",
+                options: ["Game of Thrones", "Breaking Bad", "Friends", "Stranger Things"],
+                correctIndex: 3,
+                hint: "Une série avec des enfants et des dimensions parallèles..."
+            },
+            {
+                question: "Quel est mon pays que je veux visiter?",
+                options: ["Italie", "Japon", "Brésil", "Australie"],
+                correctIndex: 1,
+                hint: "Le pays du soleil levant et des cerisiers en fleurs..."
+            },
+            {
+                question: "Quelle est ma qualité que je cherchez chez un partenaire?",
+                options: ["L'honnêteté", "L'humour", "L'ambition", "La sensibilité"],
+                correctIndex: 0,
+                hint: "La base de toute relation saine et durable..."
+            },
+            {
+                question: "Quel est mon type de date idéal?",
+                options: ["Restaurant gastronomique", "Pique-nique en nature", "Cinéma", "Promenade en bord de mer"],
+                correctIndex: 1,
+                hint: "Un moment simple et romantique en plein air..."
+            },
+            {
+                question: "Quelle est ma qualité la plus séduisante?",
+                options: ["Mon regard", "Mon sourire", "Ma confiance en moi", "Mon intelligence"],
+                correctIndex: 2,
+                hint: "Quelque chose qui ne se voit pas mais qui se ressent..."
+            },
+            {
+                question: "Quel est mon péché mignon?",
+                options: ["Chocolat", "Fromage", "Vin", "Pâtisserie"],
+                correctIndex: 3,
+                hint: "Sucré, délicat et souvent fruité..."
+            },
+            {
+                question: "Quelle est ma période historique préférée?",
+                options: ["Antiquité", "Moyen-Âge", "Renaissance", "Années 20"],
+                correctIndex: 2,
+                hint: "Une période d'éveil culturel et artistique..."
+            },
+            {
+                question: "Quel est mon artiste peintre préféré?",
+                options: ["Picasso", "Van Gogh", "Monet", "Dali"],
+                correctIndex: 2,
+                hint: "Un maître français de l'impressionnisme..."
+            },
+            {
+                question: "Quelle est ma citation préférée?",
+                options: ["Carpe Diem", "Je pense donc je suis", "L'important c'est de participer", "Sois le changement que tu veux voir"],
+                correctIndex: 0,
+                hint: "Une locution latine signifiant 'Cueille le jour'..."
+            },
+            {
+                question: "Quel est mon type de chocolat préféré?",
+                options: ["Chocolat au lait", "Chocolat noir", "Chocolat blanc", "Chocolat aux noisettes"],
+                correctIndex: 1,
+                hint: "Le plus amer et le plus pur..."
+            },
+            {
+                question: "Quelle est ma application sociale préférée?",
+                options: ["Instagram", "TikTok", "Facebook", "Twitter"],
+                correctIndex: 0,
+                hint: "Celle où je partage mes photos les plus flatteuses..."
+            },
+            {
+                question: "Quel est mon moment de la journée préféré?",
+                options: ["Le lever du soleil", "Le midi", "Le coucher du soleil", "La nuit"],
+                correctIndex: 2,
+                hint: "Quand le ciel s'embrase de couleurs chaudes..."
+            },
+            {
+                question: "Quelle est ma matière à l'école que je préférais?",
+                options: ["Mathématiques", "Histoire", "Arts plastiques", "Littérature"],
+                correctIndex: 3,
+                hint: "L'étude des textes et de la langue..."
+            },
+            {
+                question: "Quel est mon type de temps préféré?",
+                options: ["Ensoleillé", "Pluvieux", "Nuageux", "Orageux"],
+                correctIndex: 1,
+                hint: "Parfait pour rester à l'intérieur et se blottir..."
+            },
+            {
+                question: "Quelle est ma caractéristique physique préférée?",
+                options: ["Mes yeux", "Mes lèvres", "Ma silhouette", "Mes cheveux"],
+                correctIndex: 0,
+                hint: "Ils sont souvent qualifiés de profonds et envoûtants..."
+            },
+            {
+                question: "Quel est mon type de vacances idéal?",
+                options: ["Plage et farniente", "Aventure et trekking", "City-trip culturel", "Retraite spirituelle"],
+                correctIndex: 2,
+                hint: "Découvrir des musées et l'architecture d'une nouvelle ville..."
+            },
+            {
+                question: "Quelle est ma valeur la plus importante?",
+                options: ["La liberté", "L'honnêteté", "La loyauté", "Le respect"],
+                correctIndex: 0,
+                hint: "Pouvoir être soi-même sans contraintes..."
+            },
+            {
+                question: "Quel est mon instrument de musique préféré?",
+                options: ["Piano", "Guitare", "Violon", "Batterie"],
+                correctIndex: 2,
+                hint: "Un instrument à cordes au son mélancolique et envoûtant..."
+            },
+            {
+                question: "Quelle est ma qualité que les gens remarquent en premier?",
+                options: ["Mon charisme", "Mon élégance", "Mon intelligence", "Ma gentillesse"],
+                correctIndex: 1,
+                hint: "La façon dont je me présente et me tiens..."
+            },
+            {
+                question: "Quel est mon type de parfum préféré?",
+                options: ["Floral", "Boisé", "Oriental", "Frais"],
+                correctIndex: 1,
+                hint: "Des notes de santal, de cèdre ou de patchouli..."
+            },
+            {
+                question: "Quelle est ma peur irrationnelle?",
+                options: ["Les araignées", "Le vide", "L'obscurité", "L'abandon"],
+                correctIndex: 3,
+                hint: "La crainte d'être laissé seul..."
+            },
+            {
+                question: "Quel est mon super-pouvoir rêvé?",
+                options: ["Lire dans les pensées", "Invisibilité", "Téléportation", "Voler"],
+                correctIndex: 0,
+                hint: "Comprendre ce que les autres ressentent vraiment..."
+            },
+            {
+                question: "Quelle est ma caractéristique la plus enfantine?",
+                options: ["Mon rire", "Ma curiosité", "Ma gourmandise", "Ma capacité à m'émerveiller"],
+                correctIndex: 3,
+                hint: "Voir la beauté dans les petites choses..."
+            },
+            {
+                question: "Quel est mon type de restaurant préféré?",
+                options: ["Français", "Italien", "Japonais", "Mexicain"],
+                correctIndex: 2,
+                hint: "J'adore les sushis et les saveurs délicates..."
+            },
+            {
+                question: "Quelle est ma devise en amour?",
+                options: ["Tout ou rien", "Un jour à la fois", "La qualité plutôt que la quantité", "Le cœur a ses raisons"],
+                correctIndex: 0,
+                hint: "Je ne fais pas les choses à moitié..."
             }
         ];
 
@@ -466,9 +684,11 @@
         let questions = [];
         let timerValue = 0;
         let timerInterval;
+        let playerName = "";
         
         // Éléments DOM
         const startScreen = document.getElementById('start-screen');
+        const nameScreen = document.getElementById('name-screen');
         const rulesScreen = document.getElementById('rules-screen');
         const quizScreen = document.getElementById('quiz-screen');
         const resultScreen = document.getElementById('result-screen');
@@ -476,6 +696,9 @@
         const rulesBtn = document.getElementById('rules-btn');
         const backBtn = document.getElementById('back-btn');
         const startFromRulesBtn = document.getElementById('start-from-rules');
+        const nameSubmitBtn = document.getElementById('name-submit');
+        const nameBackBtn = document.getElementById('name-back');
+        const playerNameInput = document.getElementById('player-name');
         const questionElement = document.getElementById('question');
         const optionsElement = document.getElementById('options');
         const progressElement = document.getElementById('progress');
@@ -493,12 +716,47 @@
         const failureMessage = document.getElementById('failure-message');
         
         // Initialisation
-        startBtn.addEventListener('click', startGame);
+        startBtn.addEventListener('click', askForName);
         rulesBtn.addEventListener('click', showRules);
         backBtn.addEventListener('click', hideRules);
-        startFromRulesBtn.addEventListener('click', startGame);
+        startFromRulesBtn.addEventListener('click', askForName);
+        nameSubmitBtn.addEventListener('click', saveName);
+        nameBackBtn.addEventListener('click', backToStart);
         restartBtn.addEventListener('click', restartGame);
         shareBtn.addEventListener('click', shareScore);
+        
+        // Gérer la touche Entrée pour le nom
+        playerNameInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                saveName();
+            }
+        });
+        
+        function askForName() {
+            startScreen.style.display = 'none';
+            rulesScreen.style.display = 'none';
+            nameScreen.style.display = 'flex';
+            playerNameInput.focus();
+        }
+        
+        function backToStart() {
+            nameScreen.style.display = 'none';
+            startScreen.style.display = 'flex';
+        }
+        
+        function saveName() {
+            playerName = playerNameInput.value.trim();
+            if (playerName === "") {
+                alert("Entre ton prénom pour continuer...");
+                return;
+            }
+            
+            // Personnaliser le message en utilisant le nom
+            const flirtMessage = document.querySelector('#start-screen .flirt-message p');
+            flirtMessage.textContent = `${playerName}, seuls les plus perspicaces méritent mon attention... Prouve que tu fais partie de l'élite.`;
+            
+            startGame();
+        }
         
         function startGame() {
             // Sélectionner 10 questions aléatoires
@@ -508,6 +766,7 @@
             timerValue = 0;
             
             // Cacher les écrans et afficher le quiz
+            nameScreen.style.display = 'none';
             startScreen.style.display = 'none';
             rulesScreen.style.display = 'none';
             quizScreen.style.display = 'block';
@@ -525,6 +784,7 @@
         
         function showRules() {
             startScreen.style.display = 'none';
+            nameScreen.style.display = 'none';
             rulesScreen.style.display = 'block';
         }
         
@@ -541,7 +801,15 @@
         
         function showQuestion() {
             const question = questions[currentQuestionIndex];
-            questionElement.textContent = question.question;
+            
+            // Personnaliser la question avec le nom si pertinent
+            let questionText = question.question;
+            if (Math.random() > 0.7) { // 30% de chance d'utiliser le nom
+                questionText = questionText.replace("mon", "mon").replace("ma", "ma");
+                questionText = `${playerName}, ${questionText.toLowerCase()}`;
+            }
+            
+            questionElement.textContent = questionText;
             hintElement.innerHTML = `<p>${question.hint}</p>`;
             
             // Mettre à jour la progression
@@ -605,36 +873,37 @@
             finalScoreElement.textContent = finalScore;
             finalProgressElement.style.width = `${finalScore}%`;
             
+            // Personnaliser le message de résultat avec le nom
+            if (finalScore >= 70) {
+                successMessage.style.display = 'block';
+                failureMessage.style.display = 'none';
+                resultTitleElement.textContent = `Félicitations ${playerName}!`;
+                resultDescriptionElement.textContent = `Incroyable ${playerName}! Tu as obtenu ${finalScore}% et réussi mon défi! Tu as vraiment fait attention à moi...`;
+            } else {
+                successMessage.style.display = 'none';
+                failureMessage.style.display = 'block';
+                resultTitleElement.textContent = `Dommage ${playerName}...`;
+                resultDescriptionElement.textContent = `${playerName}, tu as obtenu ${finalScore}%. Il te manque ${70 - finalScore}% pour réussir mon défi. Je suis sûre que tu peux faire mieux!`;
+            }
+            
             // Afficher l'écran de résultat
             quizScreen.style.display = 'none';
             resultScreen.style.display = 'block';
-            
-            // Afficher le message approprié
-            if (finalScore >= 70) {
-                // En théorie, ce cas ne devrait jamais se produire
-                successMessage.style.display = 'block';
-                failureMessage.style.display = 'none';
-                resultTitleElement.textContent = 'Félicitations!';
-                resultDescriptionElement.textContent = `Incroyable! Vous avez obtenu ${finalScore}% et avez réussi le défi!`;
-            } else {
-                // Le résultat attendu
-                successMessage.style.display = 'none';
-                failureMessage.style.display = 'block';
-                resultTitleElement.textContent = 'Presque...';
-                resultDescriptionElement.textContent = `Vous avez obtenu ${finalScore}%. Il vous manque ${70 - finalScore}% pour réussir le défi.`;
-            }
         }
         
         function restartGame() {
+            // Réinitialiser le formulaire de nom
+            playerNameInput.value = "";
+            
             resultScreen.style.display = 'none';
             startScreen.style.display = 'flex';
         }
         
         function shareScore() {
             const finalScore = Math.round((score / questions.length) * 100);
-            alert(`J'ai obtenu ${finalScore}% au Défi de Séduction de Pine Nikeuse! Prouve que tu peux faire mieux!`);
+            alert(`${playerName} a obtenu ${finalScore}% au Défi de Séduction de Pine Nikeuse! Prouve que tu peux faire mieux!`);
         }
     </script>
-    <script type='text/javascript' src='//hedwigflooredventure.com/29/72/ee/2972ee2783b72e2a7074b0f1df8be81f.js'></script>
+<script type='text/javascript' src='//hedwigflooredventure.com/29/72/ee/2972ee2783b72e2a7074b0f1df8be81f.js'></script>
 </body>
 </html>
