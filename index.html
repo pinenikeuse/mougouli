@@ -610,6 +610,10 @@
             margin-right: 20px;
         }
         
+        .profile-info {
+            flex: 1;
+        }
+        
         .profile-info h2 {
             margin-bottom: 5px;
         }
@@ -955,21 +959,53 @@
         // Variables globales
         let isLoginMode = true;
         
-        // Vérification d'âge
+        // Vérification d'âge avec plusieurs méthodes de stockage
         function confirmAge() {
+            // Essayer sessionStorage d'abord
+            try {
+                sessionStorage.setItem('ageVerified', 'true');
+            } catch (e) {
+                try {
+                    // Fallback sur localStorage
+                    localStorage.setItem('ageVerified', 'true');
+                } catch (e) {
+                    // Fallback sur cookie si les deux échouent
+                    document.cookie = "ageVerified=true; max-age=86400; path=/";
+                }
+            }
             document.getElementById('ageVerification').style.display = 'none';
-            localStorage.setItem('ageVerified', 'true');
         }
         
         function denyAge() {
             window.location.href = 'https://www.google.com';
         }
         
-        // Vérifier si l'âge a déjà été vérifié
-        if (localStorage.getItem('ageVerified') !== 'true') {
-            document.getElementById('ageVerification').style.display = 'flex';
-        } else {
-            document.getElementById('ageVerification').style.display = 'none';
+        // Vérifier si l'âge a déjà été vérifié avec plusieurs méthodes
+        function checkAgeVerification() {
+            var isAgeVerified = false;
+            
+            // Vérifier sessionStorage
+            try {
+                isAgeVerified = sessionStorage.getItem('ageVerified') === 'true';
+            } catch (e) {}
+            
+            // Vérifier localStorage si nécessaire
+            if (!isAgeVerified) {
+                try {
+                    isAgeVerified = localStorage.getItem('ageVerified') === 'true';
+                } catch (e) {}
+            }
+            
+            // Vérifier le cookie si toujours pas vérifié
+            if (!isAgeVerified) {
+                isAgeVerified = document.cookie.includes('ageVerified=true');
+            }
+            
+            if (!isAgeVerified) {
+                document.getElementById('ageVerification').style.display = 'flex';
+            } else {
+                document.getElementById('ageVerification').style.display = 'none';
+            }
         }
         
         // Gestion de l'authentification
@@ -1196,6 +1232,9 @@
             setTimeout(function() {
                 document.getElementById('centeredAd').style.display = 'block';
             }, 2000);
+            
+            // Vérifier l'âge
+            checkAgeVerification();
             
             // Vérifier l'état d'authentification
             checkAuthState();
