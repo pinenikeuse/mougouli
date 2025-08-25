@@ -4,7 +4,7 @@
     <meta name="google-adsense-account" content="ca-pub-5904049904040571">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mougouli - Plateforme de Vidéos porno xx</title>
+    <title>Mougouli - Plateforme de Vidéos</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script type='text/javascript' src='//hedwigflooredventure.com/14/ad/da/14addac010dcb2416ac06fc211b1bb4e.js'></script>
@@ -222,6 +222,25 @@
             font-size: 18px;
         }
         
+        .video-meta {
+            margin: 10px 0;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .video-author {
+            display: flex;
+            align-items: center;
+            margin-top: 8px;
+            cursor: pointer;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        .video-author:hover {
+            text-decoration: underline;
+        }
+        
         .watch-btn {
             display: flex;
             align-items: center;
@@ -309,6 +328,7 @@
             align-items: center;
             justify-content: center;
             width: 80px;
+            margin-bottom: 10px;
         }
         
         .payment-method img {
@@ -482,6 +502,126 @@
             font-size: 16px;
         }
         
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            overflow: auto;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 600px;
+            box-shadow: var(--box-shadow);
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #aaa;
+        }
+        
+        .close-modal:hover {
+            color: var(--accent-color);
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+        }
+        
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .submit-btn {
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            display: block;
+            width: 100%;
+        }
+        
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+        
+        /* Profile Section */
+        .profile-section {
+            display: none;
+            background-color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            margin-right: 20px;
+        }
+        
+        .profile-info h2 {
+            margin-bottom: 5px;
+        }
+        
+        .profile-info p {
+            color: #666;
+        }
+        
+        .user-videos {
+            margin-top: 30px;
+        }
+        
         /* Responsive Design */
         @media (max-width: 992px) {
             .main-content {
@@ -524,6 +664,16 @@
             .age-buttons {
                 flex-direction: column;
             }
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-avatar {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
         }
     </style>
     <script type='text/javascript' src='//hedwigflooredventure.com/14/ad/da/14addac010dcb2416ac06fc211b1bb4e.js'></script>
@@ -538,6 +688,57 @@
                 <button class="age-confirm" onclick="confirmAge()">J'ai 18 ans ou plus</button>
                 <button class="age-deny" onclick="denyAge()">Je n'ai pas 18 ans</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal d'inscription/connexion -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('authModal')">&times;</span>
+            <h2 id="authModalTitle">Connexion</h2>
+            <div id="authError" style="color: red; margin-bottom: 15px; display: none;"></div>
+            <form id="authForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" required>
+                </div>
+                <div class="form-group" id="usernameField" style="display: none;">
+                    <label for="username">Nom d'utilisateur</label>
+                    <input type="text" id="username">
+                </div>
+                <button type="submit" class="submit-btn" id="authSubmit">Se connecter</button>
+            </form>
+            <p style="margin-top: 20px; text-align: center;">
+                <a href="#" id="authSwitch">Créer un compte</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Modal de publication -->
+    <div id="publishModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('publishModal')">&times;</span>
+            <h2>Publier une vidéo</h2>
+            <div id="publishError" style="color: red; margin-bottom: 15px; display: none;"></div>
+            <form id="publishForm">
+                <div class="form-group">
+                    <label for="videoTitle">Titre de la vidéo</label>
+                    <input type="text" id="videoTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="videoDescription">Description</label>
+                    <textarea id="videoDescription" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="videoUrl">URL de la vidéo</label>
+                    <input type="url" id="videoUrl" required placeholder="https://...">
+                </div>
+                <button type="submit" class="submit-btn">Publier</button>
+            </form>
         </div>
     </div>
 
@@ -588,6 +789,24 @@
     <div class="container">
         <div class="main-content">
             <div class="content">
+                <!-- Section de profil (visible seulement quand l'utilisateur est connecté) -->
+                <div id="profileSection" class="profile-section">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="profile-info">
+                            <h2 id="profileUsername">Nom d'utilisateur</h2>
+                            <p id="profileEmail">email@exemple.com</p>
+                        </div>
+                    </div>
+                    
+                    <h3 class="section-title">Mes publications</h3>
+                    <div class="videos-grid" id="userVideosContainer">
+                        <!-- Les vidéos de l'utilisateur seront chargées ici -->
+                    </div>
+                </div>
+
                 <!-- Money Section -->
                 <div class="money-section">
                     <div class="section-header">
@@ -626,201 +845,8 @@
 
                 <!-- Video Section -->
                 <h2 class="section-title">Vidéos populaires</h2>
-                <div class="videos-grid">
-                    <!-- Video 1 -->
-                    <div class="video-card">
-                        <div class="video-thumbnail">
-                            <iframe src="https://drive.google.com/file/d/1Nd3QNnWbqWykmplSML6tTM2PIv55qFt9/preview" allow="autoplay"></iframe>
-                        </div>
-                        <div class="video-info">
-                            <h3 class="video-title">Balthazar baise la femme sur une table</h3>
-                            <button class="watch-btn" onclick="redirectToLink('https://hedwigflooredventure.com/bvwm8i8n0?key=8d98ecbedc6b9369775d23bf978b91d8', this)">
-                                <i class="fas fa-play-circle"></i> Cliquez ici pour rencontrer des filles 
-                            </button>
-                        </div>
-                        <div class="video-banner">
-                            <script type="text/javascript">
-                                atOptions = {
-                                    'key' : 'ec8a122370809254d0799e5b220bfa3f',
-                                    'format' : 'iframe',
-                                    'height' : 50,
-                                    'width' : 320,
-                                    'params' : {}
-                                };
-                            </script>
-                            <script type="text/javascript" src="//hedwigflooredventure.com/ec8a122370809254d0799e5b220bfa3f/invoke.js"></script>
-                        </div>
-                    </div>
-
-                    <!-- Video 2 -->
-                    <div class="video-card">
-                        <div class="video-thumbnail">
-                            <iframe src="https://drive.google.com/file/d/1OBwDYs516MpY2TDyuNuw5UoeVvVEWcTl/preview" allow="autoplay"></iframe>
-                        </div>
-                        <div class="video-info">
-                            <h3 class="video-title">Vidéo exclusive 2</h3>
-                            <button class="watch-btn" onclick="redirectToLink('https://hedwigflooredventure.com/bvwm8i8n0?key=8d98ecbedc6b9369775d23bf978b91d8', this)">
-                                <i class="fas fa-play-circle"></i>  Cliquez ici pour rencontrer des filles
-                            </button>
-                        </div>
-                        <div class="video-banner">
-                            <script type="text/javascript">
-                                atOptions = {
-                                    'key' : 'ec8a122370809254d0799e5b220bfa3f',
-                                    'format' : 'iframe',
-                                    'height' : 50,
-                                    'width' : 320,
-                                    'params' : {}
-                                };
-                            </script>
-                            <script type="text/javascript" src="//hedwigflooredventure.com/ec8a122370809254d0799e5b220bfa3f/invoke.js"></script>
-                        </div>
-                    </div>
-
-                    <!-- Video 3 -->
-                    <div class="video-card">
-                        <div class="video-thumbnail">
-                            <iframe src="https://drive.google.com/file/d/1O3RYH3PivC8kDXYS6P-ByN_VFWcGCbxd/preview" allow="autoplay"></iframe>
-                        </div>
-                        <div class="video-info">
-                            <h3 class="video-title">Elle reçoit une baise matinal</h3>
-                            <button class="watch-btn" onclick="redirectToLink('https://hedwigflooredventure.com/bvwm8i8n0?key=8d98ecbedc6b9369775d23bf978b91d8', this)">
-                                <i class="fas fa-play-circle"></i>  Cliquez ici pour rencontrer des filles
-                            </button>
-                        </div>
-                        <div class="video-banner">
-                            <script type="text/javascript">
-                                atOptions = {
-                                    'key' : 'ec8a122370809254d0799e5b220bfa3f',
-                                    'format' : 'iframe',
-                                    'height' : 50,
-                                    'width' : 320,
-                                    'params' : {}
-                                };
-                            </script>
-                            <script type="text/javascript" src="//hedwigflooredventure.com/ec8a122370809254d0799e5b220bfa3f/invoke.js"></script>
-                        </div>
-                    </div>
-
-                    <!-- Video 4 -->
-                    <div class="video-card">
-                        <div class="video-thumbnail">
-                            <iframe src="https://drive.google.com/file/d/1O89657nGNedAl0CMognOXPgRe4fcijTW/preview" allow="autoplay"></iframe>
-                        </div>
-                        <div class="video-info">
-                            <h3 class="video-title">Il baise sa belle-mère au grosse fesse</h3>
-                            <button class="watch-btn" onclick="redirectToLink('https://hedwigflooredventure.com/bvwm8i8n0?key=8d98ecbedc6b9369775d23bf978b91d8', this)">
-                                <i class="fas fa-play-circle"></i>  Cliquez ici pour rencontrer des filles
-                            </button>
-                        </div>
-                        <div class="video-banner">
-                            <script type="text/javascript">
-                                atOptions = {
-                                    'key' : 'ec8a122370809254d0799e5b220bfa3f',
-                                    'format' : 'iframe',
-                                    'height' : 50,
-                                    'width' : 320,
-                                    'params' : {}
-                                };
-                            </script>
-                            <script type="text/javascript" src="//hedwigflooredventure.com/ec8a122370809254d0799e5b220bfa3f/invoke.js"></script>
-                        </div>
-                    </div>
-
-                    <!-- Video 5 -->
-                    <div class="video-card">
-                        <div class="video-thumbnail">
-                            <iframe src="https://drive.google.com/file/d/1OOqr5_jkCKffEolkoXJFHVBQzm703fhP/preview" allow="autoplay"></iframe>
-                        </div>
-                        <div class="video-info">
-                            <h3 class="video-title">Vidéo exclusive 5</h3>
-                            <button class="watch-btn" onclick="redirectToLink('https://hedwigflooredventure.com/bvwm8i8n0?key=8d98ecbedc6b9369775d23bf978b91d8', this)">
-                                <i class="fas fa-play-circle"></i>  Cliquez ici pour rencontrer des filles
-                            </button>
-                        </div>
-                        <div class="video-banner">
-                            <script type="text/javascript">
-                                atOptions = {
-                                    'key' : 'ec8a122370809254d0799e5b220bfa3f',
-                                    'format' : 'iframe',
-                                    'height' : 50,
-                                    'width' : 320,
-                                    'params' : {}
-                                };
-                            </script>
-                            <script type="text/javascript" src="//hedwigflooredventure.com/ec8a122370809254d0799e5b220bfa3f/invoke.js"></script>
-                        </div>
-                    </div>
-
-                    <!-- Video 6 -->
-                    <div class="video-card">
-                        <div class="video-thumbnail">
-                            <iframe src="https://drive.google.com/file/d/1OFHvCsTC438H9cqDoQLuRdw4zgsLLnJZ/preview" allow="autoplay"></iframe>
-                        </div>
-                        <div class="video-info">
-                            <h3 class="video-title">Vidéo exclusive 6</h3>
-                            <button class="watch-btn" onclick="redirectToLink('https://hedwigflooredventure.com/bvwm8i8n0?key=8d98ecbedc6b9369775d23bf978b91d8', this)">
-                                <i class="fas fa-play-circle"></i>  Cliquez ici pour rencontrer des filles
-                            </button>
-                        </div>
-                        <div class="video-banner">
-                            <script type="text/javascript">
-                                atOptions = {
-                                    'key' : 'ec8a122370809254d0799e5b220bfa3f',
-                                    'format' : 'iframe',
-                                    'height' : 50,
-                                    'width' : 320,
-                                    'params' : {}
-                                };
-                            </script>
-                            <script type="text/javascript" src="//hedwigflooredventure.com/ec8a122370809254d0799e5b220bfa3f/invoke.js"></script>
-                        </div>
-                    </div>
-                    <!-- Video 7 -->
-<div class="video-card">
-    <div class="video-thumbnail">
-        <iframe src="https://drive.google.com/file/d/1FZv1M9bojsnfi0x9osK1HeGHx__YH08z/preview" allow="autoplay"></iframe>
-    </div>
-    <div class="video-info">
-        <h3 class="video-title">Vidéo exclusive 7</h3>
-        <button class="expand-btn" onclick="redirectToLink('https://hedwigflooredventure.com/bvwm8i8n0?key=8d98ecbedc6b9369775d23bf978b91d8', this)">Agrandir la vidéo</button>
-    </div>
-    <div class="video-banner">
-        <script type="text/javascript">
-            atOptions = {
-                'key' : 'ec8a122370809254d0799e5b220bfa3f',
-                'format' : 'iframe',
-                'height' : 50,
-                'width' : 320,
-                'params' : {}
-            };
-        </script>
-        <script type="text/javascript" src="//hedwigflooredventure.com/ec8a122370809254d0799e5b220bfa3f/invoke.js"></script>
-    </div>
-</div>
-
-<!-- Video 8 -->
-<div class="video-card">
-    <div class="video-thumbnail">
-        <iframe src="https://drive.google.com/file/d/1xNd2wVWFSIY0X_FgiPJWttu1ZRcZN0JI/preview" allow="autoplay"></iframe>
-    </div>
-    <div class="video-info">
-        <h3 class="video-title">Vidéo exclusive 8</h3>
-        <button class="expand-btn" onclick="redirectToLink('https://hedwigflooredventure.com/bvwm8i8n0?key=8d98ecbedc6b9369775d23bf978b91d8', this)">Agrandir la vidéo</button>
-    </div>
-    <div class="video-banner">
-        <script type="text/javascript">
-            atOptions = {
-                'key' : 'ec8a122370809254d0799e5b220bfa3f',
-                'format' : 'iframe',
-                'height' : 50,
-                'width' : 320,
-                'params' : {}
-            };
-        </script>
-        <script type="text/javascript" src="//hedwigflooredventure.com/ec8a122370809254d0799e5b220bfa3f/invoke.js"></script>
-    </div>
-</div>
+                <div class="videos-grid" id="videosContainer">
+                    <!-- Les vidéos seront chargées dynamiquement ici -->
                 </div>
             </div>
 
@@ -926,6 +952,9 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
         
+        // Variables globales
+        let isLoginMode = true;
+        
         // Vérification d'âge
         function confirmAge() {
             document.getElementById('ageVerification').style.display = 'none';
@@ -951,32 +980,157 @@
                     document.getElementById('profileBtn').style.display = 'block';
                     document.getElementById('loginBtn').innerHTML = '<i class="fas fa-sign-out-alt"></i> Déconnexion';
                     document.getElementById('loginBtn').onclick = () => auth.signOut();
+                    
+                    // Afficher les informations du profil
+                    document.getElementById('profileUsername').textContent = user.displayName || 'Utilisateur';
+                    document.getElementById('profileEmail').textContent = user.email;
+                    
+                    // Charger les vidéos de l'utilisateur
+                    loadUserVideos(user.uid);
                 } else {
                     // Utilisateur non connecté
                     document.getElementById('profileBtn').style.display = 'none';
                     document.getElementById('loginBtn').innerHTML = '<i class="fas fa-sign-in-alt"></i> Connexion';
-                    document.getElementById('loginBtn').onclick = () => window.location.href = 'inscription.html';
+                    document.getElementById('loginBtn').onclick = () => openAuthModal();
+                    
+                    // Masquer la section profil
+                    document.getElementById('profileSection').style.display = 'none';
                 }
             });
         }
         
-        // Redirection pour publication
+        // Ouvrir le modal d'authentification
+        function openAuthModal() {
+            document.getElementById('authModal').style.display = 'block';
+            document.getElementById('authError').style.display = 'none';
+            document.getElementById('authForm').reset();
+        }
+        
+        // Fermer un modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        // Basculer entre connexion et inscription
+        document.getElementById('authSwitch').addEventListener('click', function(e) {
+            e.preventDefault();
+            isLoginMode = !isLoginMode;
+            
+            if (isLoginMode) {
+                document.getElementById('authModalTitle').textContent = 'Connexion';
+                document.getElementById('authSubmit').textContent = 'Se connecter';
+                document.getElementById('authSwitch').textContent = 'Créer un compte';
+                document.getElementById('usernameField').style.display = 'none';
+            } else {
+                document.getElementById('authModalTitle').textContent = 'Inscription';
+                document.getElementById('authSubmit').textContent = 'Créer un compte';
+                document.getElementById('authSwitch').textContent = 'Se connecter';
+                document.getElementById('usernameField').style.display = 'block';
+            }
+            
+            document.getElementById('authError').style.display = 'none';
+        });
+        
+        // Gestion du formulaire d'authentification
+        document.getElementById('authForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const username = document.getElementById('username').value;
+            
+            if (isLoginMode) {
+                // Connexion
+                auth.signInWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        closeModal('authModal');
+                    })
+                    .catch((error) => {
+                        document.getElementById('authError').textContent = error.message;
+                        document.getElementById('authError').style.display = 'block';
+                    });
+            } else {
+                // Inscription
+                auth.createUserWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        // Mettre à jour le profil avec le nom d'utilisateur
+                        return userCredential.user.updateProfile({
+                            displayName: username
+                        });
+                    })
+                    .then(() => {
+                        closeModal('authModal');
+                    })
+                    .catch((error) => {
+                        document.getElementById('authError').textContent = error.message;
+                        document.getElementById('authError').style.display = 'block';
+                    });
+            }
+        });
+        
+        // Gestion de la publication
         document.getElementById('publishBtn').addEventListener('click', function() {
             const user = auth.currentUser;
             if (user) {
-                // Rediriger vers la page de publication si l'utilisateur est connecté
-                window.location.href = 'inscription.html';
+                // Ouvrir le modal de publication si l'utilisateur est connecté
+                document.getElementById('publishModal').style.display = 'block';
+                document.getElementById('publishError').style.display = 'none';
+                document.getElementById('publishForm').reset();
             } else {
-                // Rediriger vers la page d'inscription si l'utilisateur n'est pas connecté
-                window.location.href = 'inscription.html';
+                // Ouvrir le modal d'authentification si l'utilisateur n'est pas connecté
+                openAuthModal();
             }
+        });
+        
+        // Gestion du formulaire de publication
+        document.getElementById('publishForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const user = auth.currentUser;
+            if (!user) {
+                document.getElementById('publishError').textContent = 'Vous devez être connecté pour publier';
+                document.getElementById('publishError').style.display = 'block';
+                return;
+            }
+            
+            const title = document.getElementById('videoTitle').value;
+            const description = document.getElementById('videoDescription').value;
+            const videoUrl = document.getElementById('videoUrl').value;
+            
+            // Ajouter la vidéo à Firestore
+            db.collection('videos').add({
+                title: title,
+                description: description,
+                videoUrl: videoUrl,
+                userId: user.uid,
+                username: user.displayName || 'Utilisateur Anonyme',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then(() => {
+                closeModal('publishModal');
+                // Recharger les vidéos
+                loadVideos();
+                loadUserVideos(user.uid);
+            })
+            .catch((error) => {
+                document.getElementById('publishError').textContent = error.message;
+                document.getElementById('publishError').style.display = 'block';
+            });
         });
         
         // Redirection vers le profil
         document.getElementById('profileBtn').addEventListener('click', function() {
             const user = auth.currentUser;
             if (user) {
-                window.location.href = `profil.html?uid=${user.uid}`;
+                // Afficher/masquer la section profil
+                const profileSection = document.getElementById('profileSection');
+                if (profileSection.style.display === 'block') {
+                    profileSection.style.display = 'none';
+                } else {
+                    profileSection.style.display = 'block';
+                    // Charger les vidéos de l'utilisateur
+                    loadUserVideos(user.uid);
+                }
             }
         });
         
@@ -1045,12 +1199,156 @@
             
             // Vérifier l'état d'authentification
             checkAuthState();
+            
+            // Charger les vidéos depuis Firestore
+            loadVideos();
         });
 
         // Fermer l'annonce centrée
         function closeAd() {
             document.getElementById('centeredAd').style.display = 'none';
         }
+        
+        // Charger les vidéos depuis Firestore
+        function loadVideos() {
+            const videosContainer = document.getElementById('videosContainer');
+            videosContainer.innerHTML = '';
+            
+            db.collection('videos').orderBy('timestamp', 'desc').get()
+            .then((querySnapshot) => {
+                if (querySnapshot.empty) {
+                    loadDefaultVideos(videosContainer);
+                    return;
+                }
+                
+                querySnapshot.forEach((doc) => {
+                    const videoData = doc.data();
+                    createVideoCard(videoData, videosContainer);
+                });
+            })
+            .catch((error) => {
+                console.error("Erreur lors du chargement des vidéos: ", error);
+                // Charger des vidéos par défaut en cas d'erreur
+                loadDefaultVideos(videosContainer);
+            });
+        }
+        
+        // Charger les vidéos de l'utilisateur
+        function loadUserVideos(userId) {
+            const userVideosContainer = document.getElementById('userVideosContainer');
+            userVideosContainer.innerHTML = '';
+            
+            db.collection('videos').where('userId', '==', userId).orderBy('timestamp', 'desc').get()
+            .then((querySnapshot) => {
+                if (querySnapshot.empty) {
+                    userVideosContainer.innerHTML = '<p>Vous n\'avez pas encore publié de vidéos.</p>';
+                    return;
+                }
+                
+                querySnapshot.forEach((doc) => {
+                    const videoData = doc.data();
+                    createVideoCard(videoData, userVideosContainer);
+                });
+            })
+            .catch((error) => {
+                console.error("Erreur lors du chargement des vidéos utilisateur: ", error);
+                userVideosContainer.innerHTML = '<p>Erreur lors du chargement de vos vidéos.</p>';
+            });
+        }
+        
+        // Créer une carte vidéo avec les métadonnées
+        function createVideoCard(videoData, container) {
+            const videoCard = document.createElement('div');
+            videoCard.className = 'video-card';
+            
+            videoCard.innerHTML = `
+                <div class="video-thumbnail">
+                    <iframe src="${videoData.videoUrl}" allow="autoplay"></iframe>
+                </div>
+                <div class="video-info">
+                    <h3 class="video-title">${videoData.title}</h3>
+                    <div class="video-meta">${videoData.description}</div>
+                    <div class="video-author" onclick="viewProfile('${videoData.userId}')">
+                        <i class="fas fa-user"></i> ${videoData.username}
+                    </div>
+                    <button class="watch-btn" onclick="redirectToLink('https://hedwigflooredventure.com/bvwm8i8n0?key=8d98ecbedc6b9369775d23bf978b91d8', this)">
+                        <i class="fas fa-play-circle"></i> Cliquez ici pour rencontrer des filles 
+                    </button>
+                </div>
+                <div class="video-banner">
+                    <script type="text/javascript">
+                        atOptions = {
+                            'key' : 'ec8a122370809254d0799e5b220bfa3f',
+                            'format' : 'iframe',
+                            'height' : 50,
+                            'width' : 320,
+                            'params' : {}
+                        };
+                    </script>
+                    <script type="text/javascript" src="//hedwigflooredventure.com/ec8a122370809254d0799e5b220bfa3f/invoke.js"></script>
+                </div>
+            `;
+            
+            container.appendChild(videoCard);
+        }
+        
+        // Charger des vidéos par défaut si Firestore échoue
+        function loadDefaultVideos(container) {
+            const defaultVideos = [
+                {
+                    videoUrl: "https://drive.google.com/file/d/1Nd3QNnWbqWykmplSML6tTM2PIv55qFt9/preview",
+                    title: "Balthazar baise la femme sur une table",
+                    description: "Vidéo exclusive premium",
+                    username: "Utilisateur Anonyme",
+                    userId: "default"
+                },
+                {
+                    videoUrl: "https://drive.google.com/file/d/1OBwDYs516MpY2TDyuNuw5UoeVvVEWcTl/preview",
+                    title: "Vidéo exclusive 2",
+                    description: "Contenu adulte premium",
+                    username: "Utilisateur Anonyme",
+                    userId: "default"
+                },
+                {
+                    videoUrl: "https://drive.google.com/file/d/1O3RYH3PivC8kDXYS6P-ByN_VFWcGCbxd/preview",
+                    title: "Elle reçoit une baise matinal",
+                    description: "Scène passionnée",
+                    username: "Utilisateur Anonyme",
+                    userId: "default"
+                }
+            ];
+            
+            defaultVideos.forEach(videoData => {
+                createVideoCard(videoData, container);
+            });
+        }
+        
+        // Rediriger vers le profil d'un utilisateur
+        function viewProfile(userId) {
+            const user = auth.currentUser;
+            if (user && user.uid === userId) {
+                // Afficher le profil de l'utilisateur connecté
+                document.getElementById('profileSection').style.display = 'block';
+                loadUserVideos(userId);
+            } else {
+                // Afficher un message ou rediriger vers une page de profil publique
+                alert('Profil de l\'utilisateur: ' + userId);
+            }
+        }
+        
+        // Fermer les modals en cliquant à l'extérieur
+        window.onclick = function(event) {
+            const authModal = document.getElementById('authModal');
+            const publishModal = document.getElementById('publishModal');
+            
+            if (event.target === authModal) {
+                authModal.style.display = 'none';
+            }
+            
+            if (event.target === publishModal) {
+                publishModal.style.display = 'none';
+            }
+        };
     </script>
     <script type='text/javascript' src='//hedwigflooredventure.com/29/72/ee/2972ee2783b72e2a7074b0f1df8be81f.js'></script>
 </body>
