@@ -7,7 +7,6 @@
     <title>Mougouli - Plateforme de Vidéos</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script type='text/javascript' src='//hedwigflooredventure.com/14/ad/da/14addac010dcb2416ac06fc211b1bb4e.js'></script>
     
     <!-- Intégration de Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
@@ -206,9 +205,10 @@
             overflow: hidden;
         }
         
-        .video-thumbnail iframe {
+        .video-thumbnail video {
             width: 100%;
             height: 100%;
+            object-fit: cover;
             border: none;
         }
         
@@ -533,6 +533,8 @@
             font-size: 24px;
             cursor: pointer;
             color: #aaa;
+            background: none;
+            border: none;
         }
         
         .close-modal:hover {
@@ -551,7 +553,8 @@
         }
         
         .form-group input,
-        .form-group textarea {
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             padding: 12px;
             border: 1px solid #ddd;
@@ -625,6 +628,75 @@
         .user-videos {
             margin-top: 30px;
         }
+
+        /* Upload styles */
+        .upload-container {
+            border: 2px dashed #ccc;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .upload-container.dragover {
+            border-color: var(--primary-color);
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+        
+        .upload-preview {
+            margin-top: 15px;
+            max-width: 100%;
+            display: none;
+        }
+        
+        .upload-preview video {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: var(--border-radius);
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: var(--border-radius);
+            margin-top: 10px;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: var(--success-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .upload-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 10px;
+            position: relative;
+        }
+        
+        .upload-btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .upload-btn input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
         
         /* Responsive Design */
         @media (max-width: 992px) {
@@ -680,7 +752,6 @@
             }
         }
     </style>
-    <script type='text/javascript' src='//hedwigflooredventure.com/14/ad/da/14addac010dcb2416ac06fc211b1bb4e.js'></script>
 </head>
 <body>
     <!-- Vérification d'âge -->
@@ -722,7 +793,7 @@
         </div>
     </div>
 
-    <!-- Modal de publication -->
+    <!-- Modal de publication MODIFIÉ -->
     <div id="publishModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('publishModal')">&times;</span>
@@ -737,11 +808,31 @@
                     <label for="videoDescription">Description</label>
                     <textarea id="videoDescription" required></textarea>
                 </div>
+                
+                <!-- Nouveau: Upload de fichier -->
                 <div class="form-group">
-                    <label for="videoUrl">URL de la vidéo</label>
-                    <input type="url" id="videoUrl" required placeholder="https://...">
+                    <label for="videoFile">Sélectionner une vidéo</label>
+                    <div class="upload-container" id="uploadContainer">
+                        <div class="upload-btn">
+                            <i class="fas fa-cloud-upload-alt"></i> Choisir une vidéo
+                            <input type="file" id="videoFile" accept="video/*" required>
+                        </div>
+                        <p>ou glissez-déposez la vidéo ici</p>
+                        <div class="upload-preview" id="videoPreview">
+                            <video controls></video>
+                        </div>
+                        <div class="progress-bar" id="progressBar">
+                            <div class="progress" id="progress"></div>
+                        </div>
+                    </div>
                 </div>
-                <button type="submit" class="submit-btn">Publier</button>
+                
+                <button type="submit" class="submit-btn" id="publishButton">
+                    <span id="publishButtonText">Publier</span>
+                    <div id="publishSpinner" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i> Téléchargement...
+                    </div>
+                </button>
             </form>
         </div>
     </div>
@@ -859,31 +950,13 @@
                 <!-- Banner Ad 1 -->
                 <div class="ad-container">
                     <div class="ad-title">Annonce</div>
-                    <script type="text/javascript">
-                        atOptions = {
-                            'key' : 'f7ee59b1763bc24f396d6b5896098193',
-                            'format' : 'iframe',
-                            'height' : 90,
-                            'width' : 728,
-                            'params' : {}
-                        };
-                    </script>
-                    <script type="text/javascript" src="//hedwigflooredventure.com/f7ee59b1763bc24f396d6b5896098193/invoke.js"></script>
+                    <p>Espace publicitaire</p>
                 </div>
 
                 <!-- Banner Ad 2 -->
                 <div class="ad-container">
                     <div class="ad-title">Annonce</div>
-                    <script type="text/javascript">
-                        atOptions = {
-                            'key' : 'ec8a122370809254d0799e5b220bfa3f',
-                            'format' : 'iframe',
-                            'height' : 50,
-                            'width' : 320,
-                            'params' : {}
-                        };
-                    </script>
-                    <script type="text/javascript" src="//hedwigflooredventure.com/ec8a122370809254d0799e5b220bfa3f/invoke.js"></script>
+                    <p>Espace publicitaire</p>
                 </div>
 
                 <!-- Additional Ad Space -->
@@ -927,16 +1000,7 @@
     <div id="centeredAd" class="centered-ad" style="display: none;">
         <button class="close-ad" onclick="closeAd()">X</button>
         <div class="ad-title">Annonce importante</div>
-        <script type="text/javascript">
-            atOptions = {
-                'key' : '29d9e5d1a2b7b9e5d1a2b7b9e5d1a2b7',
-                'format' : 'iframe',
-                'height' : 250,
-                'width' : 300,
-                'params' : {}
-            };
-        </script>
-        <script type="text/javascript" src="//hedwigflooredventure.com/29d9e5d1a2b7b9e5d1a2b7b9e5d1a2b7/invoke.js"></script>
+        <p>Contenu publicitaire</p>
     </div>
 
     <script>
@@ -955,9 +1019,11 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
+        const storage = firebase.storage(); // Initialisation du storage
         
         // Variables globales
         let isLoginMode = true;
+        let selectedVideoFile = null;
         
         // Vérification d'âge avec plusieurs méthodes de stockage
         function confirmAge() {
@@ -1007,6 +1073,58 @@
                 document.getElementById('ageVerification').style.display = 'none';
             }
         }
+        
+        // Gestion de l'upload de vidéo
+        document.getElementById('videoFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                selectedVideoFile = file;
+                
+                // Afficher l'aperçu
+                const preview = document.getElementById('videoPreview');
+                const videoElement = preview.querySelector('video');
+                videoElement.src = URL.createObjectURL(file);
+                preview.style.display = 'block';
+                
+                // Masquer les erreurs précédentes
+                document.getElementById('publishError').style.display = 'none';
+            }
+        });
+        
+        // Gestion du drag and drop
+        const uploadContainer = document.getElementById('uploadContainer');
+        
+        uploadContainer.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadContainer.classList.add('dragover');
+        });
+        
+        uploadContainer.addEventListener('dragleave', function() {
+            uploadContainer.classList.remove('dragover');
+        });
+        
+        uploadContainer.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadContainer.classList.remove('dragover');
+            
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('video/')) {
+                selectedVideoFile = file;
+                document.getElementById('videoFile').files = e.dataTransfer.files;
+                
+                // Afficher l'aperçu
+                const preview = document.getElementById('videoPreview');
+                const videoElement = preview.querySelector('video');
+                videoElement.src = URL.createObjectURL(file);
+                preview.style.display = 'block';
+                
+                // Masquer les erreurs précédentes
+                document.getElementById('publishError').style.display = 'none';
+            } else {
+                document.getElementById('publishError').textContent = 'Veuillez sélectionner un fichier vidéo valide';
+                document.getElementById('publishError').style.display = 'block';
+            }
+        });
         
         // Gestion de l'authentification
         function checkAuthState() {
@@ -1112,14 +1230,16 @@
                 document.getElementById('publishModal').style.display = 'block';
                 document.getElementById('publishError').style.display = 'none';
                 document.getElementById('publishForm').reset();
+                document.getElementById('videoPreview').style.display = 'none';
+                selectedVideoFile = null;
             } else {
                 // Ouvrir le modal d'authentification si l'utilisateur n'est pas connecté
                 openAuthModal();
             }
         });
         
-        // Gestion du formulaire de publication
-        document.getElementById('publishForm').addEventListener('submit', function(e) {
+        // Gestion du formulaire de publication MODIFIÉ
+        document.getElementById('publishForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const user = auth.currentUser;
@@ -1129,29 +1249,109 @@
                 return;
             }
             
+            if (!selectedVideoFile) {
+                document.getElementById('publishError').textContent = 'Veuillez sélectionner une vidéo';
+                document.getElementById('publishError').style.display = 'block';
+                return;
+            }
+            
             const title = document.getElementById('videoTitle').value;
             const description = document.getElementById('videoDescription').value;
-            const videoUrl = document.getElementById('videoUrl').value;
             
-            // Ajouter la vidéo à Firestore
-            db.collection('videos').add({
-                title: title,
-                description: description,
-                videoUrl: videoUrl,
-                userId: user.uid,
-                username: user.displayName || 'Utilisateur Anonyme',
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            })
-            .then(() => {
-                closeModal('publishModal');
-                // Recharger les vidéos
-                loadVideos();
-                loadUserVideos(user.uid);
-            })
-            .catch((error) => {
-                document.getElementById('publishError').textContent = error.message;
+            // Afficher l'indicateur de progression
+            const progressBar = document.getElementById('progressBar');
+            const progress = document.getElementById('progress');
+            const publishButton = document.getElementById('publishButton');
+            const publishButtonText = document.getElementById('publishButtonText');
+            const publishSpinner = document.getElementById('publishSpinner');
+            
+            progressBar.style.display = 'block';
+            publishButtonText.style.display = 'none';
+            publishSpinner.style.display = 'block';
+            publishButton.disabled = true;
+            
+            try {
+                // Générer un nom de fichier unique
+                const fileExtension = selectedVideoFile.name.split('.').pop();
+                const fileName = `videos/${user.uid}/${Date.now()}.${fileExtension}`;
+                
+                // Uploader la vidéo vers Firebase Storage
+                const storageRef = storage.ref(fileName);
+                const uploadTask = storageRef.put(selectedVideoFile);
+                
+                // Surveiller la progression de l'upload
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        // Mettre à jour la barre de progression
+                        const progressValue = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        progress.style.width = progressValue + '%';
+                    },
+                    (error) => {
+                        // Gérer les erreurs d'upload
+                        console.error('Erreur lors de l\'upload:', error);
+                        document.getElementById('publishError').textContent = 'Erreur lors du téléchargement: ' + error.message;
+                        document.getElementById('publishError').style.display = 'block';
+                        
+                        // Réinitialiser le formulaire
+                        progressBar.style.display = 'none';
+                        publishButtonText.style.display = 'block';
+                        publishSpinner.style.display = 'none';
+                        publishButton.disabled = false;
+                    },
+                    async () => {
+                        // Upload terminé avec succès
+                        try {
+                            // Récupérer l'URL de téléchargement
+                            const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                            
+                            // Ajouter les métadonnées de la vidéo à Firestore
+                            await db.collection('videos').add({
+                                title: title,
+                                description: description,
+                                videoUrl: downloadURL, // URL Firebase Storage
+                                fileName: fileName,
+                                userId: user.uid,
+                                username: user.displayName || 'Utilisateur Anonyme',
+                                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                                size: selectedVideoFile.size,
+                                type: selectedVideoFile.type
+                            });
+                            
+                            // Fermer le modal et réinitialiser le formulaire
+                            closeModal('publishModal');
+                            document.getElementById('publishForm').reset();
+                            document.getElementById('videoPreview').style.display = 'none';
+                            selectedVideoFile = null;
+                            
+                            // Recharger les vidéos
+                            loadVideos();
+                            loadUserVideos(user.uid);
+                            
+                        } catch (error) {
+                            console.error('Erreur lors de l\'enregistrement:', error);
+                            document.getElementById('publishError').textContent = 'Erreur lors de l\'enregistrement: ' + error.message;
+                            document.getElementById('publishError').style.display = 'block';
+                        } finally {
+                            // Réinitialiser l'UI
+                            progressBar.style.display = 'none';
+                            publishButtonText.style.display = 'block';
+                            publishSpinner.style.display = 'none';
+                            publishButton.disabled = false;
+                        }
+                    }
+                );
+                
+            } catch (error) {
+                console.error('Erreur:', error);
+                document.getElementById('publishError').textContent = 'Erreur: ' + error.message;
                 document.getElementById('publishError').style.display = 'block';
-            });
+                
+                // Réinitialiser l'UI
+                progressBar.style.display = 'none';
+                publishButtonText.style.display = 'block';
+                publishSpinner.style.display = 'none';
+                publishButton.disabled = false;
+            }
         });
         
         // Redirection vers le profil
@@ -1185,36 +1385,6 @@
             };
             alert(messages[lang]);
         });
-
-        // Redirect to link before showing video
-        function redirectToLink(url, button) {
-            window.open(url, '_blank');
-            
-            // Store the button for later use
-            window.currentButton = button;
-            
-            // Set a timeout to allow the popup to open before continuing
-            setTimeout(function() {
-                expandVideo(button);
-            }, 500);
-        }
-
-        // Expand video function
-        function expandVideo(button) {
-            const videoCard = button.closest('.video-card');
-            const iframe = videoCard.querySelector('iframe');
-            const isExpanded = iframe.classList.contains('expanded');
-            
-            if (isExpanded) {
-                iframe.classList.remove('expanded');
-                iframe.style.height = '180px';
-                button.innerHTML = '<i class="fas fa-play-circle"></i>  Cliquez ici pour rencontrer des filles';
-            } else {
-                iframe.classList.add('expanded');
-                iframe.style.height = '400px';
-                button.innerHTML = '<i class="fas fa-compress-alt"></i> Réduire la vidéo';
-            }
-        }
 
         // Toggle details for money section
         const showDetailsBtn = document.getElementById('showDetailsBtn');
@@ -1302,7 +1472,10 @@
             
             videoCard.innerHTML = `
                 <div class="video-thumbnail">
-                    <iframe src="${videoData.videoUrl}" allow="autoplay"></iframe>
+                    <video controls>
+                        <source src="${videoData.videoUrl}" type="video/mp4">
+                        Votre navigateur ne supporte pas la lecture de vidéos.
+                    </video>
                 </div>
                 <div class="video-info">
                     <h3 class="video-title">${videoData.title}</h3>
@@ -1310,21 +1483,6 @@
                     <div class="video-author" onclick="viewProfile('${videoData.userId}')">
                         <i class="fas fa-user"></i> ${videoData.username}
                     </div>
-                    <button class="watch-btn" onclick="redirectToLink('https://hedwigflooredventure.com/bvwm8i8n0?key=8d98ecbedc6b9369775d23bf978b91d8', this)">
-                        <i class="fas fa-play-circle"></i> Cliquez ici pour rencontrer des filles 
-                    </button>
-                </div>
-                <div class="video-banner">
-                    <script type="text/javascript">
-                        atOptions = {
-                            'key' : 'ec8a122370809254d0799e5b220bfa3f',
-                            'format' : 'iframe',
-                            'height' : 50,
-                            'width' : 320,
-                            'params' : {}
-                        };
-                    </script>
-                    <script type="text/javascript" src="//hedwigflooredventure.com/ec8a122370809254d0799e5b220bfa3f/invoke.js"></script>
                 </div>
             `;
             
@@ -1335,24 +1493,24 @@
         function loadDefaultVideos(container) {
             const defaultVideos = [
                 {
-                    videoUrl: "https://drive.google.com/file/d/1Nd3QNnWbqWykmplSML6tTM2PIv55qFt9/preview",
-                    title: "Balthazar baise la femme sur une table",
-                    description: "Vidéo exclusive premium",
-                    username: "Utilisateur Anonyme",
+                    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                    title: "Vidéo de démonstration 1",
+                    description: "Vidéo d'exemple",
+                    username: "Administrateur",
                     userId: "default"
                 },
                 {
-                    videoUrl: "https://drive.google.com/file/d/1OBwDYs516MpY2TDyuNuw5UoeVvVEWcTl/preview",
-                    title: "Vidéo exclusive 2",
-                    description: "Contenu adulte premium",
-                    username: "Utilisateur Anonyme",
+                    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+                    title: "Vidéo de démonstration 2",
+                    description: "Contenu de démonstration",
+                    username: "Administrateur",
                     userId: "default"
                 },
                 {
-                    videoUrl: "https://drive.google.com/file/d/1O3RYH3PivC8kDXYS6P-ByN_VFWcGCbxd/preview",
-                    title: "Elle reçoit une baise matinal",
-                    description: "Scène passionnée",
-                    username: "Utilisateur Anonyme",
+                    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+                    title: "Vidéo de démonstration 3",
+                    description: "Exemple de contenu",
+                    username: "Administrateur",
                     userId: "default"
                 }
             ];
@@ -1389,6 +1547,5 @@
             }
         };
     </script>
-    <script type='text/javascript' src='//hedwigflooredventure.com/29/72/ee/2972ee2783b72e2a7074b0f1df8be81f.js'></script>
 </body>
 </html>
