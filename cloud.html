@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VideoShare - Partagez vos vidéos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary-color: #6a11cb;
@@ -12,6 +13,7 @@
             --light-color: #f4f4f4;
             --success-color: #28a745;
             --error-color: #dc3545;
+            --background-gradient: linear-gradient(to right, var(--primary-color), var(--secondary-color));
         }
         
         * {
@@ -22,10 +24,9 @@
         }
         
         body {
-            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            background: var(--background-gradient);
             color: var(--light-color);
             min-height: 100vh;
-            padding-bottom: 50px;
         }
         
         .container {
@@ -35,6 +36,7 @@
             padding: 20px;
         }
         
+        /* Navigation */
         header {
             display: flex;
             justify-content: space-between;
@@ -46,6 +48,38 @@
         .logo {
             font-size: 2rem;
             font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+        }
+        
+        nav {
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            margin-right: 20px;
+        }
+        
+        .nav-links li {
+            margin: 0 15px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+        
+        .nav-links a:hover {
+            opacity: 0.8;
         }
         
         .auth-buttons button {
@@ -81,9 +115,67 @@
         
         .user-email {
             margin-right: 15px;
+            display: flex;
+            align-items: center;
         }
         
-        .upload-section {
+        .user-email i {
+            margin-right: 5px;
+        }
+        
+        /* Page d'accueil non connecté */
+        .hero {
+            text-align: center;
+            padding: 80px 0;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .hero-buttons button {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: white;
+            color: var(--primary-color);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid white !important;
+            color: white;
+        }
+        
+        .hero-buttons button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Sections principales */
+        .section {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             padding: 25px;
@@ -92,9 +184,16 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
         
-        .upload-section h2 {
+        .section h2 {
             margin-bottom: 20px;
             text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .section h2 i {
+            margin-right: 10px;
         }
         
         .upload-form {
@@ -135,6 +234,13 @@
             font-weight: bold;
             font-size: 1rem;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .upload-btn i {
+            margin-right: 8px;
         }
         
         .upload-btn:hover {
@@ -161,11 +267,6 @@
             transition: width 0.3s ease;
         }
         
-        .videos-section h2 {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
         .videos-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -179,6 +280,7 @@
             overflow: hidden;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
+            cursor: pointer;
         }
         
         .video-card:hover {
@@ -214,14 +316,192 @@
             font-size: 0.9rem;
             margin-bottom: 15px;
             color: rgba(255, 255, 255, 0.8);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .video-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
         }
         
         .video-author {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.7);
-            text-align: right;
+            display: flex;
+            align-items: center;
         }
         
+        .video-author i {
+            margin-right: 5px;
+        }
+        
+        .video-stats {
+            display: flex;
+            align-items: center;
+        }
+        
+        .video-stats span {
+            margin-left: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .video-stats i {
+            margin-right: 5px;
+        }
+        
+        /* Page de détail vidéo */
+        .video-detail {
+            display: none;
+        }
+        
+        .video-container {
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .video-container video {
+            width: 100%;
+            max-height: 70vh;
+        }
+        
+        .video-actions {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .action-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: background 0.3s;
+        }
+        
+        .action-btn i {
+            margin-right: 5px;
+        }
+        
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .action-btn.liked {
+            color: #ff5252;
+        }
+        
+        .comments-section {
+            margin-top: 30px;
+        }
+        
+        .comment-form {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .comment-input {
+            flex-grow: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px 0 0 5px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        .comment-submit {
+            padding: 0 20px;
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+        }
+        
+        .comments-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .comment {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .comment-author {
+            font-weight: bold;
+        }
+        
+        .comment-date {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* Page de profil */
+        .profile-section {
+            display: none;
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin-right: 20px;
+        }
+        
+        .profile-info h2 {
+            margin-bottom: 5px;
+        }
+        
+        .profile-stats {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* Modals pour l'authentification */
         .modal {
             display: none;
             position: fixed;
@@ -274,6 +554,7 @@
             color: var(--error-color);
         }
         
+        /* Responsive */
         @media (max-width: 768px) {
             .videos-grid {
                 grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -287,28 +568,80 @@
             .logo {
                 margin-bottom: 15px;
             }
+            
+            nav {
+                margin-top: 15px;
+                flex-direction: column;
+            }
+            
+            .nav-links {
+                margin: 0 0 15px 0;
+                justify-content: center;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-avatar {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <div class="logo">VideoShare</div>
-            <div class="auth-buttons">
-                <div id="userInfo" class="user-info" style="display: none;">
-                    <span class="user-email" id="userEmail"></span>
-                    <button id="logoutBtn" class="logout-btn">Déconnexion</button>
-                </div>
-                <div id="authButtons">
-                    <button id="loginBtn" class="login-btn">Connexion</button>
-                    <button id="signupBtn" class="signup-btn">Inscription</button>
-                </div>
+            <div class="logo">
+                <i class="fas fa-play-circle"></i>VideoShare
             </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#" id="navHome"><i class="fas fa-home"></i> Accueil</a></li>
+                    <li><a href="#" id="navVideos"><i class="fas fa-video"></i> Vidéos</a></li>
+                    <li><a href="#" id="navProfile"><i class="fas fa-user"></i> Profil</a></li>
+                </ul>
+                <div class="auth-buttons">
+                    <div id="userInfo" class="user-info" style="display: none;">
+                        <span class="user-email" id="userEmail"><i class="fas fa-user-circle"></i></span>
+                        <button id="logoutBtn" class="logout-btn">Déconnexion</button>
+                    </div>
+                    <div id="authButtons">
+                        <button id="loginBtn" class="login-btn">Connexion</button>
+                        <button id="signupBtn" class="signup-btn">Inscription</button>
+                    </div>
+                </div>
+            </nav>
         </header>
         
-        <main>
-            <section class="upload-section">
-                <h2>Publier une vidéo</h2>
+        <!-- Page d'accueil non connecté -->
+        <section id="homePage">
+            <div class="hero">
+                <h1>Partagez vos vidéos avec le monde</h1>
+                <p>Rejoignez notre communauté de créateurs de contenu et découvrez des vidéos incroyables</p>
+                <div class="hero-buttons">
+                    <button class="btn-primary" id="heroSignupBtn">Créer un compte</button>
+                    <button class="btn-secondary" id="heroLoginBtn">Se connecter</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Contenu principal pour utilisateurs connectés -->
+        <main id="mainContent" style="display: none;">
+            <!-- Section de téléchargement -->
+            <section class="section upload-section">
+                <h2><i class="fas fa-upload"></i> Publier une vidéo</h2>
                 <form id="uploadForm" class="upload-form">
                     <div class="form-group">
                         <label for="videoTitle">Titre de la vidéo</label>
@@ -325,14 +658,84 @@
                     <div class="progress-bar">
                         <div class="progress" id="uploadProgress"></div>
                     </div>
-                    <button type="submit" class="upload-btn" id="uploadBtn">Publier la vidéo</button>
+                    <button type="submit" class="upload-btn" id="uploadBtn"><i class="fas fa-cloud-upload-alt"></i> Publier la vidéo</button>
                 </form>
             </section>
             
-            <section class="videos-section">
-                <h2>Vidéos récentes</h2>
+            <!-- Section des vidéos -->
+            <section class="section videos-section">
+                <h2><i class="fas fa-film"></i> Vidéos récentes</h2>
                 <div id="videosGrid" class="videos-grid">
                     <!-- Les vidéos seront chargées ici dynamiquement -->
+                </div>
+            </section>
+            
+            <!-- Page de détail vidéo -->
+            <section id="videoDetail" class="video-detail">
+                <button id="backButton" class="action-btn"><i class="fas fa-arrow-left"></i> Retour</button>
+                <div class="video-container">
+                    <video id="detailVideo" controls></video>
+                </div>
+                <h2 id="detailTitle"></h2>
+                <p id="detailDescription"></p>
+                
+                <div class="video-meta">
+                    <div class="video-author">
+                        <i class="fas fa-user"></i> <span id="detailAuthor"></span>
+                    </div>
+                    <div class="video-stats">
+                        <span id="detailLikes"><i class="far fa-heart"></i> <span>0</span></span>
+                        <span id="detailViews"><i class="far fa-eye"></i> <span>0</span></span>
+                    </div>
+                </div>
+                
+                <div class="video-actions">
+                    <button id="likeButton" class="action-btn"><i class="far fa-heart"></i> J'aime</button>
+                    <button id="shareButton" class="action-btn"><i class="fas fa-share"></i> Partager</button>
+                </div>
+                
+                <div class="comments-section">
+                    <h3>Commentaires</h3>
+                    <form id="commentForm" class="comment-form">
+                        <input type="text" class="comment-input" placeholder="Ajouter un commentaire..." required>
+                        <button type="submit" class="comment-submit">Publier</button>
+                    </form>
+                    <div id="commentsList" class="comments-list">
+                        <!-- Commentaires chargés dynamiquement -->
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Page de profil -->
+            <section id="profileSection" class="section profile-section">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="profile-info">
+                        <h2 id="profileEmail"></h2>
+                        <p>Membre depuis <span id="memberSince"></span></p>
+                    </div>
+                </div>
+                
+                <div class="profile-stats">
+                    <div class="stat">
+                        <div class="stat-value" id="videosCount">0</div>
+                        <div class="stat-label">Vidéos</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="likesCount">0</div>
+                        <div class="stat-label">J'aime reçus</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="viewsCount">0</div>
+                        <div class="stat-label">Vues totales</div>
+                    </div>
+                </div>
+                
+                <h3>Mes vidéos</h3>
+                <div id="userVideos" class="videos-grid">
+                    <!-- Vidéos de l'utilisateur chargées dynamiquement -->
                 </div>
             </section>
         </main>
@@ -411,6 +814,8 @@
         // Références aux éléments du DOM
         const loginBtn = document.getElementById('loginBtn');
         const signupBtn = document.getElementById('signupBtn');
+        const heroLoginBtn = document.getElementById('heroLoginBtn');
+        const heroSignupBtn = document.getElementById('heroSignupBtn');
         const logoutBtn = document.getElementById('logoutBtn');
         const userInfo = document.getElementById('userInfo');
         const authButtons = document.getElementById('authButtons');
@@ -426,10 +831,39 @@
         const videosGrid = document.getElementById('videosGrid');
         const loginMessage = document.getElementById('loginMessage');
         const signupMessage = document.getElementById('signupMessage');
+        const homePage = document.getElementById('homePage');
+        const mainContent = document.getElementById('mainContent');
+        const navHome = document.getElementById('navHome');
+        const navVideos = document.getElementById('navVideos');
+        const navProfile = document.getElementById('navProfile');
+        const videoDetail = document.getElementById('videoDetail');
+        const backButton = document.getElementById('backButton');
+        const detailVideo = document.getElementById('detailVideo');
+        const detailTitle = document.getElementById('detailTitle');
+        const detailDescription = document.getElementById('detailDescription');
+        const detailAuthor = document.getElementById('detailAuthor');
+        const detailLikes = document.getElementById('detailLikes');
+        const detailViews = document.getElementById('detailViews');
+        const likeButton = document.getElementById('likeButton');
+        const commentForm = document.getElementById('commentForm');
+        const commentsList = document.getElementById('commentsList');
+        const profileSection = document.getElementById('profileSection');
+        const profileEmail = document.getElementById('profileEmail');
+        const memberSince = document.getElementById('memberSince');
+        const videosCount = document.getElementById('videosCount');
+        const likesCount = document.getElementById('likesCount');
+        const viewsCount = document.getElementById('viewsCount');
+        const userVideos = document.getElementById('userVideos');
+
+        // Variables globales
+        let currentUser = null;
+        let currentVideoId = null;
 
         // Ouvrir modals
         loginBtn.addEventListener('click', () => loginModal.style.display = 'flex');
         signupBtn.addEventListener('click', () => signupModal.style.display = 'flex');
+        heroLoginBtn.addEventListener('click', () => loginModal.style.display = 'flex');
+        heroSignupBtn.addEventListener('click', () => signupModal.style.display = 'flex');
 
         // Fermer modals
         closeLogin.addEventListener('click', () => loginModal.style.display = 'none');
@@ -439,6 +873,32 @@
         window.addEventListener('click', (e) => {
             if (e.target === loginModal) loginModal.style.display = 'none';
             if (e.target === signupModal) signupModal.style.display = 'none';
+        });
+
+        // Navigation
+        navHome.addEventListener('click', (e) => {
+            e.preventDefault();
+            showMainContent();
+        });
+
+        navVideos.addEventListener('click', (e) => {
+            e.preventDefault();
+            showMainContent();
+        });
+
+        navProfile.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentUser) {
+                showProfile();
+            } else {
+                loginModal.style.display = 'flex';
+            }
+        });
+
+        backButton.addEventListener('click', () => {
+            videoDetail.style.display = 'none';
+            document.querySelector('.videos-section').style.display = 'block';
+            document.querySelector('.upload-section').style.display = 'block';
         });
 
         // Connexion
@@ -451,6 +911,7 @@
                 .then((userCredential) => {
                     loginModal.style.display = 'none';
                     loginForm.reset();
+                    loginMessage.style.display = 'none';
                 })
                 .catch((error) => {
                     loginMessage.style.display = 'block';
@@ -475,8 +936,19 @@
             
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
+                    // Créer un document utilisateur dans Firestore
+                    return db.collection('users').doc(userCredential.user.uid).set({
+                        email: email,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        videos: 0,
+                        likes: 0,
+                        views: 0
+                    });
+                })
+                .then(() => {
                     signupModal.style.display = 'none';
                     signupForm.reset();
+                    signupMessage.style.display = 'none';
                 })
                 .catch((error) => {
                     signupMessage.style.display = 'block';
@@ -493,13 +965,19 @@
         // État d'authentification
         auth.onAuthStateChanged((user) => {
             if (user) {
+                currentUser = user;
                 userInfo.style.display = 'flex';
                 authButtons.style.display = 'none';
                 userEmail.textContent = user.email;
+                homePage.style.display = 'none';
+                mainContent.style.display = 'block';
                 loadVideos();
             } else {
+                currentUser = null;
                 userInfo.style.display = 'none';
                 authButtons.style.display = 'block';
+                homePage.style.display = 'block';
+                mainContent.style.display = 'none';
                 videosGrid.innerHTML = '<p>Veuillez vous connecter pour voir les vidéos.</p>';
             }
         });
@@ -508,8 +986,7 @@
         uploadForm.addEventListener('submit', (e) => {
             e.preventDefault();
             
-            const user = auth.currentUser;
-            if (!user) {
+            if (!currentUser) {
                 alert('Veuillez vous connecter pour publier une vidéo.');
                 return;
             }
@@ -560,11 +1037,18 @@
                             title: title,
                             description: description,
                             url: downloadURL,
-                            userId: user.uid,
-                            userEmail: user.email,
+                            userId: currentUser.uid,
+                            userEmail: currentUser.email,
+                            likes: 0,
+                            views: 0,
                             createdAt: firebase.firestore.FieldValue.serverTimestamp()
                         })
                         .then(() => {
+                            // Mettre à jour le compteur de vidéos de l'utilisateur
+                            db.collection('users').doc(currentUser.uid).update({
+                                videos: firebase.firestore.FieldValue.increment(1)
+                            });
+                            
                             uploadForm.reset();
                             uploadBtn.disabled = false;
                             uploadBtn.textContent = 'Publier la vidéo';
@@ -598,11 +1082,12 @@
                     videosGrid.innerHTML = '';
                     querySnapshot.forEach((doc) => {
                         const video = doc.data();
+                        const videoId = doc.id;
                         const videoCard = document.createElement('div');
                         videoCard.className = 'video-card';
                         videoCard.innerHTML = `
                             <div class="video-player">
-                                <video controls>
+                                <video>
                                     <source src="${video.url}" type="video/mp4">
                                     Votre navigateur ne supporte pas la lecture de vidéos.
                                 </video>
@@ -610,14 +1095,288 @@
                             <div class="video-info">
                                 <h3 class="video-title">${video.title}</h3>
                                 <p class="video-description">${video.description || 'Aucune description'}</p>
-                                <p class="video-author">Partagé par: ${video.userEmail}</p>
+                                <div class="video-meta">
+                                    <div class="video-author">
+                                        <i class="fas fa-user"></i> ${video.userEmail}
+                                    </div>
+                                    <div class="video-stats">
+                                        <span><i class="far fa-heart"></i> ${video.likes || 0}</span>
+                                        <span><i class="far fa-eye"></i> ${video.views || 0}</span>
+                                    </div>
+                                </div>
                             </div>
                         `;
+                        
+                        // Ajouter un événement pour ouvrir la vidéo en détail
+                        videoCard.addEventListener('click', () => {
+                            openVideoDetail(videoId, video);
+                        });
+                        
                         videosGrid.appendChild(videoCard);
                     });
                 })
                 .catch((error) => {
                     videosGrid.innerHTML = '<p>Erreur lors du chargement des vidéos.</p>';
+                    console.error('Erreur:', error);
+                });
+        }
+
+        // Ouvrir la page de détail d'une vidéo
+        function openVideoDetail(videoId, video) {
+            // Cacher les autres sections
+            document.querySelector('.videos-section').style.display = 'none';
+            document.querySelector('.upload-section').style.display = 'none';
+            
+            // Afficher la section de détail
+            videoDetail.style.display = 'block';
+            
+            // Remplir les informations de la vidéo
+            detailVideo.innerHTML = `<source src="${video.url}" type="video/mp4">`;
+            detailVideo.load();
+            detailTitle.textContent = video.title;
+            detailDescription.textContent = video.description || 'Aucune description';
+            detailAuthor.textContent = video.userEmail;
+            detailLikes.querySelector('span').textContent = video.likes || 0;
+            detailViews.querySelector('span').textContent = video.views || 0;
+            
+            // Stocker l'ID de la vidéo actuelle
+            currentVideoId = videoId;
+            
+            // Incrémenter le compteur de vues
+            db.collection('videos').doc(videoId).update({
+                views: firebase.firestore.FieldValue.increment(1)
+            });
+            
+            // Charger les commentaires
+            loadComments(videoId);
+            
+            // Vérifier si l'utilisateur a déjà liké cette vidéo
+            if (currentUser) {
+                db.collection('likes').doc(`${currentUser.uid}_${videoId}`).get()
+                    .then((doc) => {
+                        if (doc.exists) {
+                            likeButton.classList.add('liked');
+                            likeButton.innerHTML = '<i class="fas fa-heart"></i> J\'aime';
+                        } else {
+                            likeButton.classList.remove('liked');
+                            likeButton.innerHTML = '<i class="far fa-heart"></i> J\'aime';
+                        }
+                    });
+            }
+            
+            // Configurer le bouton like
+            likeButton.onclick = () => {
+                if (!currentUser) {
+                    alert('Veuillez vous connecter pour aimer une vidéo.');
+                    return;
+                }
+                
+                toggleLike(videoId);
+            };
+        }
+
+        // Gérer les likes
+        function toggleLike(videoId) {
+            const likeRef = db.collection('likes').doc(`${currentUser.uid}_${videoId}`);
+            
+            likeRef.get().then((doc) => {
+                if (doc.exists) {
+                    // Retirer le like
+                    likeRef.delete().then(() => {
+                        // Décrémenter le compteur de likes
+                        db.collection('videos').doc(videoId).update({
+                            likes: firebase.firestore.FieldValue.increment(-1)
+                        });
+                        
+                        likeButton.classList.remove('liked');
+                        likeButton.innerHTML = '<i class="far fa-heart"></i> J\'aime';
+                        
+                        // Mettre à jour l'affichage
+                        const currentLikes = parseInt(detailLikes.querySelector('span').textContent);
+                        detailLikes.querySelector('span').textContent = currentLikes - 1;
+                    });
+                } else {
+                    // Ajouter un like
+                    likeRef.set({
+                        userId: currentUser.uid,
+                        videoId: videoId,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    }).then(() => {
+                        // Incrémenter le compteur de likes
+                        db.collection('videos').doc(videoId).update({
+                            likes: firebase.firestore.FieldValue.increment(1)
+                        });
+                        
+                        likeButton.classList.add('liked');
+                        likeButton.innerHTML = '<i class="fas fa-heart"></i> J\'aime';
+                        
+                        // Mettre à jour l'affichage
+                        const currentLikes = parseInt(detailLikes.querySelector('span').textContent);
+                        detailLikes.querySelector('span').textContent = currentLikes + 1;
+                    });
+                }
+            });
+        }
+
+        // Charger les commentaires
+        function loadComments(videoId) {
+            commentsList.innerHTML = '<p>Chargement des commentaires...</p>';
+            
+            db.collection('comments')
+                .where('videoId', '==', videoId)
+                .orderBy('timestamp', 'desc')
+                .get()
+                .then((querySnapshot) => {
+                    commentsList.innerHTML = '';
+                    
+                    if (querySnapshot.empty) {
+                        commentsList.innerHTML = '<p>Soyez le premier à commenter cette vidéo!</p>';
+                        return;
+                    }
+                    
+                    querySnapshot.forEach((doc) => {
+                        const comment = doc.data();
+                        const commentElement = document.createElement('div');
+                        commentElement.className = 'comment';
+                        commentElement.innerHTML = `
+                            <div class="comment-header">
+                                <span class="comment-author">${comment.userEmail}</span>
+                                <span class="comment-date">${new Date(comment.timestamp.toDate()).toLocaleDateString()}</span>
+                            </div>
+                            <p>${comment.text}</p>
+                        `;
+                        commentsList.appendChild(commentElement);
+                    });
+                })
+                .catch((error) => {
+                    commentsList.innerHTML = '<p>Erreur lors du chargement des commentaires.</p>';
+                    console.error('Erreur:', error);
+                });
+        }
+
+        // Ajouter un commentaire
+        commentForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            if (!currentUser) {
+                alert('Veuillez vous connecter pour commenter.');
+                return;
+            }
+            
+            if (!currentVideoId) {
+                alert('Aucune vidéo sélectionnée.');
+                return;
+            }
+            
+            const commentInput = commentForm.querySelector('.comment-input');
+            const commentText = commentInput.value.trim();
+            
+            if (!commentText) {
+                alert('Veuillez écrire un commentaire.');
+                return;
+            }
+            
+            // Ajouter le commentaire à la base de données
+            db.collection('comments').add({
+                videoId: currentVideoId,
+                userId: currentUser.uid,
+                userEmail: currentUser.email,
+                text: commentText,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then(() => {
+                commentInput.value = '';
+                loadComments(currentVideoId);
+            })
+            .catch((error) => {
+                alert('Erreur lors de l\'ajout du commentaire: ' + error.message);
+            });
+        });
+
+        // Afficher le contenu principal
+        function showMainContent() {
+            videoDetail.style.display = 'none';
+            profileSection.style.display = 'none';
+            document.querySelector('.videos-section').style.display = 'block';
+            document.querySelector('.upload-section').style.display = 'block';
+        }
+
+        // Afficher le profil utilisateur
+        function showProfile() {
+            if (!currentUser) return;
+            
+            // Cacher les autres sections
+            document.querySelector('.videos-section').style.display = 'none';
+            document.querySelector('.upload-section').style.display = 'none';
+            videoDetail.style.display = 'none';
+            
+            // Afficher la section profil
+            profileSection.style.display = 'block';
+            
+            // Remplir les informations du profil
+            profileEmail.textContent = currentUser.email;
+            memberSince.textContent = new Date(currentUser.metadata.creationTime).toLocaleDateString();
+            
+            // Charger les statistiques de l'utilisateur
+            db.collection('users').doc(currentUser.uid).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        videosCount.textContent = userData.videos || 0;
+                        likesCount.textContent = userData.likes || 0;
+                        viewsCount.textContent = userData.views || 0;
+                    }
+                });
+            
+            // Charger les vidéos de l'utilisateur
+            userVideos.innerHTML = '<p>Chargement de vos vidéos...</p>';
+            
+            db.collection('videos')
+                .where('userId', '==', currentUser.uid)
+                .orderBy('createdAt', 'desc')
+                .get()
+                .then((querySnapshot) => {
+                    userVideos.innerHTML = '';
+                    
+                    if (querySnapshot.empty) {
+                        userVideos.innerHTML = '<p>Vous n\'avez pas encore publié de vidéos.</p>';
+                        return;
+                    }
+                    
+                    querySnapshot.forEach((doc) => {
+                        const video = doc.data();
+                        const videoId = doc.id;
+                        const videoCard = document.createElement('div');
+                        videoCard.className = 'video-card';
+                        videoCard.innerHTML = `
+                            <div class="video-player">
+                                <video>
+                                    <source src="${video.url}" type="video/mp4">
+                                    Votre navigateur ne supporte pas la lecture de vidéos.
+                                </video>
+                            </div>
+                            <div class="video-info">
+                                <h3 class="video-title">${video.title}</h3>
+                                <p class="video-description">${video.description || 'Aucune description'}</p>
+                                <div class="video-meta">
+                                    <div class="video-stats">
+                                        <span><i class="far fa-heart"></i> ${video.likes || 0}</span>
+                                        <span><i class="far fa-eye"></i> ${video.views || 0}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        
+                        // Ajouter un événement pour ouvrir la vidéo en détail
+                        videoCard.addEventListener('click', () => {
+                            openVideoDetail(videoId, video);
+                        });
+                        
+                        userVideos.appendChild(videoCard);
+                    });
+                })
+                .catch((error) => {
+                    userVideos.innerHTML = '<p>Erreur lors du chargement de vos vidéos.</p>';
                     console.error('Erreur:', error);
                 });
         }
