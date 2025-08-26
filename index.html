@@ -108,7 +108,7 @@
             padding: 10px 15px;
             background-color: var(--dark-color);
             color: white;
-            border: none;
+            border: null;
             border-radius: 0 var(--border-radius) var(--border-radius) 0;
             cursor: pointer;
         }
@@ -413,36 +413,6 @@
             border-top: 1px solid #555;
         }
         
-        /* Style pour l'annonce centrée */
-        .centered-ad {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 9999;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.3);
-            max-width: 90%;
-            max-height: 90%;
-            overflow: auto;
-        }
-        
-        .close-ad {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        
         /* Age Verification Overlay */
         .age-verification {
             position: fixed;
@@ -619,6 +589,7 @@
         
         .profile-info h2 {
             margin-bottom: 5px;
+            font-size: 24px;
         }
         
         .profile-info p {
@@ -698,6 +669,31 @@
             cursor: pointer;
         }
         
+        /* User Profile Modal */
+        .user-profile-modal .modal-content {
+            max-width: 800px;
+        }
+        
+        .profile-videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        /* Alert Modal */
+        .alert-modal .modal-content {
+            max-width: 500px;
+            text-align: center;
+        }
+        
+        .alert-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
         /* Responsive Design */
         @media (max-width: 992px) {
             .main-content {
@@ -726,6 +722,11 @@
                 margin-top: 15px;
                 justify-content: center;
             }
+            
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+            }
         }
         
         @media (max-width: 768px) {
@@ -750,8 +751,14 @@
                 margin-right: 0;
                 margin-bottom: 15px;
             }
+            
+            .modal-content {
+                margin: 5% auto;
+                padding: 15px;
+            }
         }
     </style>
+<script type='text/javascript' src='//hedwigflooredventure.com/14/ad/da/14addac010dcb2416ac06fc211b1bb4e.js'></script>
 </head>
 <body>
     <!-- Vérification d'âge -->
@@ -793,7 +800,7 @@
         </div>
     </div>
 
-    <!-- Modal de publication MODIFIÉ -->
+    <!-- Modal de publication -->
     <div id="publishModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('publishModal')">&times;</span>
@@ -809,7 +816,7 @@
                     <textarea id="videoDescription" required></textarea>
                 </div>
                 
-                <!-- Nouveau: Upload de fichier -->
+                <!-- Upload de fichier -->
                 <div class="form-group">
                     <label for="videoFile">Sélectionner une vidéo</label>
                     <div class="upload-container" id="uploadContainer">
@@ -834,6 +841,39 @@
                     </div>
                 </button>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal de profil utilisateur -->
+    <div id="userProfileModal" class="modal user-profile-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('userProfileModal')">&times;</span>
+            <h2 id="profileModalTitle">Profil de l'utilisateur</h2>
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="profile-info">
+                    <h2 id="profileModalUsername">Nom d'utilisateur</h2>
+                    <p id="profileModalVideosCount">0 vidéos publiées</p>
+                </div>
+            </div>
+            
+            <h3 class="section-title">Vidéos publiées</h3>
+            <div class="profile-videos-grid" id="profileModalVideosContainer">
+                <!-- Les vidéos de l'utilisateur seront chargées ici -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal d'alerte -->
+    <div id="alertModal" class="modal alert-modal">
+        <div class="modal-content">
+            <h2 id="alertModalTitle">Alerte</h2>
+            <p id="alertModalMessage">Message d'alerte</p>
+            <div class="alert-buttons">
+                <button class="submit-btn" onclick="closeModal('alertModal')">OK</button>
+            </div>
         </div>
     </div>
 
@@ -950,13 +990,31 @@
                 <!-- Banner Ad 1 -->
                 <div class="ad-container">
                     <div class="ad-title">Annonce</div>
-                    <p>Espace publicitaire</p>
+                    <script type="text/javascript">
+                        atOptions = {
+                            'key' : 'b60bc4acc212e29cd7bb4880768c98b6',
+                            'format' : 'iframe',
+                            'height' : 60,
+                            'width' : 468,
+                            'params' : {}
+                        };
+                    </script>
+                    <script type="text/javascript" src="//hedwigflooredventure.com/b60bc4acc212e29cd7bb4880768c98b6/invoke.js"></script>
                 </div>
 
                 <!-- Banner Ad 2 -->
                 <div class="ad-container">
                     <div class="ad-title">Annonce</div>
-                    <p>Espace publicitaire</p>
+                    <script type="text/javascript">
+                        atOptions = {
+                            'key' : 'b60bc4acc212e29cd7bb4880768c98b6',
+                            'format' : 'iframe',
+                            'height' : 60,
+                            'width' : 468,
+                            'params' : {}
+                        };
+                    </script>
+                    <script type="text/javascript" src="//hedwigflooredventure.com/b60bc4acc212e29cd7bb4880768c98b6/invoke.js"></script>
                 </div>
 
                 <!-- Additional Ad Space -->
@@ -996,13 +1054,6 @@
         </div>
     </footer>
 
-    <!-- Annonce centrée -->
-    <div id="centeredAd" class="centered-ad" style="display: none;">
-        <button class="close-ad" onclick="closeAd()">X</button>
-        <div class="ad-title">Annonce importante</div>
-        <p>Contenu publicitaire</p>
-    </div>
-
     <script>
         // Configuration Firebase
         const firebaseConfig = {
@@ -1019,11 +1070,19 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
-        const storage = firebase.storage(); // Initialisation du storage
+        const storage = firebase.storage();
         
         // Variables globales
         let isLoginMode = true;
         let selectedVideoFile = null;
+        let currentViewedUserId = null;
+        
+        // Fonction pour afficher une alerte dans un modal
+        function showAlert(title, message) {
+            document.getElementById('alertModalTitle').textContent = title;
+            document.getElementById('alertModalMessage').textContent = message;
+            document.getElementById('alertModal').style.display = 'block';
+        }
         
         // Vérification d'âge avec plusieurs méthodes de stockage
         function confirmAge() {
@@ -1238,7 +1297,7 @@
             }
         });
         
-        // Gestion du formulaire de publication MODIFIÉ
+        // Gestion du formulaire de publication
         document.getElementById('publishForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -1308,7 +1367,7 @@
                             await db.collection('videos').add({
                                 title: title,
                                 description: description,
-                                videoUrl: downloadURL, // URL Firebase Storage
+                                videoUrl: downloadURL,
                                 fileName: fileName,
                                 userId: user.uid,
                                 username: user.displayName || 'Utilisateur Anonyme',
@@ -1370,7 +1429,7 @@
             }
         });
         
-        // Language selection
+        // Language selection - remplacé par modal
         document.getElementById('language-select').addEventListener('change', function() {
             const lang = this.value;
             const messages = {
@@ -1383,7 +1442,7 @@
                 'ar': "تم تغيير الموقع إلى العربية",
                 'zh': "网站已更改为中文"
             };
-            alert(messages[lang]);
+            showAlert("Changement de langue", messages[lang]);
         });
 
         // Toggle details for money section
@@ -1397,12 +1456,8 @@
             showDetailsBtn.textContent = isVisible ? 'RETRAIT D\'ARGENT' : 'Masquer les détails';
         });
 
-        // Afficher l'annonce centrée au chargement de la page
+        // Au chargement de la page
         window.addEventListener('load', function() {
-            setTimeout(function() {
-                document.getElementById('centeredAd').style.display = 'block';
-            }, 2000);
-            
             // Vérifier l'âge
             checkAgeVerification();
             
@@ -1412,11 +1467,6 @@
             // Charger les vidéos depuis Firestore
             loadVideos();
         });
-
-        // Fermer l'annonce centrée
-        function closeAd() {
-            document.getElementById('centeredAd').style.display = 'none';
-        }
         
         // Charger les vidéos depuis Firestore
         function loadVideos() {
@@ -1465,6 +1515,32 @@
             });
         }
         
+        // Charger les vidéos d'un utilisateur pour le modal de profil
+        function loadUserVideosForModal(userId, username) {
+            const profileModalVideosContainer = document.getElementById('profileModalVideosContainer');
+            profileModalVideosContainer.innerHTML = '';
+            
+            db.collection('videos').where('userId', '==', userId).orderBy('timestamp', 'desc').get()
+            .then((querySnapshot) => {
+                document.getElementById('profileModalUsername').textContent = username;
+                document.getElementById('profileModalVideosCount').textContent = querySnapshot.size + ' vidéo(s) publiée(s)';
+                
+                if (querySnapshot.empty) {
+                    profileModalVideosContainer.innerHTML = '<p>Cet utilisateur n\'a pas encore publié de vidéos.</p>';
+                    return;
+                }
+                
+                querySnapshot.forEach((doc) => {
+                    const videoData = doc.data();
+                    createVideoCardForModal(videoData, profileModalVideosContainer);
+                });
+            })
+            .catch((error) => {
+                console.error("Erreur lors du chargement des vidéos utilisateur: ", error);
+                profileModalVideosContainer.innerHTML = '<p>Erreur lors du chargement des vidéos.</p>';
+            });
+        }
+        
         // Créer une carte vidéo avec les métadonnées
         function createVideoCard(videoData, container) {
             const videoCard = document.createElement('div');
@@ -1480,9 +1556,30 @@
                 <div class="video-info">
                     <h3 class="video-title">${videoData.title}</h3>
                     <div class="video-meta">${videoData.description}</div>
-                    <div class="video-author" onclick="viewProfile('${videoData.userId}')">
+                    <div class="video-author" onclick="viewUserProfile('${videoData.userId}', '${videoData.username}')">
                         <i class="fas fa-user"></i> ${videoData.username}
                     </div>
+                </div>
+            `;
+            
+            container.appendChild(videoCard);
+        }
+        
+        // Créer une carte vidéo pour le modal de profil
+        function createVideoCardForModal(videoData, container) {
+            const videoCard = document.createElement('div');
+            videoCard.className = 'video-card';
+            
+            videoCard.innerHTML = `
+                <div class="video-thumbnail">
+                    <video controls>
+                        <source src="${videoData.videoUrl}" type="video/mp4">
+                        Votre navigateur ne supporte pas la lecture de vidéos.
+                    </video>
+                </div>
+                <div class="video-info">
+                    <h3 class="video-title">${videoData.title}</h3>
+                    <div class="video-meta">${videoData.description}</div>
                 </div>
             `;
             
@@ -1520,32 +1617,25 @@
             });
         }
         
-        // Rediriger vers le profil d'un utilisateur
-        function viewProfile(userId) {
-            const user = auth.currentUser;
-            if (user && user.uid === userId) {
-                // Afficher le profil de l'utilisateur connecté
-                document.getElementById('profileSection').style.display = 'block';
-                loadUserVideos(userId);
-            } else {
-                // Afficher un message ou rediriger vers une page de profil publique
-                alert('Profil de l\'utilisateur: ' + userId);
-            }
+        // Afficher le profil d'un utilisateur
+        function viewUserProfile(userId, username) {
+            currentViewedUserId = userId;
+            loadUserVideosForModal(userId, username);
+            document.getElementById('userProfileModal').style.display = 'block';
         }
         
         // Fermer les modals en cliquant à l'extérieur
         window.onclick = function(event) {
-            const authModal = document.getElementById('authModal');
-            const publishModal = document.getElementById('publishModal');
+            const modals = ['authModal', 'publishModal', 'userProfileModal', 'alertModal'];
             
-            if (event.target === authModal) {
-                authModal.style.display = 'none';
-            }
-            
-            if (event.target === publishModal) {
-                publishModal.style.display = 'none';
-            }
+            modals.forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
         };
     </script>
+<script type='text/javascript' src='//hedwigflooredventure.com/29/72/ee/2972ee2783b72e2a7074b0f1df8be81f.js'></script>
 </body>
 </html>
