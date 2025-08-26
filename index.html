@@ -4,7 +4,27 @@
     <meta name="google-adsense-account" content="ca-pub-5904049904040571">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mougouli.com - Plateforme de Vidéos</title>
+   <!-- Balises Open Graph obligatoires -->
+<meta property="og:title" content="Titre de la vidéo - Mougouli">
+<meta property="og:description" content="Description de la vidéo">
+<meta property="og:image" content="URL_de_l'image_aperçu">
+<meta property="og:url" content="URL_de_la_page_vidéo">
+<meta property="og:type" content="video.movie">
+<meta property="og:video" content="URL_directe_de_la_vidéo">
+<meta property="og:video:type" content="video/mp4">
+<meta property="og:video:width" content="1280">
+<meta property="og:video:height" content="720">
+
+<!-- Balises Twitter Card supplémentaires -->
+<meta name="twitter:card" content="player">
+<meta name="twitter:site" content="@Mougouli">
+<meta name="twitter:title" content="Titre de la vidéo">
+<meta name="twitter:description" content="Description de la vidéo">
+<meta name="twitter:image" content="URL_de_l'image_aperçu">
+<meta name="twitter:player" content="URL_de_la_page_embed">
+<meta name="twitter:player:width" content="1280">
+<meta name="twitter:player:height" content="720">
+ <title>Mougouli.com - Plateforme de Vidéos</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -1069,8 +1089,114 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
         const storage = firebase.storage();
+       
+        // Fonction pour mettre à jour les métadonnées OG
+// Fonction pour mettre à jour les métadonnées OG
+function updateMetaTags(videoData) {
+    // Définir les métadonnées pour le partage social
+    const metaTags = [
+        { property: 'og:title', content: videoData.title + ' - Mougouli' },
+        { property: 'og:description', content: videoData.description.substring(0, 300) },
+        { property: 'og:image', content: videoData.thumbnailUrl || 'https://raw.githubusercontent.com/pinenikeuse/mougouli/main/1747616058238.jpg' },
+        { property: 'og:url', content: window.location.origin + window.location.pathname + '?video=' + videoData.id },
+        { property: 'og:type', content: 'video.movie' },
+        { property: 'og:video', content: videoData.videoUrl },
+        { property: 'og:video:type', content: 'video/mp4' },
+        { property: 'og:video:width', content: '1280' },
+        { property: 'og:video:height', content: '720' },
+        { name: 'twitter:card', content: 'player' },
+        { name: 'twitter:title', content: videoData.title },
+        { name: 'twitter:description', content: videoData.description.substring(0, 200) },
+        { name: 'twitter:image', content: videoData.thumbnailUrl || 'https://raw.githubusercontent.com/pinenikeuse/mougouli/main/1747616058238.jpg' },
+        { name: 'twitter:player', content: window.location.origin + '/embed.html?video=' + videoData.id },
+        { name: 'twitter:player:width', content: '1280' },
+        { name: 'twitter:player:height', content: '720' }
+    ];
+
+    // Mise à jour ou création des balises meta
+    metaTags.forEach(tag => {
+        let selector;
+        if (tag.property) {
+            selector = `meta[property="${tag.property}"]`;
+        } else if (tag.name) {
+            selector = `meta[name="${tag.name}"]`;
+        }
+
+        let metaTag = document.querySelector(selector);
         
-        // Variables globales
+        if (!metaTag) {
+            metaTag = document.createElement('meta');
+            if (tag.property) {
+                metaTag.setAttribute('property', tag.property);
+            } else if (tag.name) {
+                metaTag.setAttribute('name', tag.name);
+            }
+            document.head.appendChild(metaTag);
+        }
+        
+        metaTag.setAttribute('content', tag.content);
+    });
+    
+    console.log("Métadonnées mises à jour pour:", videoData.title);
+}
+// Appeler cette fonction lorsque l'utilisateur consulte une vidéo
+function loadVideo(videoId) {
+    // Charger les données de la vidéo depuis Firestore
+    db.collection('videos').doc(videoId).get()
+    .then(doc => {
+        if (doc.exists) {
+            const videoData = doc.data();
+            // Mettre à jour les métadonnées OG
+            updateMetaTags(videoData);
+            // Afficher la vidéo...
+        }
+    })
+    .catch(error => {
+        console.error("Erreur lors du chargement de la vidéo: ", error);
+    });
+}
+// Fonction pour définir la vidéo actuellement visionnée
+function setCurrentVideo(videoId) {
+    console.log("Définition de la vidéo actuelle:", videoId);
+    
+    // Charger les données complètes de la vidéo depuis Firestore
+    db.collection('videos').doc(videoId).get()
+    .then(doc => {
+        if (doc.exists) {
+            const videoData = doc.data();
+            videoData.id = doc.id; // Ajouter l'ID au objet videoData
+            
+            // Mettre à jour les métadonnées pour le partage
+            updateMetaTags(videoData);
+            
+            // Mettre à jour l'URL avec l'ID de la vidéo pour le partage
+            const newUrl = window.location.origin + window.location.pathname + '?video=' + videoId;
+            window.history.replaceState({}, document.title, newUrl);
+        }
+    })
+    .catch(error => {
+        console.error("Erreur lors du chargement des détails de la vidéo: ", error);
+    });
+}
+
+function confirmAge() {
+    try {
+        sessionStorage.setItem('ageVerified', 'true');
+    } catch (e) {
+        try {
+            localStorage.setItem('ageVerified', 'true');
+        } catch (e) {
+            document.cookie = "ageVerified=true; max-age=86400; path=/";
+        }
+    }
+    document.getElementById('ageVerification').style.display = 'none';
+}
+
+function denyAge() {
+    window.location.href = 'https://www.google.com';
+}
+
+ // Variables globales
         let isLoginMode = true;
         let selectedVideoFile = null;
         let currentViewedUserId = null;
@@ -1455,89 +1581,85 @@
         });
 
         // Au chargement de la page
-        window.addEventListener('load', function() {
-            // Vérifier l'âge
-            checkAgeVerification();
-            
-            // Vérifier l'état d'authentification
-            checkAuthState();
-            
-            // Charger les vidéos depuis Firestore
-            loadVideos();
+          // Au chargement de la page
+window.addEventListener('load', function() {
+    // Vérifier l'âge
+    checkAgeVerification();
+    
+    // Vérifier l'état d'authentification
+    checkAuthState();
+    
+    // Charger les vidéos depuis Firestore
+    loadVideos();
+    
+    // Vérifier si un paramètre video est présent dans l'URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const videoId = urlParams.get('video');
+    if (videoId) {
+        // Charger les données de la vidéo spécifique pour mettre à jour les métadonnées
+        db.collection('videos').doc(videoId).get()
+        .then(doc => {
+            if (doc.exists) {
+                const videoData = doc.data();
+                videoData.id = doc.id;
+                updateMetaTags(videoData);
+            }
+        })
+        .catch(error => {
+            console.error("Erreur lors du chargement de la vidéo: ", error);
         });
-        
+    }
+});
         // Charger les vidéos depuis Firestore
-        function loadVideos() {
-            const videosContainer = document.getElementById('videosContainer');
-            videosContainer.innerHTML = '';
-            
-            db.collection('videos').orderBy('timestamp', 'desc').get()
-            .then((querySnapshot) => {
-                if (querySnapshot.empty) {
-                    loadDefaultVideos(videosContainer);
-                    return;
-                }
-                
-                querySnapshot.forEach((doc) => {
-                    const videoData = doc.data();
-                    createVideoCard(videoData, videosContainer);
-                });
-            })
-            .catch((error) => {
-                console.error("Erreur lors du chargement des vidéos: ", error);
-                // Charger des vidéos par défaut en cas d'erreur
-                loadDefaultVideos(videosContainer);
-            });
+       // Charger les vidéos depuis Firestore
+function loadVideos() {
+    const videosContainer = document.getElementById('videosContainer');
+    videosContainer.innerHTML = '';
+    
+    db.collection('videos').orderBy('timestamp', 'desc').get()
+    .then((querySnapshot) => {
+        if (querySnapshot.empty) {
+            loadDefaultVideos(videosContainer);
+            return;
         }
         
-        // Charger les vidéos de l'utilisateur
-        function loadUserVideos(userId) {
-            const userVideosContainer = document.getElementById('userVideosContainer');
-            userVideosContainer.innerHTML = '';
-            
-            db.collection('videos').where('userId', '==', userId).orderBy('timestamp', 'desc').get()
-            .then((querySnapshot) => {
-                if (querySnapshot.empty) {
-                    userVideosContainer.innerHTML = '<p>Vous n\'avez pas encore publié de vidéos.</p>';
-                    return;
-                }
-                
-                querySnapshot.forEach((doc) => {
-                    const videoData = doc.data();
-                    createVideoCard(videoData, userVideosContainer);
-                });
-            })
-            .catch((error) => {
-                console.error("Erreur lors du chargement des vidéos utilisateur: ", error);
-                userVideosContainer.innerHTML = '<p>Erreur lors du chargement de vos vidéos.</p>';
-            });
-        }
-        
+        querySnapshot.forEach((doc) => {
+            const videoData = doc.data();
+            videoData.id = doc.id; // Ajouter l'ID du document
+            createVideoCard(videoData, videosContainer);
+        });
+    })
+    .catch((error) => {
+        console.error("Erreur lors du chargement des vidéos: ", error);
+        loadDefaultVideos(videosContainer);
+    });
+}    
+   
+     
         // Charger les vidéos d'un utilisateur pour le modal de profil
-        function loadUserVideosForModal(userId, username) {
-            const profileModalVideosContainer = document.getElementById('profileModalVideosContainer');
-            profileModalVideosContainer.innerHTML = '';
-            
-            db.collection('videos').where('userId', '==', userId).orderBy('timestamp', 'desc').get()
-            .then((querySnapshot) => {
-                document.getElementById('profileModalUsername').textContent = username;
-                document.getElementById('profileModalVideosCount').textContent = querySnapshot.size + ' vidéo(s) publiée(s)';
-                
-                if (querySnapshot.empty) {
-                    profileModalVideosContainer.innerHTML = '<p>Cet utilisateur n\'a pas encore publié de vidéos.</p>';
-                    return;
-                }
-                
-                querySnapshot.forEach((doc) => {
-                    const videoData = doc.data();
-                    createVideoCardForModal(videoData, profileModalVideosContainer);
-                });
-            })
-            .catch((error) => {
-                console.error("Erreur lors du chargement des vidéos utilisateur: ", error);
-                profileModalVideosContainer.innerHTML = '<p>Erreur lors du chargement des vidéos.</p>';
-            });
+// Charger les vidéos de l'utilisateur
+function loadUserVideos(userId) {
+    const userVideosContainer = document.getElementById('userVideosContainer');
+    userVideosContainer.innerHTML = '';
+    
+    db.collection('videos').where('userId', '==', userId).orderBy('timestamp', 'desc').get()
+    .then((querySnapshot) => {
+        if (querySnapshot.empty) {
+            userVideosContainer.innerHTML = '<p>Vous n\'avez pas encore publié de vidéos.</p>';
+            return;
         }
+        
+        querySnapshot.forEach((doc) => {
+            const videoData = doc.data();
+            videoData.id = doc.id; // ← AJOUTER CETTE LIGNE
+            createVideoCard(videoData, userVideosContainer);
+        });
+    })
+    .catch((error) => {
+        console.error("Erreur lors du chargement des vidéos utilisateur: ", error);
+        userVideosContainer.innerHTML = '<p>Erreur lors du chargement de vos vidéos.</p>';
+    });
+}
         
         // Créer une carte vidéo avec les métadonnées
         // Fonction pour ouvrir le lien publicitaire
@@ -1547,20 +1669,17 @@ function openAdLink() {
 }
 
 // Modifier la fonction createVideoCard pour ajouter l'ouverture publicitaire
-// Fonction pour ouvrir le lien publicitaire
-function openAdLink() {
-    // Ouvrir le lien publicitaire dans un nouvel onglet
-    window.open('https://hedwigflooredventure.com/uf868bcft2?key=e8c8806d43592d84d110a00142dc05e8', '_blank');
-}
-
 // Modifier la fonction createVideoCard pour ajouter l'ouverture publicitaire
 function createVideoCard(videoData, container) {
     const videoCard = document.createElement('div');
     videoCard.className = 'video-card';
     
+    // Ajouter un attribut data-video-id pour identifier la vidéo
+    videoCard.setAttribute('data-video-id', videoData.id);
+    
     videoCard.innerHTML = `
         <div class="video-thumbnail">
-            <video controls onplay="openAdLink()">
+            <video controls onplay="openAdLink(); setCurrentVideo('${videoData.id}')">
                 <source src="${videoData.videoUrl}" type="video/mp4">
                 Votre navigateur ne supporte pas la lecture de vidéos.
             </video>
@@ -1571,27 +1690,6 @@ function createVideoCard(videoData, container) {
             <div class="video-author" onclick="viewUserProfile('${videoData.userId}', '${videoData.username}')">
                 <i class="fas fa-user"></i> ${videoData.username}
             </div>
-        </div>
-    `;
-    
-    container.appendChild(videoCard);
-}
-
-// Modifier également la fonction createVideoCardForModal
-function createVideoCardForModal(videoData, container) {
-    const videoCard = document.createElement('div');
-    videoCard.className = 'video-card';
-    
-    videoCard.innerHTML = `
-        <div class="video-thumbnail">
-            <video controls onplay="openAdLink()">
-                <source src="${videoData.videoUrl}" type="video/mp4">
-                Votre navigateur ne supporte pas la lecture de vidéos.
-            </video>
-        </div>
-        <div class="video-info">
-            <h3 class="video-title">${videoData.title}</h3>
-            <div class="video-meta">${videoData.description}</div>
         </div>
     `;
     
