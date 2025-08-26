@@ -757,7 +757,6 @@
             }
         }
     </style>
-<script type='text/javascript' src='//hedwigflooredventure.com/14/ad/da/14addac010dcb2416ac06fc211b1bb4e.js'></script>
 </head>
 <body>
     <!-- Vérification d'âge -->
@@ -1541,50 +1540,63 @@
         }
         
         // Créer une carte vidéo avec les métadonnées
-        function createVideoCard(videoData, container) {
-            const videoCard = document.createElement('div');
-            videoCard.className = 'video-card';
-            
-            videoCard.innerHTML = `
-                <div class="video-thumbnail">
-                    <video controls>
-                        <source src="${videoData.videoUrl}" type="video/mp4">
-                        Votre navigateur ne supporte pas la lecture de vidéos.
-                    </video>
-                </div>
-                <div class="video-info">
-                    <h3 class="video-title">${videoData.title}</h3>
-                    <div class="video-meta">${videoData.description}</div>
-                    <div class="video-author" onclick="viewUserProfile('${videoData.userId}', '${videoData.username}')">
-                        <i class="fas fa-user"></i> ${videoData.username}
-                    </div>
-                </div>
-            `;
-            
-            container.appendChild(videoCard);
-        }
-        
-        // Créer une carte vidéo pour le modal de profil
-        function createVideoCardForModal(videoData, container) {
-            const videoCard = document.createElement('div');
-            videoCard.className = 'video-card';
-            
-            videoCard.innerHTML = `
-                <div class="video-thumbnail">
-                    <video controls>
-                        <source src="${videoData.videoUrl}" type="video/mp4">
-                        Votre navigateur ne supporte pas la lecture de vidéos.
-                    </video>
-                </div>
-                <div class="video-info">
-                    <h3 class="video-title">${videoData.title}</h3>
-                    <div class="video-meta">${videoData.description}</div>
-                </div>
-            `;
-            
-            container.appendChild(videoCard);
-        }
-        
+        // Fonction pour ouvrir le lien publicitaire
+function openAdLink() {
+    // Ouvrir le lien publicitaire dans un nouvel onglet
+    window.open('https://hedwigflooredventure.com/uf868bcft2?key=e8c8806d43592d84d110a00142dc05e8', '_blank');
+}
+
+// Modifier la fonction createVideoCard pour ajouter l'ouverture publicitaire
+// Fonction pour ouvrir le lien publicitaire
+function openAdLink() {
+    // Ouvrir le lien publicitaire dans un nouvel onglet
+    window.open('https://hedwigflooredventure.com/uf868bcft2?key=e8c8806d43592d84d110a00142dc05e8', '_blank');
+}
+
+// Modifier la fonction createVideoCard pour ajouter l'ouverture publicitaire
+function createVideoCard(videoData, container) {
+    const videoCard = document.createElement('div');
+    videoCard.className = 'video-card';
+    
+    videoCard.innerHTML = `
+        <div class="video-thumbnail">
+            <video controls onplay="openAdLink()">
+                <source src="${videoData.videoUrl}" type="video/mp4">
+                Votre navigateur ne supporte pas la lecture de vidéos.
+            </video>
+        </div>
+        <div class="video-info">
+            <h3 class="video-title">${videoData.title}</h3>
+            <div class="video-meta">${videoData.description}</div>
+            <div class="video-author" onclick="viewUserProfile('${videoData.userId}', '${videoData.username}')">
+                <i class="fas fa-user"></i> ${videoData.username}
+            </div>
+        </div>
+    `;
+    
+    container.appendChild(videoCard);
+}
+
+// Modifier également la fonction createVideoCardForModal
+function createVideoCardForModal(videoData, container) {
+    const videoCard = document.createElement('div');
+    videoCard.className = 'video-card';
+    
+    videoCard.innerHTML = `
+        <div class="video-thumbnail">
+            <video controls onplay="openAdLink()">
+                <source src="${videoData.videoUrl}" type="video/mp4">
+                Votre navigateur ne supporte pas la lecture de vidéos.
+            </video>
+        </div>
+        <div class="video-info">
+            <h3 class="video-title">${videoData.title}</h3>
+            <div class="video-meta">${videoData.description}</div>
+        </div>
+    `;
+    
+    container.appendChild(videoCard);
+}
         // Charger des vidéos par défaut si Firestore échoue
         function loadDefaultVideos(container) {
             const defaultVideos = [
