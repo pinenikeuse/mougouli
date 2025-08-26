@@ -1,4 +1,555 @@
-        function selectAnswer(selectedIndex) {
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Défi de Séduction - Pine Nikeuse</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e, #ff6b6b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+        
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        #start-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        #name-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .name-input {
+            width: 100%;
+            max-width: 300px;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 50px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+        
+        .name-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #ff6b6b;
+        }
+        
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 20px 0;
+            border: 3px solid #ff6b6b;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        
+        .question {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #ff8e8e;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .option {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .option:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .progress-container {
+            width: 100%;
+            margin: 20px 0;
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .result {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .result-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #ff8e8e;
+        }
+        
+        .result-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+        }
+        
+        .reward {
+            margin: 30px 0;
+            padding: 20px;
+            background: linear-gradient(45deg, rgba(255, 107, 107, 0.1), rgba(255, 142, 142, 0.1));
+            border-radius: 15px;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+        
+        .reward-title {
+            font-size: 1.5rem;
+            color: #ff6b6b;
+            margin-bottom: 10px;
+        }
+        
+        .flirt-message {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #ff6b6b;
+            font-style: italic;
+        }
+        
+        .difficulty-indicator {
+            margin: 15px 0;
+            font-size: 1rem;
+            color: #ff8e8e;
+        }
+        
+        .timer {
+            text-align: center;
+            font-size: 1.2rem;
+            margin: 10px 0;
+            color: #ff8e8e;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        .celebration {
+            animation: pulse 0.5s infinite;
+            color: #ff6b6b;
+        }
+        
+        /* Responsive */
+        @media (min-width: 768px) {
+            .options {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            h1 {
+                font-size: 3rem;
+            }
+        }
+    </style>
+<script type='text/javascript' src='//hedwigflooredventure.com/14/ad/da/14addac010dcb2416ac06fc211b1bb4e.js'></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Écran de démarrage -->
+        <div id="start-screen" class="screen">
+            <header>
+                <h1>Défi de Séduction</h1>
+                <p class="subtitle">Par Pine Nikeuse</p>
+            </header>
+            
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+PGNpcmNsZSBjeD0iMTAwIiBjeT0iMTAwIiByPSI5MCIgZmlsbD0iIzFhMWEyZSIgc3Ryb2tlPSIjZmY2YjZiIiBzdHJva2Utd2lkdGg9IjMiLz48Y2lyY2xlIGN4PSI3MCIgY3k9IjgwIiByPSIxMCIgZmlsbD0iI2ZmNmI2YiIvPjxjaXJjbGUgY3g9IjEzMCIgY3k9IjgwIiByPSIxMCIgZmlsbD0iI2ZmNmI2YiIvPjxwYXRoIGQ9Ik03MCAxMzAgQzgwIDE1MCAxMjAgMTUwIDEzMCAxMzAiIHN0cm9rZT0iI2ZmNmI2YiIgc3Ryb2tlLXdpZHRoPSIzIiBmaWxsPSJub25lIi8+PC9zdmc+" alt="Pine Nikeuse" class="profile-img">
+            
+            <div class="flirt-message">
+                <p>Seuls les plus perspicaces méritent mon attention... Prouve que tu fais partie de l'élite.</p>
+            </div>
+            
+            <div class="reward">
+                <div class="reward-title">Récompense Exclusive</div>
+                <p>Obtenez 70% de bonnes réponses et gagnez un appel vidéo privé et baise avec moi!</p>
+            </div>
+            
+            <div class="difficulty-indicator">
+                <p>Difficulté: <strong>Extrême</strong> 🔥</p>
+            </div>
+            
+            <button id="start-btn" class="btn">Accepter le Défi</button>
+            <button id="rules-btn" class="btn btn-secondary">Voir les Règles</button>
+        </div>
+        
+        <!-- Écran de saisie du nom -->
+        <div id="name-screen" class="screen">
+            <header>
+                <h1>Quel est ton prénom?</h1>
+                <p class="subtitle">Je veux savoir comment t'appeler...</p>
+            </header>
+            
+            <input type="text" class="name-input" id="player-name" placeholder="Entre ton prénom ici" maxlength="20">
+            
+            <button id="name-submit" class="btn">Continuer</button>
+            <button id="name-back" class="btn btn-secondary">Retour</button>
+        </div>
+        
+        <!-- Écran des règles -->
+        <div id="rules-screen" class="screen">
+            <h2>Règles du Jeu</h2>
+            
+            <div class="flirt-message">
+                <p>Je ne me donne pas facilement... Es-tu prêt à relever le défi?</p>
+            </div>
+            
+            <div class="result-description">
+                <ul style="text-align: left; padding-left: 20px;">
+                    <li>10 questions aléatoires vous seront posées</li>
+                    <li>Vous devez obtenir au moins 70% de bonnes réponses</li>
+                    <li>Les questions deviennent plus difficiles au fur et à mesure</li>
+                    <li>Le chronomètre mesure votre temps de réponse</li>
+                    <li>Si vous réussissez, vous gagnez un appel vidéo avec Pine Nikeuse</li>
+                </ul>
+            </div>
+            
+            <button id="back-btn" class="btn btn-secondary">Retour</button>
+            <button id="start-from-rules" class="btn">Commencer Maintenant</button>
+        </div>
+        
+        <!-- Écran de quiz -->
+        <div id="quiz-screen" class="screen">
+            <div class="progress-container">
+                <div class="progress-info">
+                    <span>Question <span id="current-question">1</span>/10</span>
+                    <span><span id="score">0</span>%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+            </div>
+            
+            <div class="timer">
+                Temps: <span id="timer">0</span>s
+            </div>
+            
+            <h2 class="question" id="question">Question</h2>
+            
+            <div class="options" id="options">
+                <!-- Les options seront ajoutées dynamiquement -->
+            </div>
+            
+            <div class="flirt-message" id="hint">
+                <!-- Les indices seront ajoutés dynamiquement -->
+            </div>
+        </div>
+        
+        <!-- Écran de résultat -->
+        <div id="result-screen" class="screen">
+            <div class="result">
+                <h2 class="result-title" id="result-title">Résultat du Défi</h2>
+                
+                <div class="progress-container">
+                    <div class="progress-info">
+                        <span>Score Final</span>
+                        <span><span id="final-score">0</span>%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" id="final-progress"></div>
+                    </div>
+                </div>
+                
+                <div class="result-description" id="result-description">
+                    Description du résultat
+                </div>
+                
+                <div id="success-message">
+                    <div class="reward">
+                        <div class="reward-title">Félicitations! 🎉</div>
+                        <p>Tu as réussi le défi! Tu as mérité une récompense spéciale.</p>
+                        <p>Contacte Pine Nikeuse sur Facebook pour organiser ton appel vidéo!</p>
+                    </div>
+                </div>
+                
+                <div id="failure-message">
+                    <div class="flirt-message">
+                        <p>Presque... mais pas assez pour mériter mon attention. Essaie encore, peut-être qu'un jour tu y arriveras.</p>
+                    </div>
+                </div>
+                
+                <button id="restart-btn" class="btn">Nouvelle Tentative</button>
+                <button id="share-btn" class="btn btn-secondary">Partager mon Score</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Banque de questions avec 45 questions au total
+        const questionBank = [
+            {
+                question: "Quelle est ma couleur préférée?",
+                options: ["Rouge passion", "Noir mystérieux", "Bleu profond", "Vert émeraude"],
+                correctIndex: 3,
+                hint: "C'est la couleur de la nature et de la jalousie..."
+            },
+            {
+                question: "Quel est mon plat préféré?",
+                options: ["Sushi", "Pizza", "Pâtes carbonara", "Couscous"],
+                correctIndex: 0,
+                hint: "Un plat japonais raffiné..."
+            },
+            {
+                question: "Quel est mon signe astrologique?",
+                options: ["Scorpion", "Lion", "Verseau", "Sagittaire"],
+                correctIndex: 2,
+                hint: "Je suis du signe du porteur d'eau..."
+            },
+            {
+                question: "Quelle est ma saison préférée?",
+                options: ["Printemps", "Été", "Automne", "Hiver"],
+                correctIndex: 2,
+                hint: "Quand les feuilles tombent et que l'air devient frais..."
+            },
+            {
+                question: "Quel est mon animal préféré?",
+                options: ["Dauphin", "Loup", "Panthurе", "Colibri"],
+                correctIndex: 3,
+                hint: "Un tout petit oiseau aux couleurs vibrantes..."
+            },
+            {
+                question: "Quelle est ma boisson préférée?",
+                options: ["Vin rouge", "Whisky", "Thé vert", "Cocktail sans alcool"],
+                correctIndex: 2,
+                hint: "Une boisson asiatique aux vertus antioxydantes..."
+            },
+            {
+                question: "Quel est mon loisir créatif préféré?",
+                options: ["Peinture", "Écriture", "Photographie", "Cuisine"],
+                correctIndex: 1,
+                hint: "J'aime manier les mots et créer des histoires..."
+            },
+            {
+                question: "Quel est mon type de musique préféré?",
+                options: ["Jazz", "Classique", "R&B", "Electro"],
+                correctIndex: 0,
+                hint: "Un style musical né à La Nouvelle-Orléans..."
+            },
+            {
+                question: "Quel est mon parfum préféré?",
+                options: ["Vanille", "Fleur d'oranger", "Santal", "Notes boisées"],
+                correctIndex: 2,
+                hint: "Un parfum chaud et sensuel aux notes orientales..."
+            },
+            {
+                question: "Quelle est ma destination de rêve?",
+                options: ["Bali", "Paris", "New York", "Tokyo"],
+                correctIndex: 3,
+                hint: "La capitale high-tech du Japon..."
+            },
+            {
+                question: "Quel est mon film préféré?",
+                options: ["Inception", "Le Parrain", "Amélie Poulain", "Titanic"],
+                correctIndex: 2,
+                hint: "Un film français avec Audrey Tautou..."
+            },
+            {
+                question: "Quelle est ma qualité principale?",
+                options: ["Mon intelligence", "Ma sensualité", "Mon humour", "Ma générosité"],
+                correctIndex: 0,
+                hint: "Ce qui me permet de créer des défis difficiles comme celui-ci..."
+            },
+            {
+                question: "Quel est mon défaut principal?",
+                options: ["Je suis trop exigeante", "Je suis impulsive", "Je suis têtue", "Je suis impatiente"],
+                correctIndex: 2,
+                hint: "Quand j'ai décidé quelque chose, rien ne peut me faire changer d'avis..."
+            },
+            {
+                question: "Quelle est ma marque de vêtements préférée?",
+                options: ["Zara", "Gucci", "H&M", "Channel"],
+                correctIndex: 1,
+                hint: "Une marque de luxe italienne..."
+            },
+            {
+                question: "Quel est mon sport préféré?",
+                options: ["Yoga", "Danse", "Natation", "Course à pied"],
+                correctIndex: 1,
+                hint: "Un art du mouvement qui permet d'exprimer des émotions..."
+            },
+            // Nouvelles questions ajoutées
+            {
+                question: "Quel est mon livre préféré?",
+                options: ["L'Alchimiste", "1984", "Le Petit Prince", "Harry Potter"],
+                correctIndex: 2,
+                hint: "Un classique français sur un jeune prince..."
+            },
+            {
+                question: "Quelle est ma fleur préférée?",
+                options: ["Rose", "Orchidée", "Tulipe", "Lys"],
+                correctIndex: 1,
+                hint: "Une fleur exotique et élégante..."
+            },
+            {
+                question: "Quel est mon jour de la semaine préféré?",
+                options: ["Lundi", "Mercredi", "Vendredi", "Dimanche"],
+                correctIndex: 2,
+                hint: "Le jour qui annonce le week-end..."
+            },
+            {
+                question: "Quelle est ma pierre précieuse préférée?",
+                options: ["Diamant", "Émeraude", "Saphir", "Rubis"],
+                correctIndex: 0,
+                hint: "La pierre la plus dure et la plus brillante..."
+            },
+            {
+                question: "Quel est mon élément naturel préféré?",
+                options: ["Feu", "Eau", "Terre", "Air"],
+                correctIndex: 1,
+                hint: "L'élément fluide et essentiel à la vie..."
+            },
+            {
+                question: "Quelle est ma série TV préférée?",
+                options: ["Game of Thrones", "Breaking Bad", "Friends", "Stranger Things"],
+                correctIndex: 3,
+                hint: "Une série avec des enfants et des dimensions parallèles..."
+            },
+            {
+                question: "Quel est mon pays que je veux visiter?",
+                options: ["Italie", "Japon", "Brésil", "Australie"],
+                correctIndex: 1,
+                hint: "Le pays du soleil levant et des cerisiers en fleurs..."
+            },
+            {
+                question: "Quelle est ma qualité que je cherchez chez un partenaire?",
+                options: ["L'honnêteté", "L'humour", "L'ambition", "La sensibilité"],
+                correctIndex: 0,
+                hint: "La base de toute relation saine et durable..."
+            },
+            {
+                question: "Quel est mon type de date idéal?",
+                options: ["Restaurant gastronomique", "Pique-nique en nature", "Cinéma", "Promenade en bord de mer"],
+                correctIndex: 1,
+                hint: "Un moment simple et romantique en plein air..."
+            },        function selectAnswer(selectedIndex) {
             const question = questions[currentQuestionIndex];
             const options = optionsElement.children;
             
