@@ -1092,6 +1092,7 @@
        
         // Fonction pour mettre à jour les métadonnées OG
 // Fonction pour mettre à jour les métadonnées OG
+// Fonction pour mettre à jour les métadonnées OG
 function updateMetaTags(videoData) {
     // Définir les métadonnées pour le partage social
     const metaTags = [
@@ -1104,7 +1105,10 @@ function updateMetaTags(videoData) {
         { property: 'og:video:type', content: 'video/mp4' },
         { property: 'og:video:width', content: '1280' },
         { property: 'og:video:height', content: '720' },
+        { property: 'og:image:width', content: '1280' },
+        { property: 'og:image:height', content: '720' },
         { name: 'twitter:card', content: 'player' },
+        { name: 'twitter:site', content: '@Mougouli' },
         { name: 'twitter:title', content: videoData.title },
         { name: 'twitter:description', content: videoData.description.substring(0, 200) },
         { name: 'twitter:image', content: videoData.thumbnailUrl || 'https://raw.githubusercontent.com/pinenikeuse/mougouli/main/1747616058238.jpg' },
@@ -1139,45 +1143,6 @@ function updateMetaTags(videoData) {
     
     console.log("Métadonnées mises à jour pour:", videoData.title);
 }
-// Appeler cette fonction lorsque l'utilisateur consulte une vidéo
-function loadVideo(videoId) {
-    // Charger les données de la vidéo depuis Firestore
-    db.collection('videos').doc(videoId).get()
-    .then(doc => {
-        if (doc.exists) {
-            const videoData = doc.data();
-            // Mettre à jour les métadonnées OG
-            updateMetaTags(videoData);
-            // Afficher la vidéo...
-        }
-    })
-    .catch(error => {
-        console.error("Erreur lors du chargement de la vidéo: ", error);
-    });
-}
-// Fonction pour définir la vidéo actuellement visionnée
-function setCurrentVideo(videoId) {
-    console.log("Définition de la vidéo actuelle:", videoId);
-    
-    // Charger les données complètes de la vidéo depuis Firestore
-    db.collection('videos').doc(videoId).get()
-    .then(doc => {
-        if (doc.exists) {
-            const videoData = doc.data();
-            videoData.id = doc.id; // Ajouter l'ID au objet videoData
-            
-            // Mettre à jour les métadonnées pour le partage
-            updateMetaTags(videoData);
-            
-            // Mettre à jour l'URL avec l'ID de la vidéo pour le partage
-            const newUrl = window.location.origin + window.location.pathname + '?video=' + videoId;
-            window.history.replaceState({}, document.title, newUrl);
-        }
-    })
-    .catch(error => {
-        console.error("Erreur lors du chargement des détails de la vidéo: ", error);
-    });
-}
 
 function confirmAge() {
     try {
@@ -1201,30 +1166,64 @@ function shareVideo(videoId, platform) {
     const shareUrl = window.location.origin + window.location.pathname + '?video=' + videoId;
     const title = "Regardez cette vidéo sur Mougouli!";
     
-    if (platform === 'facebook') {
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
-    } else if (platform === 'twitter') {
-        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
-    } else if (platform === 'whatsapp') {
-        window.open(`https://wa.me/?text=${encodeURIComponent(title + ' ' + shareUrl)}`, '_blank');
-    }
+    // Charger les données de la vidéo pour mettre à jour les métadonnées
+    db.collection('videos').doc(videoId).get()
+    .then((doc) => {
+        if (doc.exists) {
+            const videoData = doc.data();
+            
+            // Mettre à jour les métadonnées OG avant le partage
+            updateMetaTags({
+                ...videoData,
+                id: videoId
+            });
+            
+            // Court délai pour s'assurer que les métadonnées sont mises à jour
+            setTimeout(() => {
+                if (platform === 'facebook') {
+                    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
+                } else if (platform === 'twitter') {
+                    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+                } else if (platform === 'whatsapp') {
+                    window.open(`https://wa.me/?text=${encodeURIComponent(title + ' ' + shareUrl)}`, '_blank');
+                }
+            }, 100);
+        }
+    })
+    .catch((error) => {
+        console.error("Erreur lors du chargement de la vidéo pour le partage:", error);
+        // Fallback: partager même sans les métadonnées
+        if (platform === 'facebook') {
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
+        } else if (platform === 'twitter') {
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+        } else if (platform === 'whatsapp') {
+            window.open(`https://wa.me/?text=${encodeURIComponent(title + ' ' + shareUrl)}`, '_blank');
+        }
+    });
 }
 
-function copyShareLink(videoId) {
-    const shareUrl = window.location.origin + window.location.pathname + '?video=' + videoId;
+// ===== FONCTION setCurrentVideo (À AJOUTER ICI) =====
+function setCurrentVideo(videoId) {
+    console.log("Définition de la vidéo actuelle:", videoId);
     
-    navigator.clipboard.writeText(shareUrl).then(() => {
-        showAlert("Succès", "Lien copié dans le presse-papiers!");
-    }).catch(err => {
-        console.error('Erreur lors de la copie du lien: ', err);
-        // Fallback pour les navigateurs qui ne supportent pas clipboard API
-        const tempInput = document.createElement('input');
-        tempInput.value = shareUrl;
-        document.body.appendChild(tempInput);
-        tempInput.select();
-        document.execCommand('copy');
-        document.body.removeChild(tempInput);
-        showAlert("Succès", "Lien copié dans le presse-papiers!");
+    // Mettre à jour l'URL avec l'ID de la vidéo pour le partage
+    const newUrl = window.location.origin + window.location.pathname + '?video=' + videoId;
+    window.history.replaceState({}, document.title, newUrl);
+    
+    // Charger les données complètes de la vidéo depuis Firestore
+    db.collection('videos').doc(videoId).get()
+    .then(doc => {
+        if (doc.exists) {
+            const videoData = doc.data();
+            videoData.id = doc.id;
+            
+            // Mettre à jour les métadonnées pour le partage
+            updateMetaTags(videoData);
+        }
+    })
+    .catch(error => {
+        console.error("Erreur lors du chargement des détails de la vidéo: ", error);
     });
 }
 
@@ -1233,6 +1232,73 @@ function copyShareLink(videoId) {
         let isLoginMode = true;
         let selectedVideoFile = null;
         let currentViewedUserId = null;
+        
+        // Fonction pour générer une miniature à partir d'un fichier vidéo
+function generateThumbnail(videoFile, userId) {
+    return new Promise((resolve, reject) => {
+        console.log("Début de la génération de la miniature...");
+        
+        // Créer un élément vidéo invisible pour extraire une frame
+        const videoElement = document.createElement('video');
+        videoElement.src = URL.createObjectURL(videoFile);
+        videoElement.crossOrigin = 'anonymous'; // Important pour éviter les erreurs de sécurité
+        videoElement.muted = true;
+        videoElement.playsInline = true;
+
+        // Dès que la vidéo peut être lue, on cherche une frame
+        videoElement.addEventListener('loadedmetadata', function() {
+            console.log("Métadonnées vidéo chargées, durée:", this.duration, "secondes");
+            // Prendre une frame au quart de la vidéo ou à 2 secondes
+            this.currentTime = Math.min(2, this.duration * 0.25);
+        });
+
+        videoElement.addEventListener('seeked', function() {
+            console.log("Frame trouvée, création de la miniature...");
+            try {
+                // Créer un canvas pour dessiner l'image
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+
+                // Dimension du canvas = dimensions de la vidéo
+                canvas.width = this.videoWidth;
+                canvas.height = this.videoHeight;
+
+                // Dessiner l'image (la frame actuelle de la vidéo) sur le canvas
+                ctx.drawImage(this, 0, 0, canvas.width, canvas.height);
+
+                // Convertir le canvas en image JPEG (Blob)
+                canvas.toBlob(async (blob) => {
+                    try {
+                        console.log("Miniature créée, upload vers Firebase...");
+                        // Uploader l'image blob vers Firebase Storage
+                        const thumbnailFileName = `thumbnails/${userId}/${Date.now()}.jpg`;
+                        const thumbnailRef = storage.ref(thumbnailFileName);
+                        const thumbnailSnapshot = await thumbnailRef.put(blob);
+
+                        // Récupérer l'URL de téléchargement de la miniature
+                        const downloadURL = await thumbnailSnapshot.ref.getDownloadURL();
+                        console.log("Miniature uploadée avec succès:", downloadURL);
+                        resolve(downloadURL); // Renvoyer l'URL de la miniature
+
+                    } catch (uploadError) {
+                        console.error("Erreur lors de l'upload de la miniature:", uploadError);
+                        reject(uploadError);
+                    }
+                }, 'image/jpeg', 0.85); // Qualité JPEG à 85%
+            } catch (error) {
+                reject(error);
+            }
+        });
+
+        videoElement.addEventListener('error', function(e) {
+            console.error("Erreur élément vidéo:", e);
+            reject(new Error("Erreur lors de la lecture de la vidéo pour la miniature."));
+        });
+        
+        // Démarrer le chargement de la vidéo
+        videoElement.load();
+    });
+}
         
         // Fonction pour afficher une alerte dans un modal
         function showAlert(title, message) {
@@ -1455,120 +1521,108 @@ function copyShareLink(videoId) {
         });
         
         // Gestion du formulaire de publication
-        document.getElementById('publishForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const user = auth.currentUser;
-            if (!user) {
-                document.getElementById('publishError').textContent = 'Vous devez être connecté pour publier';
-                document.getElementById('publishError').style.display = 'block';
-                return;
-            }
-            
-            if (!selectedVideoFile) {
-                document.getElementById('publishError').textContent = 'Veuillez sélectionner une vidéo';
-                document.getElementById('publishError').style.display = 'block';
-                return;
-            }
-            
-            const title = document.getElementById('videoTitle').value;
-            const description = document.getElementById('videoDescription').value;
-            
-            // Afficher l'indicateur de progression
-            const progressBar = document.getElementById('progressBar');
-            const progress = document.getElementById('progress');
-            const publishButton = document.getElementById('publishButton');
-            const publishButtonText = document.getElementById('publishButtonText');
-            const publishSpinner = document.getElementById('publishSpinner');
-            
-            progressBar.style.display = 'block';
-            publishButtonText.style.display = 'none';
-            publishSpinner.style.display = 'block';
-            publishButton.disabled = true;
-            
-            try {
-                // Générer un nom de fichier unique
-                const fileExtension = selectedVideoFile.name.split('.').pop();
-                const fileName = `videos/${user.uid}/${Date.now()}.${fileExtension}`;
-                
-                // Uploader la vidéo vers Firebase Storage
-                const storageRef = storage.ref(fileName);
-                const uploadTask = storageRef.put(selectedVideoFile);
-                
-                // Surveiller la progression de l'upload
-                uploadTask.on('state_changed',
-                    (snapshot) => {
-                        // Mettre à jour la barre de progression
-                        const progressValue = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        progress.style.width = progressValue + '%';
-                    },
-                    (error) => {
-                        // Gérer les erreurs d'upload
-                        console.error('Erreur lors de l\'upload:', error);
-                        document.getElementById('publishError').textContent = 'Erreur lors du téléchargement: ' + error.message;
-                        document.getElementById('publishError').style.display = 'block';
-                        
-                        // Réinitialiser le formulaire
-                        progressBar.style.display = 'none';
-                        publishButtonText.style.display = 'block';
-                        publishSpinner.style.display = 'none';
-                        publishButton.disabled = false;
-                    },
-                    async () => {
-                        // Upload terminé avec succès
-                        try {
-                            // Récupérer l'URL de téléchargement
-                            const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-                            
-                            // Ajouter les métadonnées de la vidéo à Firestore
-                            await db.collection('videos').add({
-                                title: title,
-                                description: description,
-                                videoUrl: downloadURL,
-                                fileName: fileName,
-                                userId: user.uid,
-                                username: user.displayName || 'Utilisateur Anonyme',
-                                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                                size: selectedVideoFile.size,
-                                type: selectedVideoFile.type
-                            });
-                            
-                            // Fermer le modal et réinitialiser le formulaire
-                            closeModal('publishModal');
-                            document.getElementById('publishForm').reset();
-                            document.getElementById('videoPreview').style.display = 'none';
-                            selectedVideoFile = null;
-                            
-                            // Recharger les vidéos
-                            loadVideos();
-                            loadUserVideos(user.uid);
-                            
-                        } catch (error) {
-                            console.error('Erreur lors de l\'enregistrement:', error);
-                            document.getElementById('publishError').textContent = 'Erreur lors de l\'enregistrement: ' + error.message;
-                            document.getElementById('publishError').style.display = 'block';
-                        } finally {
-                            // Réinitialiser l'UI
-                            progressBar.style.display = 'none';
-                            publishButtonText.style.display = 'block';
-                            publishSpinner.style.display = 'none';
-                            publishButton.disabled = false;
-                        }
-                    }
-                );
-                
-            } catch (error) {
-                console.error('Erreur:', error);
-                document.getElementById('publishError').textContent = 'Erreur: ' + error.message;
-                document.getElementById('publishError').style.display = 'block';
-                
-                // Réinitialiser l'UI
-                progressBar.style.display = 'none';
-                publishButtonText.style.display = 'block';
-                publishSpinner.style.display = 'none';
-                publishButton.disabled = false;
-            }
+  // Gestion du formulaire de publication
+document.getElementById('publishForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const user = auth.currentUser;
+    if (!user) {
+        document.getElementById('publishError').textContent = 'Vous devez être connecté pour publier';
+        document.getElementById('publishError').style.display = 'block';
+        return;
+    }
+    
+    if (!selectedVideoFile) {
+        document.getElementById('publishError').textContent = 'Veuillez sélectionner une vidéo';
+        document.getElementById('publishError').style.display = 'block';
+        return;
+    }
+    
+    const title = document.getElementById('videoTitle').value;
+    const description = document.getElementById('videoDescription').value;
+    
+    // Afficher l'indicateur de progression
+    const progressBar = document.getElementById('progressBar');
+    const progress = document.getElementById('progress');
+    const publishButton = document.getElementById('publishButton');
+    const publishButtonText = document.getElementById('publishButtonText');
+    const publishSpinner = document.getElementById('publishSpinner');
+    
+    progressBar.style.display = 'block';
+    publishButtonText.style.display = 'none';
+    publishSpinner.style.display = 'block';
+    publishButton.disabled = true;
+    
+    try {
+        // 1. Upload de la vidéo principale
+        const fileExtension = selectedVideoFile.name.split('.').pop();
+        const fileName = `videos/${user.uid}/${Date.now()}.${fileExtension}`;
+        const storageRef = storage.ref(fileName);
+        const uploadTask = storageRef.put(selectedVideoFile);
+        
+        // Surveiller la progression de l'upload
+        const videoSnapshot = await new Promise((resolve, reject) => {
+            uploadTask.on('state_changed',
+                (snapshot) => {
+                    // Mettre à jour la barre de progression
+                    const progressValue = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    progress.style.width = progressValue + '%';
+                },
+                (error) => { 
+                    reject(error); 
+                },
+                () => { 
+                    resolve(uploadTask.snapshot); 
+                }
+            );
         });
+        
+        // 2. Récupérer l'URL de la vidéo
+        const videoUrl = await videoSnapshot.ref.getDownloadURL();
+        
+        // 3. GÉNÉRER LA MINIATURE (NOUVEAU CODE)
+        console.log("Génération de la miniature...");
+        const thumbnailUrl = await generateThumbnail(selectedVideoFile, user.uid);
+        
+        // 4. Ajouter les métadonnées de la vidéo + URL de la miniature à Firestore
+        const docRef = await db.collection('videos').add({
+            title: title,
+            description: description,
+            videoUrl: videoUrl,
+            thumbnailUrl: thumbnailUrl, // <-- Nouveau champ
+            fileName: fileName,
+            userId: user.uid,
+            username: user.displayName || 'Utilisateur Anonyme',
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            size: selectedVideoFile.size,
+            type: selectedVideoFile.type
+        });
+        
+        console.log("Vidéo publiée avec ID : ", docRef.id);
+        console.log("Miniature générée : ", thumbnailUrl);
+        
+        // 5. Fermer le modal et réinitialiser le formulaire
+        closeModal('publishModal');
+        document.getElementById('publishForm').reset();
+        document.getElementById('videoPreview').style.display = 'none';
+        selectedVideoFile = null;
+        
+        // 6. Recharger les vidéos
+        loadVideos();
+        loadUserVideos(user.uid);
+        
+    } catch (error) {
+        console.error('Erreur complète:', error);
+        document.getElementById('publishError').textContent = 'Erreur: ' + error.message;
+        document.getElementById('publishError').style.display = 'block';
+    } finally {
+        // Réinitialiser l'UI
+        progressBar.style.display = 'none';
+        publishButtonText.style.display = 'block';
+        publishSpinner.style.display = 'none';
+        publishButton.disabled = false;
+    }
+});
         
         // Redirection vers le profil
         document.getElementById('profileBtn').addEventListener('click', function() {
@@ -1645,7 +1699,22 @@ window.addEventListener('load', function() {
 });
         // Charger les vidéos depuis Firestore
        // Charger les vidéos depuis Firestore
+// Charger les vidéos depuis Firestore
 function loadVideos() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const videoId = urlParams.get('video');
+    
+    if (videoId) {
+        // Si un paramètre video est présent, charger uniquement cette vidéo
+        loadSpecificVideo(videoId);
+    } else {
+        // Sinon, charger toutes les vidéos comme avant
+        loadAllVideos();
+    }
+}
+
+// Charger toutes les vidéos (fonction existante modifiée)
+function loadAllVideos() {
     const videosContainer = document.getElementById('videosContainer');
     videosContainer.innerHTML = '';
     
@@ -1658,7 +1727,7 @@ function loadVideos() {
         
         querySnapshot.forEach((doc) => {
             const videoData = doc.data();
-            videoData.id = doc.id; // Ajouter l'ID du document
+            videoData.id = doc.id;
             createVideoCard(videoData, videosContainer);
         });
     })
@@ -1666,8 +1735,62 @@ function loadVideos() {
         console.error("Erreur lors du chargement des vidéos: ", error);
         loadDefaultVideos(videosContainer);
     });
-}    
-   
+}
+
+// Charger une vidéo spécifique (NOUVELLE FONCTION)
+function loadSpecificVideo(videoId) {
+    const videosContainer = document.getElementById('videosContainer');
+    videosContainer.innerHTML = '<div class="loading" style="text-align: center; padding: 20px;">Chargement de la vidéo...</div>';
+    
+    db.collection('videos').doc(videoId).get()
+    .then((doc) => {
+        if (doc.exists) {
+            const videoData = doc.data();
+            videoData.id = doc.id;
+            
+            // 1. Mettre à jour les métadonnées pour le partage social
+            updateMetaTags(videoData);
+            
+            // 2. Afficher UNIQUEMENT cette vidéo
+            videosContainer.innerHTML = '';
+            createVideoCard(videoData, videosContainer);
+            
+            // 3. Mettre à jour l'URL dans la barre d'adresse
+            const newUrl = window.location.origin + window.location.pathname + '?video=' + videoId;
+            window.history.replaceState({}, document.title, newUrl);
+            
+            // 4. Ajouter un bouton "Voir toutes les vidéos"
+            const backButton = document.createElement('div');
+            backButton.innerHTML = `
+                <div style="text-align: center; margin: 20px 0;">
+                    <button onclick="loadAllVideosAndRemoveParam()" style="padding: 10px 20px; background: var(--primary-color); color: white; border: none; border-radius: var(--border-radius); cursor: pointer;">
+                        <i class="fas fa-arrow-left"></i> Voir toutes les vidéos
+                    </button>
+                </div>
+            `;
+            videosContainer.prepend(backButton);
+            
+        } else {
+            // Si la vidéo n'existe pas, charger toutes les vidéos
+            console.error("Vidéo non trouvée avec l'ID:", videoId);
+            loadAllVideos();
+        }
+    })
+    .catch((error) => {
+        console.error("Erreur lors du chargement de la vidéo: ", error);
+        loadAllVideos();
+    });
+}
+
+// Fonction pour revenir à toutes les vidéos (NOUVELLE)
+function loadAllVideosAndRemoveParam() {
+    // Retirer le paramètre video de l'URL
+    const newUrl = window.location.origin + window.location.pathname;
+    window.history.replaceState({}, document.title, newUrl);
+    
+    // Recharger toutes les vidéos
+    loadAllVideos();
+}
      
         // Charger les vidéos d'un utilisateur pour le modal de profil
 // Charger les vidéos de l'utilisateur
