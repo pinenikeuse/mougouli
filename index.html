@@ -1196,6 +1196,39 @@ function denyAge() {
     window.location.href = 'https://www.google.com';
 }
 
+// ===== FONCTIONS DE PARTAGE =====
+function shareVideo(videoId, platform) {
+    const shareUrl = window.location.origin + window.location.pathname + '?video=' + videoId;
+    const title = "Regardez cette vidéo sur Mougouli!";
+    
+    if (platform === 'facebook') {
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
+    } else if (platform === 'twitter') {
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+    } else if (platform === 'whatsapp') {
+        window.open(`https://wa.me/?text=${encodeURIComponent(title + ' ' + shareUrl)}`, '_blank');
+    }
+}
+
+function copyShareLink(videoId) {
+    const shareUrl = window.location.origin + window.location.pathname + '?video=' + videoId;
+    
+    navigator.clipboard.writeText(shareUrl).then(() => {
+        showAlert("Succès", "Lien copié dans le presse-papiers!");
+    }).catch(err => {
+        console.error('Erreur lors de la copie du lien: ', err);
+        // Fallback pour les navigateurs qui ne supportent pas clipboard API
+        const tempInput = document.createElement('input');
+        tempInput.value = shareUrl;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        showAlert("Succès", "Lien copié dans le presse-papiers!");
+    });
+}
+
+
  // Variables globales
         let isLoginMode = true;
         let selectedVideoFile = null;
@@ -1674,9 +1707,6 @@ function createVideoCard(videoData, container) {
     const videoCard = document.createElement('div');
     videoCard.className = 'video-card';
     
-    // Ajouter un attribut data-video-id pour identifier la vidéo
-    videoCard.setAttribute('data-video-id', videoData.id);
-    
     videoCard.innerHTML = `
         <div class="video-thumbnail">
             <video controls onplay="openAdLink(); setCurrentVideo('${videoData.id}')">
@@ -1689,6 +1719,21 @@ function createVideoCard(videoData, container) {
             <div class="video-meta">${videoData.description}</div>
             <div class="video-author" onclick="viewUserProfile('${videoData.userId}', '${videoData.username}')">
                 <i class="fas fa-user"></i> ${videoData.username}
+            </div>
+            <!-- BOUTONS DE PARTAGE -->
+            <div class="share-buttons" style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="share-btn" onclick="shareVideo('${videoData.id}', 'facebook')" style="padding: 8px 12px; background: #1877F2; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    <i class="fab fa-facebook"></i> Facebook
+                </button>
+                <button class="share-btn" onclick="shareVideo('${videoData.id}', 'twitter')" style="padding: 8px 12px; background: #1DA1F2; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    <i class="fab fa-twitter"></i> Twitter
+                </button>
+                <button class="share-btn" onclick="shareVideo('${videoData.id}', 'whatsapp')" style="padding: 8px 12px; background: #25D366; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </button>
+                <button class="share-btn" onclick="copyShareLink('${videoData.id}')" style="padding: 8px 12px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    <i class="fas fa-link"></i> Copier lien
+                </button>
             </div>
         </div>
     `;
