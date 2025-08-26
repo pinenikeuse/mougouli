@@ -484,18 +484,17 @@
             z-index: 10000;
             overflow: auto;
         }
-        
         .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 20px;
-            border-radius: var(--border-radius);
-            width: 90%;
-            max-width: 600px;
-            box-shadow: var(--box-shadow);
-            position: relative;
+    background-color: white;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    width: 90%;
+    max-width: 600px;
+    box-shadow: var(--box-shadow);
+    position: relative;
+    z-index: 10001; /* Ajoutez cette ligne */
         }
-        
         .close-modal {
             position: absolute;
             top: 15px;
