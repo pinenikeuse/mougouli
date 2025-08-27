@@ -855,6 +855,154 @@
 .share-option-btn:nth-child(4) {
     background-color: #6c757d; /* Copier lien */
 }
+  /* Conteneur principal de la vidéo en haut de page */
+  #featuredVideoContainer {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto 30px auto;
+    background-color: #000;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    display: none;
+  }
+  
+  /* Format 2:3 pour la vidéo */
+  #featuredVideo {
+    width: 100%;
+    aspect-ratio: 2/3;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  /* Informations de la vidéo */
+  #featuredVideoInfo {
+    padding: 15px 0;
+    color: white;
+  }
+  
+  #featuredVideoTitle {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  
+  #featuredVideoDescription {
+    color: #ddd;
+    margin-bottom: 15px;
+  }
+  
+  #featuredVideoStats {
+    display: flex;
+    justify-content: space-between;
+    color: #aaa;
+    font-size: 0.9rem;
+  }
+  /* Styles pour l'affichage des vidéos */
+.video-card {
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.video-card.minimized {
+    opacity: 0.8;
+}
+
+.video-card.minimized .share-container {
+    display: none;
+}
+
+.featured-video {
+    width: 100%;
+    background-color: #000;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.featured-video-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.featured-video-container video {
+    width: 100%;
+    aspect-ratio: 2/3;
+    object-fit: cover;
+}
+
+.featured-video-info {
+    padding: 15px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.featured-video-info .share-container {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.share-btn {
+    background-color: #444;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.share-btn:hover {
+    background-color: #555;
+}
+
+.back-to-all-btn {
+    background-color: #f1c40f;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 10px 0;
+    font-weight: bold;
+}
+
+.back-to-all-btn:hover {
+    background-color: #f39c12;
+}
+<style>
+/* Couleurs pour l'icône de vues */
+.video-views {
+    color: #3ea6ff; /* Bleu vif YouTube-like */
+}
+
+.video-views i {
+    color: #3ea6ff;
+}
+
+/* Couleurs pour l'icône de date */
+.video-date {
+    color: #f1c40f; /* Jaune doré */
+}
+
+.video-date i {
+    color: #f1c40f;
+}
+
+/* Optionnel: Style pour l'auteur */
+.video-author {
+    color: #aaaaaa; /* Gris */
+}
+
+.video-author i {
+    color: #aaaaaa;
+}
+</style>
+</style>
     </style>
 </head>
 <body>
@@ -869,7 +1017,34 @@
             </div>
         </div>
     </div>
-
+<!-- Conteneur pour la vidéo en vedette -->
+<!-- Conteneur pour la vidéo en vedette -->
+<div id="featuredVideoContainer" class="featured-video" style="display: none;">
+    <button class="back-to-all-btn" onclick="loadAllVideosAndRemoveParam()">
+        <i class="fas fa-arrow-left"></i> Retour à toutes les vidéos
+    </button>
+    <div class="featured-video-container">
+        <video id="featuredVideoPlayer" controls></video>
+        <div class="featured-video-info">
+            <h2 id="featuredVideoTitle"></h2>
+            <p id="featuredVideoDescription"></p>
+            <div class="share-container">
+                <button class="share-btn" onclick="shareVideo(currentVideoId, 'facebook')">
+                    <i class="fab fa-facebook"></i> Facebook
+                </button>
+                <button class="share-btn" onclick="shareVideo(currentVideoId, 'twitter')">
+                    <i class="fab fa-twitter"></i> Twitter
+                </button>
+                <button class="share-btn" onclick="shareVideo(currentVideoId, 'whatsapp')">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </button>
+                <button class="share-btn" onclick="copyShareLink(currentVideoId)">
+                    <i class="fas fa-link"></i> Copier le lien
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
     <!-- Modal d'inscription/connexion -->
     <div id="authModal" class="modal">
         <div class="modal-content">
@@ -942,27 +1117,27 @@
     </div>
 
     <!-- Modal de profil utilisateur -->
-<!-- Modal de profil utilisateur -->
-<div id="userProfileModal" class="modal user-profile-modal">
-    <div class="modal-content">
-        <span class="close-modal" onclick="closeModal('userProfileModal');">&times;</span>
-        <h2 id="profileModalTitle">Profil de l'utilisateur</h2>
-        <div class="profile-header">
-            <div class="profile-avatar">
-                <i class="fas fa-user"></i>
+    <div id="userProfileModal" class="modal user-profile-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('userProfileModal')">&times;</span>
+            <h2 id="profileModalTitle">Profil de l'utilisateur</h2>
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="profile-info">
+                    <h2 id="profileModalUsername">Nom d'utilisateur</h2>
+                    <p id="profileModalVideosCount">0 vidéos publiées</p>
+                </div>
             </div>
-            <div class="profile-info">
-                <h2 id="profileModalUsername">Nom d'utilisateur</h2>
-                <p id="profileModalVideosCount">0 vidéos publiées</p>
+            
+            <h3 class="section-title">Vidéos publiées</h3>
+            <div class="profile-videos-grid" id="profileModalVideosContainer">
+                <!-- Les vidéos de l'utilisateur seront chargées ici -->
             </div>
-        </div>
-        
-        <h3 class="section-title">Vidéos publiées</h3>
-        <div class="profile-videos-grid" id="profileModalVideosContainer">
-            <!-- Les vidéos de l'utilisateur seront chargées ici -->
         </div>
     </div>
-</div>
+    
     <!-- Modal de partage -->
 <div id="shareModal" class="modal share-modal">
     <div class="modal-content">
@@ -984,15 +1159,7 @@
         </div>
     </div>
 </div>
-<!-- Modal Video -->
-<div id="videoModal" class="modal">
-    <div class="modal-content">
-<span class="close-modal" onclick="closeModal('videoModal');">&times;</span>
-        <div id="modalVideoContainer"></div>
-        <h3 id="modalVideoTitle" style="color: white; margin-top: 15px;"></h3>
-        <p id="modalVideoDescription" style="color: #ddd;"></p>
-    </div>
-</div>
+
     <!-- Modal d'alerte -->
     <div id="alertModal" class="modal alert-modal">
         <div class="modal-content">
@@ -1199,26 +1366,6 @@
         const db = firebase.firestore();
         const storage = firebase.storage();
        
-// Fonction pour fermer un modal et mémoriser cet état
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
-    
-    // Si c'est le modal vidéo, mémoriser que l'utilisateur l'a fermé
-    if (modalId === 'videoModal') {
-        const urlParams = new URLSearchParams(window.location.search);
-        const videoId = urlParams.get('video');
-        if (videoId) {
-            closedModals.video.add(videoId);
-        }
-    }
-}
-     // Fonction pour vérifier si un modal a été fermé par l'utilisateur
-function isModalClosed(modalType, identifier) {
-    if (modalType === 'video') {
-        return closedModals.video.has(identifier);
-    }
-    return false;
-}
         // Fonction pour mettre à jour les métadonnées OG
 // Fonction pour mettre à jour les métadonnées OG
 // Fonction pour mettre à jour les métadonnées OG
@@ -1331,6 +1478,7 @@ function shareVideo(videoId, platform) {
         }
     });
 }
+
 // ===== NOUVELLE FONCTION POUR COPIER LE LIEN =====
 function copyShareLink(videoId) {
     const shareUrl = window.location.origin + window.location.pathname + '?video=' + videoId;
@@ -1367,6 +1515,7 @@ function openShareModal(videoId) {
     currentVideoId = videoId;
     document.getElementById('shareModal').style.display = 'block';
 }
+
 
 // Fonction pour partager une vidéo (version mise à jour)
 function shareVideo(videoId, platform) {
@@ -1435,522 +1584,64 @@ function setCurrentVideo(videoId) {
         console.error("Erreur lors du chargement des détails de la vidéo: ", error);
     });
 }
-
-
- // Variables globales
-// ===== VARIABLES GLOBALES =====
+// Variables globales
 let isLoginMode = true;
 let selectedVideoFile = null;
 let currentViewedUserId = null;
+let currentPage = 1;
+const VIDEOS_PER_PAGE = 45;
+let lastVisibleDoc = null;
+let hasNextPage = false;
 
-
-// ===== GESTION DE LA FERMETURE DES MODALS =====
-// Objet pour suivre l'état des modals fermés par l'utilisateur
-const closedModals = {
-    video: new Set()  // Ensemble des IDs de vidéos dont le modal a été fermé
-};
-        
-        // ===== FONCTIONS DE COMPTEUR DE VUES =====
-function incrementVideoViews(videoId) {
-    // Vérifier si l'utilisateur a déjà vu cette vidéo (pour éviter les refreshes)
-    const viewedVideos = JSON.parse(sessionStorage.getItem('viewedVideos') || '[]');
-    
-    if (!viewedVideos.includes(videoId)) {
-        // Incrémenter le compteur dans Firestore
-        const videoRef = db.collection('videos').doc(videoId);
-        videoRef.update({
-            views: firebase.firestore.FieldValue.increment(1)
-        });
-        
-        // Marquer la vidéo comme vue dans cette session
-        viewedVideos.push(videoId);
-        sessionStorage.setItem('viewedVideos', JSON.stringify(viewedVideos));
-        
-        console.log("Vue ajoutée pour la vidéo:", videoId);
-    }
-}
-        
-        // Fonction pour générer une miniature à partir d'un fichier vidéo
-function generateThumbnail(videoFile, userId) {
-    return new Promise((resolve, reject) => {
-        console.log("Début de la génération de la miniature...");
-        
-        // Créer un élément vidéo invisible pour extraire une frame
-        const videoElement = document.createElement('video');
-        videoElement.src = URL.createObjectURL(videoFile);
-        videoElement.crossOrigin = 'anonymous'; // Important pour éviter les erreurs de sécurité
-        videoElement.muted = true;
-        videoElement.playsInline = true;
-
-        // Dès que la vidéo peut être lue, on cherche une frame
-        videoElement.addEventListener('loadedmetadata', function() {
-            console.log("Métadonnées vidéo chargées, durée:", this.duration, "secondes");
-            // Prendre une frame au quart de la vidéo ou à 2 secondes
-            this.currentTime = Math.min(2, this.duration * 0.25);
-        });
-
-        videoElement.addEventListener('seeked', function() {
-            console.log("Frame trouvée, création de la miniature...");
-            try {
-                // Créer un canvas pour dessiner l'image
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-
-                // Dimension du canvas = dimensions de la vidéo
-                canvas.width = this.videoWidth;
-                canvas.height = this.videoHeight;
-
-                // Dessiner l'image (la frame actuelle de la vidéo) sur le canvas
-                ctx.drawImage(this, 0, 0, canvas.width, canvas.height);
-
-                // Convertir le canvas en image JPEG (Blob)
-                canvas.toBlob(async (blob) => {
-                    try {
-                        console.log("Miniature créée, upload vers Firebase...");
-                        // Uploader l'image blob vers Firebase Storage
-                        const thumbnailFileName = `thumbnails/${userId}/${Date.now()}.jpg`;
-                        const thumbnailRef = storage.ref(thumbnailFileName);
-                        const thumbnailSnapshot = await thumbnailRef.put(blob);
-
-                        // Récupérer l'URL de téléchargement de la miniature
-                        const downloadURL = await thumbnailSnapshot.ref.getDownloadURL();
-                        console.log("Miniature uploadée avec succès:", downloadURL);
-                        resolve(downloadURL); // Renvoyer l'URL de la miniature
-
-                    } catch (uploadError) {
-                        console.error("Erreur lors de l'upload de la miniature:", uploadError);
-                        reject(uploadError);
-                    }
-                }, 'image/jpeg', 0.85); // Qualité JPEG à 85%
-            } catch (error) {
-                reject(error);
-            }
-        });
-
-        videoElement.addEventListener('error', function(e) {
-            console.error("Erreur élément vidéo:", e);
-            reject(new Error("Erreur lors de la lecture de la vidéo pour la miniature."));
-        });
-        
-        // Démarrer le chargement de la vidéo
-        videoElement.load();
-    });
-}
-        
-        // Fonction pour afficher une alerte dans un modal
-        function showAlert(title, message) {
-            document.getElementById('alertModalTitle').textContent = title;
-            document.getElementById('alertModalMessage').textContent = message;
-            document.getElementById('alertModal').style.display = 'block';
-        }
-        
-        // Vérification d'âge avec plusieurs méthodes de stockage
-        function confirmAge() {
-            // Essayer sessionStorage d'abord
-            try {
-                sessionStorage.setItem('ageVerified', 'true');
-            } catch (e) {
-                try {
-                    // Fallback sur localStorage
-                    localStorage.setItem('ageVerified', 'true');
-                } catch (e) {
-                    // Fallback sur cookie si les deux échouent
-                    document.cookie = "ageVerified=true; max-age=86400; path=/";
-                }
-            }
-            document.getElementById('ageVerification').style.display = 'none';
-        }
-        
-        function denyAge() {
-            window.location.href = 'https://www.google.com';
-        }
-        
-        // Vérifier si l'âge a déjà été vérifié avec plusieurs méthodes
-        function checkAgeVerification() {
-            var isAgeVerified = false;
-            
-            // Vérifier sessionStorage
-            try {
-                isAgeVerified = sessionStorage.getItem('ageVerified') === 'true';
-            } catch (e) {}
-            
-            // Vérifier localStorage si nécessaire
-            if (!isAgeVerified) {
-                try {
-                    isAgeVerified = localStorage.getItem('ageVerified') === 'true';
-                } catch (e) {}
-            }
-            
-            // Vérifier le cookie si toujours pas vérifié
-            if (!isAgeVerified) {
-                isAgeVerified = document.cookie.includes('ageVerified=true');
-            }
-            
-            if (!isAgeVerified) {
-                document.getElementById('ageVerification').style.display = 'flex';
-            } else {
-                document.getElementById('ageVerification').style.display = 'none';
-            }
-        }
-        
-        // Gestion de l'upload de vidéo
-        document.getElementById('videoFile').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                selectedVideoFile = file;
-                
-                // Afficher l'aperçu
-                const preview = document.getElementById('videoPreview');
-                const videoElement = preview.querySelector('video');
-                videoElement.src = URL.createObjectURL(file);
-                preview.style.display = 'block';
-                
-                // Masquer les erreurs précédentes
-                document.getElementById('publishError').style.display = 'none';
-            }
-        });
-        
-        // Gestion du drag and drop
-        const uploadContainer = document.getElementById('uploadContainer');
-        
-        uploadContainer.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            uploadContainer.classList.add('dragover');
-        });
-        
-        uploadContainer.addEventListener('dragleave', function() {
-            uploadContainer.classList.remove('dragover');
-        });
-        
-        uploadContainer.addEventListener('drop', function(e) {
-            e.preventDefault();
-            uploadContainer.classList.remove('dragover');
-            
-            const file = e.dataTransfer.files[0];
-            if (file && file.type.startsWith('video/')) {
-                selectedVideoFile = file;
-                document.getElementById('videoFile').files = e.dataTransfer.files;
-                
-                // Afficher l'aperçu
-                const preview = document.getElementById('videoPreview');
-                const videoElement = preview.querySelector('video');
-                videoElement.src = URL.createObjectURL(file);
-                preview.style.display = 'block';
-                
-                // Masquer les erreurs précédentes
-                document.getElementById('publishError').style.display = 'none';
-            } else {
-                document.getElementById('publishError').textContent = 'Veuillez sélectionner un fichier vidéo valide';
-                document.getElementById('publishError').style.display = 'block';
-            }
-        });
-        
-        // Gestion de l'authentification
-        function checkAuthState() {
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    // Utilisateur connecté
-                    document.getElementById('profileBtn').style.display = 'block';
-                    document.getElementById('loginBtn').innerHTML = '<i class="fas fa-sign-out-alt"></i> Déconnexion';
-                    document.getElementById('loginBtn').onclick = () => auth.signOut();
-                    
-                    // Afficher les informations du profil
-                    document.getElementById('profileUsername').textContent = user.displayName || 'Utilisateur';
-                    document.getElementById('profileEmail').textContent = user.email;
-                    
-                    // Charger les vidéos de l'utilisateur
-                    loadUserVideos(user.uid);
-                } else {
-                    // Utilisateur non connecté
-                    document.getElementById('profileBtn').style.display = 'none';
-                    document.getElementById('loginBtn').innerHTML = '<i class="fas fa-sign-in-alt"></i> Connexion';
-                    document.getElementById('loginBtn').onclick = () => openAuthModal();
-                    
-                    // Masquer la section profil
-                    document.getElementById('profileSection').style.display = 'none';
-                }
-            });
-        }
-        
-        // Ouvrir le modal d'authentification
-        function openAuthModal() {
-            document.getElementById('authModal').style.display = 'block';
-            document.getElementById('authError').style.display = 'none';
-            document.getElementById('authForm').reset();
-        }
-        
-        // Fermer un modal
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-        
-        // Basculer entre connexion et inscription
-        document.getElementById('authSwitch').addEventListener('click', function(e) {
-            e.preventDefault();
-            isLoginMode = !isLoginMode;
-            
-            if (isLoginMode) {
-                document.getElementById('authModalTitle').textContent = 'Connexion';
-                document.getElementById('authSubmit').textContent = 'Se connecter';
-                document.getElementById('authSwitch').textContent = 'Créer un compte';
-                document.getElementById('usernameField').style.display = 'none';
-            } else {
-                document.getElementById('authModalTitle').textContent = 'Inscription';
-                document.getElementById('authSubmit').textContent = 'Créer un compte';
-                document.getElementById('authSwitch').textContent = 'Se connecter';
-                document.getElementById('usernameField').style.display = 'block';
-            }
-            
-            document.getElementById('authError').style.display = 'none';
-        });
-        
-        // Gestion du formulaire d'authentification
-        document.getElementById('authForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const username = document.getElementById('username').value;
-            
-            if (isLoginMode) {
-                // Connexion
-                auth.signInWithEmailAndPassword(email, password)
-                    .then((userCredential) => {
-                        closeModal('authModal');
-                    })
-                    .catch((error) => {
-                        document.getElementById('authError').textContent = error.message;
-                        document.getElementById('authError').style.display = 'block';
-                    });
-            } else {
-                // Inscription
-                auth.createUserWithEmailAndPassword(email, password)
-                    .then((userCredential) => {
-                        // Mettre à jour le profil avec le nom d'utilisateur
-                        return userCredential.user.updateProfile({
-                            displayName: username
-                        });
-                    })
-                    .then(() => {
-                        closeModal('authModal');
-                    })
-                    .catch((error) => {
-                        document.getElementById('authError').textContent = error.message;
-                        document.getElementById('authError').style.display = 'block';
-                    });
-            }
-        });
-        
-        // Gestion de la publication
-        document.getElementById('publishBtn').addEventListener('click', function() {
-            const user = auth.currentUser;
-            if (user) {
-                // Ouvrir le modal de publication si l'utilisateur est connecté
-                document.getElementById('publishModal').style.display = 'block';
-                document.getElementById('publishError').style.display = 'none';
-                document.getElementById('publishForm').reset();
-                document.getElementById('videoPreview').style.display = 'none';
-                selectedVideoFile = null;
-            } else {
-                // Ouvrir le modal d'authentification si l'utilisateur n'est pas connecté
-                openAuthModal();
-            }
-        });
-        
-        // Gestion du formulaire de publication
-  // Gestion du formulaire de publication
-document.getElementById('publishForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const user = auth.currentUser;
-    if (!user) {
-        document.getElementById('publishError').textContent = 'Vous devez être connecté pour publier';
-        document.getElementById('publishError').style.display = 'block';
-        return;
-    }
-    
-    if (!selectedVideoFile) {
-        document.getElementById('publishError').textContent = 'Veuillez sélectionner une vidéo';
-        document.getElementById('publishError').style.display = 'block';
-        return;
-    }
-    
-    const title = document.getElementById('videoTitle').value;
-    const description = document.getElementById('videoDescription').value;
-    
-    // Afficher l'indicateur de progression
-    const progressBar = document.getElementById('progressBar');
-    const progress = document.getElementById('progress');
-    const publishButton = document.getElementById('publishButton');
-    const publishButtonText = document.getElementById('publishButtonText');
-    const publishSpinner = document.getElementById('publishSpinner');
-    
-    progressBar.style.display = 'block';
-    publishButtonText.style.display = 'none';
-    publishSpinner.style.display = 'block';
-    publishButton.disabled = true;
-    
-    try {
-        // 1. Upload de la vidéo principale
-        const fileExtension = selectedVideoFile.name.split('.').pop();
-        const fileName = `videos/${user.uid}/${Date.now()}.${fileExtension}`;
-        const storageRef = storage.ref(fileName);
-        const uploadTask = storageRef.put(selectedVideoFile);
-        
-        // Surveiller la progression de l'upload
-        const videoSnapshot = await new Promise((resolve, reject) => {
-            uploadTask.on('state_changed',
-                (snapshot) => {
-                    // Mettre à jour la barre de progression
-                    const progressValue = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    progress.style.width = progressValue + '%';
-                },
-                (error) => { 
-                    reject(error); 
-                },
-                () => { 
-                    resolve(uploadTask.snapshot); 
-                }
-            );
-        });
-        
-        // 2. Récupérer l'URL de la vidéo
-        const videoUrl = await videoSnapshot.ref.getDownloadURL();
-        
-        // 3. GÉNÉRER LA MINIATURE (NOUVEAU CODE)
-        console.log("Génération de la miniature...");
-        const thumbnailUrl = await generateThumbnail(selectedVideoFile, user.uid);
-        
-        // 4. Ajouter les métadonnées de la vidéo + URL de la miniature à Firestore
-  const docRef = await db.collection('videos').add({
-    title: title,
-    description: description,
-    videoUrl: videoUrl,
-    thumbnailUrl: thumbnailUrl,
-    fileName: fileName,
-    userId: user.uid,
-    username: user.displayName || 'Utilisateur Anonyme',
-    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    size: selectedVideoFile.size,
-    type: selectedVideoFile.type, // ← IL MANQUE UNE VIRGULE ICI !
-    views: 0  // ← Erreur à cause de la virgule manquante
-});
-        
-        console.log("Vidéo publiée avec ID : ", docRef.id);
-        console.log("Miniature générée : ", thumbnailUrl);
-        
-        // 5. Fermer le modal et réinitialiser le formulaire
-        closeModal('publishModal');
-        document.getElementById('publishForm').reset();
-        document.getElementById('videoPreview').style.display = 'none';
-        selectedVideoFile = null;
-        
-        // 6. Recharger les vidéos
-        loadVideos();
-        loadUserVideos(user.uid);
-        
-    } catch (error) {
-        console.error('Erreur complète:', error);
-        document.getElementById('publishError').textContent = 'Erreur: ' + error.message;
-        document.getElementById('publishError').style.display = 'block';
-    } finally {
-        // Réinitialiser l'UI
-        progressBar.style.display = 'none';
-        publishButtonText.style.display = 'block';
-        publishSpinner.style.display = 'none';
-        publishButton.disabled = false;
-    }
-});
-        
-        // Redirection vers le profil
-        document.getElementById('profileBtn').addEventListener('click', function() {
-            const user = auth.currentUser;
-            if (user) {
-                // Afficher/masquer la section profil
-                const profileSection = document.getElementById('profileSection');
-                if (profileSection.style.display === 'block') {
-                    profileSection.style.display = 'none';
-                } else {
-                    profileSection.style.display = 'block';
-                    // Charger les vidéos de l'utilisateur
-                    loadUserVideos(user.uid);
-                }
-            }
-        });
-        
-        // Language selection - remplacé par modal
-        document.getElementById('language-select').addEventListener('change', function() {
-            const lang = this.value;
-            const messages = {
-                'fr': "Le site a été changé en Français",
-                'en': "The site has been changed to English",
-                'es': "El sitio ha sido cambiado a Español",
-                'de': "Die Seite wurde auf Deutsch geändert",
-                'it': "Il sito è stato cambiato in Italiano",
-                'pt': "O site foi alterado para Português",
-                'ar': "تم تغيير الموقع إلى العربية",
-                'zh': "网站已更改为中文"
-            };
-            showAlert("Changement de langue", messages[lang]);
-        });
-
-        // Toggle details for money section
-        const showDetailsBtn = document.getElementById('showDetailsBtn');
-        const detailsSection = document.querySelector('.money-section .details');
-
-        showDetailsBtn.addEventListener('click', function() {
-            // Toggle the details section
-            const isVisible = detailsSection.style.display === 'block';
-            detailsSection.style.display = isVisible ? 'none' : 'block';
-            showDetailsBtn.textContent = isVisible ? 'RETRAIT D\'ARGENT' : 'Masquer les détails';
-        });
-
-        // Au chargement de la page
-          // Au chargement de la page
-window.addEventListener('load', function() {
-    // Vérifier l'âge
-    checkAgeVerification();
-    
-    // Vérifier l'état d'authentification
-    checkAuthState();
-    
-    // Charger les vidéos depuis Firestore
-    loadVideos();
-    
-    // Vérifier si un paramètre video est présent dans l'URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const videoId = urlParams.get('video');
-    if (videoId) {
-        // Charger la vidéo spécifique dans un modal
-        loadSpecificVideo(videoId);
-    }
-});
-        // Charger les vidéos depuis Firestore
-       // Charger les vidéos depuis Firestore
-// Charger les vidéos depuis Firestore
+// ===== FONCTIONS D'AFFICHAGE DES VIDÉOS =====
 function loadVideos() {
     const urlParams = new URLSearchParams(window.location.search);
     const videoId = urlParams.get('video');
     
     if (videoId) {
-        // Si un paramètre video est présent, charger uniquement cette vidéo
         loadSpecificVideo(videoId);
     } else {
-        // Sinon, charger toutes les vidéos comme avant
         loadAllVideos();
     }
 }
 
-// Charger toutes les vidéos (fonction existante modifiée)
 function loadAllVideos() {
     const videosContainer = document.getElementById('videosContainer');
+    if (!videosContainer) {
+        console.error("Element 'videosContainer' non trouvé");
+        return;
+    }
+    
     videosContainer.innerHTML = '';
     
-    db.collection('videos').orderBy('timestamp', 'desc').get()
+    const featuredContainer = document.getElementById('featuredVideoContainer');
+    if (featuredContainer) {
+        featuredContainer.style.display = 'none';
+    }
+    
+    const pagination = document.getElementById('pagination');
+    if (pagination) {
+        pagination.style.display = 'none';
+    }
+    
+    // Charger les vidéos avec pagination
+    db.collection('videos')
+        .orderBy('timestamp', 'desc')
+        .limit(VIDEOS_PER_PAGE)
+        .get()
     .then((querySnapshot) => {
         if (querySnapshot.empty) {
             loadDefaultVideos(videosContainer);
             return;
+        }
+        
+        // Déterminer s'il y a une page suivante
+        hasNextPage = querySnapshot.docs.length === VIDEOS_PER_PAGE;
+        if (hasNextPage) {
+            lastVisibleDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
+            if (pagination) {
+                pagination.style.display = 'flex';
+            }
         }
         
         querySnapshot.forEach((doc) => {
@@ -1965,91 +1656,353 @@ function loadAllVideos() {
     });
 }
 
-// Charger une vidéo spécifique (NOUVELLE FONCTION)
-// Modifier la fonction loadSpecificVideo pour respecter la fermeture utilisateur
-function loadSpecificVideo(videoId) {
-    // Vérifier si l'utilisateur a déjà fermé le modal pour cette vidéo
-    if (isModalClosed('video', videoId)) {
-        // Ne pas afficher le modal, mais charger toutes les vidéos normalement
-        loadAllVideos();
-        return;
-    }
+function loadNextPage() {
+    if (!lastVisibleDoc) return;
     
+    const videosContainer = document.getElementById('videosContainer');
+    if (!videosContainer) return;
+    
+    db.collection('videos')
+        .orderBy('timestamp', 'desc')
+        .startAfter(lastVisibleDoc)
+        .limit(VIDEOS_PER_PAGE)
+        .get()
+    .then((querySnapshot) => {
+        if (querySnapshot.empty) {
+            hasNextPage = false;
+            const pagination = document.getElementById('pagination');
+            if (pagination) {
+                pagination.style.display = 'none';
+            }
+            return;
+        }
+        
+        // Mettre à jour la pagination
+        hasNextPage = querySnapshot.docs.length === VIDEOS_PER_PAGE;
+        lastVisibleDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
+        
+        if (!hasNextPage) {
+            const pagination = document.getElementById('pagination');
+            if (pagination) {
+                pagination.style.display = 'none';
+            }
+        }
+        
+        // Ajouter les nouvelles vidéos
+        querySnapshot.forEach((doc) => {
+            const videoData = doc.data();
+            videoData.id = doc.id;
+            createVideoCard(videoData, videosContainer);
+        });
+        
+        // Faire défiler vers le haut de la section vidéos
+        const videosContainerElement = document.getElementById('videosContainer');
+        if (videosContainerElement) {
+            videosContainerElement.scrollIntoView({ behavior: 'smooth' });
+        }
+    })
+    .catch((error) => {
+        console.error("Erreur lors du chargement de la page suivante: ", error);
+    });
+}
+
+function loadSpecificVideo(videoId) {
     db.collection('videos').doc(videoId).get()
     .then((doc) => {
         if (doc.exists) {
             const videoData = doc.data();
             videoData.id = doc.id;
             
-            // Mettre à jour les métadonnées pour le partage social
             updateMetaTags(videoData);
+            showFeaturedVideo(videoData);
+            loadOtherVideos(videoId);
             
-            // Afficher la vidéo dans un modal
-            showVideoInModal(videoData);
+            // Ouvrir la publicité après un délai
+            setTimeout(openAdLink, 2000);
             
         } else {
             console.error("Vidéo non trouvée avec l'ID:", videoId);
-            // Charger toutes les vidéos si celle spécifiée n'existe pas
             loadAllVideos();
         }
     })
     .catch((error) => {
         console.error("Erreur lors du chargement de la vidéo: ", error);
-        // Charger toutes les vidéos en cas d'erreur
         loadAllVideos();
     });
 }
-// Afficher la vidéo dans un modal (NOUVELLE FONCTION)
-function showVideoInModal(videoData) {
-    // Créer ou mettre à jour le modal vidéo
-    let videoModal = document.getElementById('videoModal');
-    if (!videoModal) {
-        videoModal = document.createElement('div');
-        videoModal.id = 'videoModal';
-        videoModal.className = 'modal';
-        videoModal.innerHTML = `
-            <div class="modal-content">
-                <span class="close-modal" onclick="closeModal('videoModal')">&times;</span>
-                <div id="modalVideoContainer"></div>
-                <h3 id="modalVideoTitle" style="color: white; margin-top: 15px;"></h3>
-                <p id="modalVideoDescription" style="color: #ddd;"></p>
-            </div>
-        `;
-        document.body.appendChild(videoModal);
+
+function loadOtherVideos(excludeVideoId) {
+    const videosContainer = document.getElementById('videosContainer');
+    if (!videosContainer) return;
+    
+    videosContainer.innerHTML = '';
+    
+    db.collection('videos')
+        .orderBy('timestamp', 'desc')
+        .limit(VIDEOS_PER_PAGE)
+        .get()
+    .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            if (doc.id !== excludeVideoId) {
+                const videoData = doc.data();
+                videoData.id = doc.id;
+                createVideoCard(videoData, videosContainer, true);
+            }
+        });
+    })
+    .catch((error) => {
+        console.error("Erreur lors du chargement des autres vidéos: ", error);
+    });
+}
+
+function showFeaturedVideo(videoData) {
+    currentVideoId = videoData.id;
+    
+    const featuredContainer = document.getElementById('featuredVideoContainer');
+    if (featuredContainer) {
+        featuredContainer.style.display = 'block';
     }
     
-    // Remplir le modal avec les données de la vidéo
-    document.getElementById('modalVideoContainer').innerHTML = `
-        <video controls style="width: 100%; max-height: 70vh;">
-            <source src="${videoData.videoUrl}" type="video/mp4">
-        </video>
-    `;
-    document.getElementById('modalVideoTitle').textContent = videoData.title;
-    document.getElementById('modalVideoDescription').textContent = videoData.description;
+    const videoPlayer = document.getElementById('featuredVideoPlayer');
+    if (videoPlayer) {
+        videoPlayer.innerHTML = `<source src="${videoData.videoUrl}" type="video/mp4">`;
+        videoPlayer.load();
+    }
     
-    // Afficher le modal
-    videoModal.style.display = 'block';
+    const featuredTitle = document.getElementById('featuredVideoTitle');
+    if (featuredTitle) {
+        featuredTitle.textContent = videoData.title;
+    }
     
-    // Charger les autres vidéos en dessous
-    loadAllVideos();
+    const featuredDescription = document.getElementById('featuredVideoDescription');
+    if (featuredDescription) {
+        featuredDescription.textContent = videoData.description;
+    }
     
-    // Incrémenter le compteur de vues
     incrementVideoViews(videoData.id);
+    window.scrollTo(0, 0);
 }
-// Fonction pour revenir à toutes les vidéos (NOUVELLE)
+
+function createVideoCard(videoData, container, minimized = false) {
+    if (!container) return;
+    
+    const videoCard = document.createElement('div');
+    videoCard.className = minimized ? 'video-card minimized' : 'video-card';
+    videoCard.id = `video-${videoData.id}`;
+    
+    // Formater la date de publication
+    const publishDate = videoData.timestamp ? 
+        new Date(videoData.timestamp.seconds * 1000).toLocaleDateString('fr-FR') : 
+        'Date inconnue';
+    
+    videoCard.innerHTML = `
+    <div class="video-thumbnail">
+       <video onclick="handleVideoClick(this, '${videoData.id}')">
+            <source src="${videoData.videoUrl}" type="video/mp4">
+            Votre navigateur ne supporte pas la lecture de vidéos.
+        </video>
+    </div>
+    <div class="video-info">
+        <h3 class="video-title">${videoData.title}</h3>
+        
+        <div class="video-stats">
+            <div class="video-views">
+                <i class="fas fa-eye"></i> ${videoData.views || 0} vues
+            </div>
+            <div class="video-date">
+                <i class="far fa-calendar-alt"></i> ${publishDate}
+            </div>
+            <div class="video-author" onclick="viewUserProfile('${videoData.userId}', '${videoData.username}')">
+                <i class="fas fa-user"></i> ${videoData.username}
+            </div>
+        </div>
+        
+        ${minimized ? '' : `
+        <div class="share-container" style="text-align: center; margin-top: 15px;">
+            <button class="share-toggle-btn" onclick="openShareOptions('${videoData.id}')">
+                <i class="fas fa-share-alt"></i> Partager
+            </button>
+        </div>
+        `}
+    </div>
+`;
+    
+    container.appendChild(videoCard);
+}
+
+function handleVideoClick(videoElement, videoId) {
+    const newUrl = window.location.origin + window.location.pathname + '?video=' + videoId;
+    window.history.replaceState({}, document.title, newUrl);
+    loadSpecificVideo(videoId);
+}
+
 function loadAllVideosAndRemoveParam() {
-    // Retirer le paramètre video de l'URL
     const newUrl = window.location.origin + window.location.pathname;
     window.history.replaceState({}, document.title, newUrl);
-    
-    // Recharger toutes les vidéos
     loadAllVideos();
 }
-     
-        // Charger les vidéos d'un utilisateur pour le modal de profil
-// Charger les vidéos de l'utilisateur
+
+function loadDefaultVideos(container) {
+    if (!container) return;
+    
+    const defaultVideos = [
+        {
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+            title: "Vidéo de démonstration 1",
+            username: "Administrateur",
+            userId: "default",
+            views: 42,
+            timestamp: { seconds: Date.now() / 1000 }
+        },
+        {
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+            title: "Vidéo de démonstration 2",
+            username: "Administrateur",
+            userId: "default",
+            views: 28,
+            timestamp: { seconds: Date.now() / 1000 - 86400 }
+        },
+        {
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            title: "Vidéo de démonstration 3",
+            username: "Administrateur",
+            userId: "default",
+            views: 35,
+            timestamp: { seconds: Date.now() / 1000 - 172800 }
+        }
+    ];
+    
+    defaultVideos.forEach(videoData => {
+        createVideoCard(videoData, container);
+    });
+}
+
+// ===== FONCTIONS DE PARTAGE =====
+function openShareOptions(videoId) {
+    currentVideoId = videoId;
+    
+    // Créer ou afficher le modal de partage
+    let shareModal = document.getElementById('shareModal');
+    if (!shareModal) {
+        shareModal = document.createElement('div');
+        shareModal.id = 'shareModal';
+        shareModal.className = 'modal';
+        shareModal.innerHTML = `
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeModal('shareModal')">&times;</span>
+                <h3>Partager cette vidéo</h3>
+                <div class="share-options">
+                    <button class="share-option-btn" onclick="shareVideo('${videoId}', 'whatsapp')">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </button>
+                    <button class="share-option-btn" onclick="shareVideo('${videoId}', 'facebook')">
+                        <i class="fab fa-facebook"></i> Facebook
+                    </button>
+                    <button class="share-option-btn" onclick="shareVideo('${videoId}', 'twitter')">
+                        <i class="fab fa-twitter"></i> Twitter
+                    </button>
+                    <button class="share-option-btn" onclick="shareVideo('${videoId}', 'telegram')">
+                        <i class="fab fa-telegram"></i> Telegram
+                    </button>
+                    <button class="share-option-btn" onclick="copyShareLink('${videoId}')">
+                        <i class="fas fa-link"></i> Copier le lien
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(shareModal);
+    }
+    
+    shareModal.style.display = 'block';
+}
+
+function shareVideo(videoId, platform) {
+    const shareUrl = window.location.origin + window.location.pathname + '?video=' + videoId;
+    const title = "Regardez cette vidéo sur Mougouli!";
+    
+    db.collection('videos').doc(videoId).get()
+    .then((doc) => {
+        if (doc.exists) {
+            const videoData = doc.data();
+            
+            updateMetaTags({
+                ...videoData,
+                id: videoId
+            });
+            
+            setTimeout(() => {
+                if (platform === 'facebook') {
+                    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
+                } else if (platform === 'twitter') {
+                    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+                } else if (platform === 'whatsapp') {
+                    window.open(`https://wa.me/?text=${encodeURIComponent(title + ' ' + shareUrl)}`, '_blank');
+                } else if (platform === 'telegram') {
+                    window.open(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(title)}`, '_blank');
+                }
+            }, 100);
+        }
+    })
+    .catch((error) => {
+        console.error("Erreur lors du chargement de la vidéo pour le partage:", error);
+        if (platform === 'facebook') {
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
+        } else if (platform === 'twitter') {
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+        } else if (platform === 'whatsapp') {
+            window.open(`https://wa.me/?text=${encodeURIComponent(title + ' ' + shareUrl)}`, '_blank');
+        } else if (platform === 'telegram') {
+            window.open(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(title)}`, '_blank');
+        }
+    });
+    
+    closeModal('shareModal');
+}
+
+function copyShareLink(videoId) {
+    const shareUrl = window.location.origin + window.location.pathname + '?video=' + videoId;
+    
+    navigator.clipboard.writeText(shareUrl).then(() => {
+        showAlert("Succès", "Lien copié dans le presse-papier!");
+    }).catch(err => {
+        const textArea = document.createElement("textarea");
+        textArea.value = shareUrl;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            showAlert("Succès", "Lien copié dans le presse-papier!");
+        } catch (err) {
+            showAlert("Erreur", "Impossible de copier le lien: " + err);
+        }
+        document.body.removeChild(textArea);
+    });
+    
+    closeModal('shareModal');
+}
+
+// ===== FONCTIONS DE COMPTEUR DE VUES =====
+function incrementVideoViews(videoId) {
+    const viewedVideos = JSON.parse(sessionStorage.getItem('viewedVideos') || '[]');
+    
+    if (!viewedVideos.includes(videoId)) {
+        const videoRef = db.collection('videos').doc(videoId);
+        videoRef.update({
+            views: firebase.firestore.FieldValue.increment(1)
+        });
+        
+        viewedVideos.push(videoId);
+        sessionStorage.setItem('viewedVideos', JSON.stringify(viewedVideos));
+        
+        console.log("Vue ajoutée pour la vidéo:", videoId);
+    }
+}
+
+// ===== FONCTIONS DE GESTION DE PROFIL =====
 function loadUserVideos(userId) {
     const userVideosContainer = document.getElementById('userVideosContainer');
+    if (!userVideosContainer) return;
+    
     userVideosContainer.innerHTML = '';
     
     db.collection('videos').where('userId', '==', userId).orderBy('timestamp', 'desc').get()
@@ -2061,7 +2014,7 @@ function loadUserVideos(userId) {
         
         querySnapshot.forEach((doc) => {
             const videoData = doc.data();
-            videoData.id = doc.id; // ← AJOUTER CETTE LIGNE
+            videoData.id = doc.id;
             createVideoCard(videoData, userVideosContainer);
         });
     })
@@ -2070,27 +2023,48 @@ function loadUserVideos(userId) {
         userVideosContainer.innerHTML = '<p>Erreur lors du chargement de vos vidéos.</p>';
     });
 }
-    // Charger les vidéos d'un utilisateur pour le modal de profil
+
+function viewUserProfile(userId, username) {
+    currentViewedUserId = userId;
+    loadUserVideosForModal(userId, username);
+    
+    const profileModal = document.getElementById('userProfileModal');
+    if (profileModal) {
+        profileModal.style.display = 'block';
+    }
+}
+
 function loadUserVideosForModal(userId, username) {
-    document.getElementById('profileModalUsername').textContent = username;
+    const profileModalUsername = document.getElementById('profileModalUsername');
+    if (profileModalUsername) {
+        profileModalUsername.textContent = username;
+    }
+    
     const videosContainer = document.getElementById('profileModalVideosContainer');
+    if (!videosContainer) return;
+    
     videosContainer.innerHTML = '';
     
     db.collection('videos').where('userId', '==', userId).orderBy('timestamp', 'desc').get()
     .then((querySnapshot) => {
         if (querySnapshot.empty) {
             videosContainer.innerHTML = '<p>Cet utilisateur n\'a pas encore publié de vidéos.</p>';
-            document.getElementById('profileModalVideosCount').textContent = '0 vidéos publiées';
+            const videosCount = document.getElementById('profileModalVideosCount');
+            if (videosCount) {
+                videosCount.textContent = '0 vidéos publiées';
+            }
             return;
         }
         
-        document.getElementById('profileModalVideosCount').textContent = querySnapshot.size + ' vidéos publiées';
+        const videosCount = document.getElementById('profileModalVideosCount');
+        if (videosCount) {
+            videosCount.textContent = querySnapshot.size + ' vidéos publiées';
+        }
         
         querySnapshot.forEach((doc) => {
             const videoData = doc.data();
             videoData.id = doc.id;
             
-            // Créer une carte vidéo simplifiée pour le modal
             const videoElement = document.createElement('div');
             videoElement.className = 'video-card';
             videoElement.innerHTML = `
@@ -2114,127 +2088,194 @@ function loadUserVideosForModal(userId, username) {
         videosContainer.innerHTML = '<p>Erreur lors du chargement des vidéos.</p>';
     });
 }
-        // Créer une carte vidéo avec les métadonnées
-        // Fonction pour ouvrir le lien publicitaire
-function openAdLink() {
-    // Ouvrir le lien publicitaire dans un nouvel onglet
-    window.open('https://hedwigflooredventure.com/uf868bcft2?key=e8c8806d43592d84d110a00142dc05e8', '_blank');
+
+// ===== FONCTIONS D'AUTHENTIFICATION =====
+function checkAuthState() {
+    auth.onAuthStateChanged(user => {
+        const profileBtn = document.getElementById('profileBtn');
+        const loginBtn = document.getElementById('loginBtn');
+        const profileUsername = document.getElementById('profileUsername');
+        const profileEmail = document.getElementById('profileEmail');
+        const profileSection = document.getElementById('profileSection');
+        
+        if (user) {
+            if (profileBtn) profileBtn.style.display = 'block';
+            if (loginBtn) {
+                loginBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Déconnexion';
+                loginBtn.onclick = () => auth.signOut();
+            }
+            if (profileUsername) profileUsername.textContent = user.displayName || 'Utilisateur';
+            if (profileEmail) profileEmail.textContent = user.email;
+            
+            loadUserVideos(user.uid);
+        } else {
+            if (profileBtn) profileBtn.style.display = 'none';
+            if (loginBtn) {
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Connexion';
+                loginBtn.onclick = () => openAuthModal();
+            }
+            if (profileSection) profileSection.style.display = 'none';
+        }
+    });
 }
-// Fonction pour gérer le clic sur la vidéo
-// Modifier la fonction handleVideoClick pour réinitialiser l'état fermé si on clique à nouveau
-function handleVideoClick(videoElement, videoId) {
-    // Si la vidéo est en pause, on la lit
-    if (videoElement.paused) {
-        videoElement.play()
-            .then(() => {
-                // Actions à effectuer quand la vidéo commence à jouer
-                setCurrentVideo(videoId);
-                incrementVideoViews(videoId);
-                
-                // Si le modal avait été précédemment fermé, le réactiver
-                if (isModalClosed('video', videoId)) {
-                    closedModals.video.delete(videoId);
-                }
-                
-                // Ouvrir la pub après un court délai
-                setTimeout(openAdLink, 2000);
-            })
-            .catch(error => {
-                console.error("Erreur de lecture:", error);
-            });
-    } else {
-        // Si la vidéo est déjà en lecture, on la met en pause
-        videoElement.pause();
+
+function openAuthModal() {
+    const authModal = document.getElementById('authModal');
+    const authError = document.getElementById('authError');
+    const authForm = document.getElementById('authForm');
+    
+    if (authModal) authModal.style.display = 'block';
+    if (authError) authError.style.display = 'none';
+    if (authForm) authForm.reset();
+}
+
+// ===== FONCTIONS DE PUBLICATION =====
+function generateThumbnail(videoFile, userId) {
+    return new Promise((resolve, reject) => {
+        console.log("Début de la génération de la miniature...");
+        
+        const videoElement = document.createElement('video');
+        videoElement.src = URL.createObjectURL(videoFile);
+        videoElement.crossOrigin = 'anonymous';
+        videoElement.muted = true;
+        videoElement.playsInline = true;
+
+        videoElement.addEventListener('loadedmetadata', function() {
+            console.log("Métadonnées vidéo chargées, durée:", this.duration, "secondes");
+            this.currentTime = Math.min(2, this.duration * 0.25);
+        });
+
+        videoElement.addEventListener('seeked', function() {
+            console.log("Frame trouvée, création de la miniature...");
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+
+                canvas.width = this.videoWidth;
+                canvas.height = this.videoHeight;
+
+                ctx.drawImage(this, 0, 0, canvas.width, canvas.height);
+
+                canvas.toBlob(async (blob) => {
+                    try {
+                        console.log("Miniature créée, upload vers Firebase...");
+                        const thumbnailFileName = `thumbnails/${userId}/${Date.now()}.jpg`;
+                        const thumbnailRef = storage.ref(thumbnailFileName);
+                        const thumbnailSnapshot = await thumbnailRef.put(blob);
+
+                        const downloadURL = await thumbnailSnapshot.ref.getDownloadURL();
+                        console.log("Miniature uploadée avec succès:", downloadURL);
+                        resolve(downloadURL);
+                    } catch (uploadError) {
+                        console.error("Erreur lors de l'upload de la miniature:", uploadError);
+                        reject(uploadError);
+                    }
+                }, 'image/jpeg', 0.85);
+            } catch (error) {
+                reject(error);
+            }
+        });
+
+        videoElement.addEventListener('error', function(e) {
+            console.error("Erreur élément vidéo:", e);
+            reject(new Error("Erreur lors de la lecture de la vidéo pour la miniature."));
+        });
+        
+        videoElement.load();
+    });
+}
+
+// ===== FONCTIONS UTILITAIRES =====
+function showAlert(title, message) {
+    const alertModalTitle = document.getElementById('alertModalTitle');
+    const alertModalMessage = document.getElementById('alertModalMessage');
+    const alertModal = document.getElementById('alertModal');
+    
+    if (alertModalTitle) alertModalTitle.textContent = title;
+    if (alertModalMessage) alertModalMessage.textContent = message;
+    if (alertModal) alertModal.style.display = 'block';
+}
+
+function confirmAge() {
+    try {
+        sessionStorage.setItem('ageVerified', 'true');
+    } catch (e) {
+        try {
+            localStorage.setItem('ageVerified', 'true');
+        } catch (e) {
+            document.cookie = "ageVerified=true; max-age=86400; path=/";
+        }
+    }
+    
+    const ageVerification = document.getElementById('ageVerification');
+    if (ageVerification) {
+        ageVerification.style.display = 'none';
     }
 }
-// Modifier la fonction createVideoCard pour ajouter l'ouverture publicitaire
-// Modifier la fonction createVideoCard pour ajouter l'ouverture publicitaire
-function createVideoCard(videoData, container) {
-    const videoCard = document.createElement('div');
-    videoCard.className = 'video-card';
-    
-    videoCard.innerHTML = `
-    <div class="video-thumbnail">
-       <video onclick="handleVideoClick(this, '${videoData.id}')">
-            <source src="${videoData.videoUrl}" type="video/mp4">
-            Votre navigateur ne supporte pas la lecture de vidéos.
-        </video>
-    </div>
-    <div class="video-info">
-        <h3 class="video-title">${videoData.title}</h3>
-        <div class="video-meta">${videoData.description}</div>
-        
-        <!-- Affichage du compteur de vues -->
-        <div class="video-stats">
-            <div class="video-views">
-                <i class="fas fa-eye"></i> ${videoData.views || 0} vues
-            </div>
-            <div class="video-author" onclick="viewUserProfile('${videoData.userId}', '${videoData.username}')">
-                <i class="fas fa-user"></i> ${videoData.username}
-            </div>
-        </div>
-        
-        <!-- BOUTON PARTAGER (NOUVEAU) -->
-        <div class="share-container" style="text-align: center; margin-top: 15px;">
-            <button class="share-toggle-btn" onclick="openShareModal('${videoData.id}')">
-                <i class="fas fa-share-alt"></i> Partager
-            </button>
-        </div>
-    </div>
-`;
-    
-    container.appendChild(videoCard);
+
+function denyAge() {
+    window.location.href = 'https://www.google.com';
 }
-        // Charger des vidéos par défaut si Firestore échoue
-        function loadDefaultVideos(container) {
-            const defaultVideos = [
-                {
-                    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-                    title: "Vidéo de démonstration 1",
-                    description: "Vidéo d'exemple",
-                    username: "Administrateur",
-                    userId: "default"
-                },
-                {
-                    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-                    title: "Vidéo de démonstration 2",
-                    description: "Contenu de démonstration",
-                    username: "Administrateur",
-                    userId: "default"
-                },
-                {
-                    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-                    title: "Vidéo de démonstration 3",
-                    description: "Exemple de contenu",
-                    username: "Administrateur",
-                    userId: "default"
-                }
-            ];
-            
-            defaultVideos.forEach(videoData => {
-                createVideoCard(videoData, container);
-            });
+
+function checkAgeVerification() {
+    var isAgeVerified = false;
+    
+    try {
+        isAgeVerified = sessionStorage.getItem('ageVerified') === 'true';
+    } catch (e) {}
+    
+    if (!isAgeVerified) {
+        try {
+            isAgeVerified = localStorage.getItem('ageVerified') === 'true';
+        } catch (e) {}
+    }
+    
+    if (!isAgeVerified) {
+        isAgeVerified = document.cookie.includes('ageVerified=true');
+    }
+    
+    const ageVerification = document.getElementById('ageVerification');
+    if (ageVerification) {
+        ageVerification.style.display = isAgeVerified ? 'none' : 'flex';
+    }
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function openAdLink() {
+    window.open('https://hedwigflooredventure.com/uf868bcft2?key=e8c8806d43592d84d110a00142dc05e8', '_blank');
+}
+
+// ===== ÉVÉNEMENTS AU CHARGEMENT =====
+window.addEventListener('load', function() {
+    checkAgeVerification();
+    checkAuthState();
+    loadVideos();
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const videoId = urlParams.get('video');
+    if (videoId) {
+        loadSpecificVideo(videoId);
+    }
+});
+
+// Fermer les modals en cliquant à l'extérieur
+window.onclick = function(event) {
+    const modals = ['authModal', 'publishModal', 'userProfileModal', 'alertModal', 'shareModal'];
+    
+    modals.forEach(modalId => {
+        const modal = document.getElementById(modalId);
+        if (event.target === modal) {
+            modal.style.display = 'none';
         }
-        
-        // Afficher le profil d'un utilisateur
-        function viewUserProfile(userId, username) {
-            currentViewedUserId = userId;
-            loadUserVideosForModal(userId, username);
-            document.getElementById('userProfileModal').style.display = 'block';
-        }
-        
-        // Fermer les modals en cliquant à l'extérieur
-        window.onclick = function(event) {
-            const modals = ['authModal', 'publishModal', 'userProfileModal', 'alertModal'];
-            
-            modals.forEach(modalId => {
-                const modal = document.getElementById(modalId);
-                if (event.target === modal) {
-                    modal.style.display = 'none';
-                }
-            });
-        };
-    </script>
+    });
+};
+</script>
 <script type='text/javascript' src='//hedwigflooredventure.com/29/72/ee/2972ee2783b72e2a7074b0f1df8be81f.js'></script>
 </body>
 </html>
