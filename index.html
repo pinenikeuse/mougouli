@@ -752,7 +752,42 @@
             .videos-grid {
                 grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             }
-            
+                    /* ... VOTRE CODE CSS EXISTANT ... */
+
+        .modal-content {
+            margin: 5% auto;
+            padding: 15px;
+        }
+    } /* ← Fin de la media query */
+
+    /* ===== AJOUTEZ LE CSS POUR LES STATISTIQUES ICI ===== */
+    .video-stats {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 10px 0;
+        font-size: 14px;
+        color: #666;
+    }
+
+    .video-stats i {
+        margin-right: 5px;
+        color: var(--primary-color);
+    }
+
+    .video-views {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .loading {
+        text-align: center;
+        padding: 20px;
+        color: var(--primary-color);
+        font-size: 18px;
+    }
+    Ne pas toucher à cette balise fermante -->
             .footer-section {
                 min-width: 100%;
             }
@@ -776,6 +811,342 @@
                 padding: 15px;
             }
         }
+       /* ===== ÉTAPE 5 - STYLES POUR LE MODAL DE PARTAGE ===== */
+
+/* Styles pour le modal de partage */
+.share-modal .modal-content {
+    max-width: 500px;
+    text-align: center;
+}
+
+.share-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.share-option-btn {
+    padding: 12px;
+    border: none;
+    border-radius: var(--border-radius);
+    background-color: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.3s;
+}
+
+.share-option-btn:hover {
+    background-color: var(--secondary-color);
+}
+
+.share-option-btn:nth-child(1) {
+    background-color: #1877F2; /* Facebook */
+}
+
+.share-option-btn:nth-child(2) {
+    background-color: #1DA1F2; /* Twitter */
+}
+
+.share-option-btn:nth-child(3) {
+    background-color: #25D366; /* WhatsApp */
+}
+
+.share-option-btn:nth-child(4) {
+    background-color: #6c757d; /* Copier lien */
+}
+
+.share-toggle-btn {
+    padding: 10px 20px;
+    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.share-toggle-btn:hover {
+    opacity: 0.9;
+}
+
+/* Styles pour le modal vidéo */
+#videoModal .modal-content {
+    max-width: 800px;
+    background: #000;
+    color: white;
+}
+
+#videoModal .close-modal {
+    color: white;
+    z-index: 10;
+}
+/* ===== AMÉLIORATIONS MODERNES ===== */
+
+/* Amélioration globale des transitions et animations */
+* {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Header amélioré avec effet de verre (glassmorphism) */
+header {
+    background: rgba(52, 152, 219, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Recherche améliorée */
+.search-bar input {
+    border-radius: 50px 0 0 50px;
+    padding: 12px 20px;
+    border: 2px solid transparent;
+}
+
+.search-bar input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.search-bar button {
+    border-radius: 0 50px 50px 0;
+    padding: 12px 20px;
+    background: var(--dark-color);
+    transition: all 0.3s ease;
+}
+
+.search-bar button:hover {
+    background: #2c3e50;
+    transform: translateY(-1px);
+}
+
+/* Boutons améliorés avec effet de profondeur */
+.publish-btn, .profile-btn, .login-btn, .toggle-btn {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.publish-btn:after, .profile-btn:after, .login-btn:after, .toggle-btn:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+.publish-btn:hover:after, .profile-btn:hover:after, .login-btn:hover:after, .toggle-btn:hover:after {
+    animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(20, 20);
+        opacity: 0;
+    }
+}
+
+/* Cartes de vidéo améliorées */
+.video-card {
+    border: none;
+    overflow: hidden;
+    position: relative;
+}
+
+.video-thumbnail {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.video-thumbnail:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.video-card:hover .video-thumbnail:before {
+    opacity: 1;
+}
+
+.video-thumbnail video {
+    transition: transform 0.5s ease;
+}
+
+.video-card:hover .video-thumbnail video {
+    transform: scale(1.05);
+}
+
+/* Badge de durée de vidéo */
+.video-duration {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    z-index: 2;
+}
+
+/* Animation de chargement améliorée */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.loading:after {
+    content: "";
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-top: 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Amélioration des modals */
+.modal-content {
+    animation: modalFadeIn 0.3s;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Barre de défilement stylisée */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}
+
+/* Effet de survol sur les cartes de paiement */
+.payment-method {
+    transition: transform 0.3s ease;
+}
+
+.payment-method:hover {
+    transform: translateY(-5px);
+}
+
+/* Animation pour les nouveaux éléments */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Amélioration responsive */
+@media (max-width: 768px) {
+    .videos-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .search-bar input {
+        width: 100%;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .user-actions {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}
+
+/* Mode sombre optionnel (à activer via JS si souhaité) */
+[data-theme="dark"] {
+    --light-color: #2d3748;
+    --dark-color: #e2e8f0;
+    background-color: #1a202c;
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .video-card,
+[data-theme="dark"] .money-section,
+[data-theme="dark"] .ad-container {
+    background-color: #2d3748;
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .video-title,
+[data-theme="dark"] .section-title {
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .video-meta {
+    color: #cbd5e0;
+}
     </style>
 </head>
 <body>
@@ -883,7 +1254,37 @@
             </div>
         </div>
     </div>
-
+    
+    <!-- Modal de partage -->
+<div id="shareModal" class="modal share-modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal('shareModal')">&times;</span>
+        <h2>Partager cette vidéo</h2>
+        <div class="share-options">
+            <button class="share-option-btn" onclick="shareVideo(currentVideoId, 'facebook')">
+                <i class="fab fa-facebook"></i> Facebook
+            </button>
+            <button class="share-option-btn" onclick="shareVideo(currentVideoId, 'twitter')">
+                <i class="fab fa-twitter"></i> Twitter
+            </button>
+            <button class="share-option-btn" onclick="shareVideo(currentVideoId, 'whatsapp')">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+            </button>
+            <button class="share-option-btn" onclick="copyShareLink(currentVideoId)">
+                <i class="fas fa-link"></i> Copier le lien
+            </button>
+        </div>
+    </div>
+</div>
+<!-- Modal Video -->
+<div id="videoModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal('videoModal')">&times;</span>
+        <div id="modalVideoContainer"></div>
+        <h3 id="modalVideoTitle" style="color: white; margin-top: 15px;"></h3>
+        <p id="modalVideoDescription" style="color: #ddd;"></p>
+    </div>
+</div>
     <!-- Modal d'alerte -->
     <div id="alertModal" class="modal alert-modal">
         <div class="modal-content">
@@ -1202,7 +1603,87 @@ function shareVideo(videoId, platform) {
         }
     });
 }
+// ===== NOUVELLE FONCTION POUR COPIER LE LIEN =====
+function copyShareLink(videoId) {
+    const shareUrl = window.location.origin + window.location.pathname + '?video=' + videoId;
+    
+    // Utiliser l'API Clipboard moderne
+    navigator.clipboard.writeText(shareUrl).then(() => {
+        showAlert("Succès", "Lien copié dans le presse-papier!");
+    }).catch(err => {
+        // Fallback pour les navigateurs plus anciens
+        const textArea = document.createElement("textarea");
+        textArea.value = shareUrl;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            showAlert("Succès", "Lien copié dans le presse-papier!");
+        } catch (err) {
+            showAlert("Erreur", "Impossible de copier le lien: " + err);
+        }
+        document.body.removeChild(textArea);
+    });
+    
+    // Fermer le modal après la copie
+    closeModal('shareModal');
+}
 
+// ===== ÉTAPE 4 - FONCTIONS POUR LE MODAL DE PARTAGE =====
+
+// Variable pour stocker l'ID de la vidéo actuelle
+let currentVideoId = '';
+
+// Ouvrir le modal de partage
+function openShareModal(videoId) {
+    currentVideoId = videoId;
+    document.getElementById('shareModal').style.display = 'block';
+}
+
+// Fonction pour partager une vidéo (version mise à jour)
+function shareVideo(videoId, platform) {
+    const shareUrl = window.location.origin + window.location.pathname + '?video=' + videoId;
+    const title = "Regardez cette vidéo sur Mougouli!";
+    
+    // Charger les données de la vidéo pour mettre à jour les métadonnées
+    db.collection('videos').doc(videoId).get()
+    .then((doc) => {
+        if (doc.exists) {
+            const videoData = doc.data();
+            
+            // Mettre à jour les métadonnées OG avant le partage
+            updateMetaTags({
+                ...videoData,
+                id: videoId
+            });
+            
+            // Court délai pour s'assurer que les métadonnées sont mises à jour
+            setTimeout(() => {
+                if (platform === 'facebook') {
+                    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
+                } else if (platform === 'twitter') {
+                    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+                } else if (platform === 'whatsapp') {
+                    window.open(`https://wa.me/?text=${encodeURIComponent(title + ' ' + shareUrl)}`, '_blank');
+                }
+            }, 100);
+        }
+    })
+    .catch((error) => {
+        console.error("Erreur lors du chargement de la vidéo pour le partage:", error);
+        // Fallback: partager même sans les métadonnées
+        if (platform === 'facebook') {
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
+        } else if (platform === 'twitter') {
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+        } else if (platform === 'whatsapp') {
+            window.open(`https://wa.me/?text=${encodeURIComponent(title + ' ' + shareUrl)}`, '_blank');
+        }
+    });
+    
+    // Fermer le modal après le partage
+    closeModal('shareModal');
+}
 // ===== FONCTION setCurrentVideo (À AJOUTER ICI) =====
 function setCurrentVideo(videoId) {
     console.log("Définition de la vidéo actuelle:", videoId);
@@ -1232,6 +1713,26 @@ function setCurrentVideo(videoId) {
         let isLoginMode = true;
         let selectedVideoFile = null;
         let currentViewedUserId = null;
+        
+        // ===== FONCTIONS DE COMPTEUR DE VUES =====
+function incrementVideoViews(videoId) {
+    // Vérifier si l'utilisateur a déjà vu cette vidéo (pour éviter les refreshes)
+    const viewedVideos = JSON.parse(sessionStorage.getItem('viewedVideos') || '[]');
+    
+    if (!viewedVideos.includes(videoId)) {
+        // Incrémenter le compteur dans Firestore
+        const videoRef = db.collection('videos').doc(videoId);
+        videoRef.update({
+            views: firebase.firestore.FieldValue.increment(1)
+        });
+        
+        // Marquer la vidéo comme vue dans cette session
+        viewedVideos.push(videoId);
+        sessionStorage.setItem('viewedVideos', JSON.stringify(viewedVideos));
+        
+        console.log("Vue ajoutée pour la vidéo:", videoId);
+    }
+}
         
         // Fonction pour générer une miniature à partir d'un fichier vidéo
 function generateThumbnail(videoFile, userId) {
@@ -1585,18 +2086,19 @@ document.getElementById('publishForm').addEventListener('submit', async function
         const thumbnailUrl = await generateThumbnail(selectedVideoFile, user.uid);
         
         // 4. Ajouter les métadonnées de la vidéo + URL de la miniature à Firestore
-        const docRef = await db.collection('videos').add({
-            title: title,
-            description: description,
-            videoUrl: videoUrl,
-            thumbnailUrl: thumbnailUrl, // <-- Nouveau champ
-            fileName: fileName,
-            userId: user.uid,
-            username: user.displayName || 'Utilisateur Anonyme',
-            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-            size: selectedVideoFile.size,
-            type: selectedVideoFile.type
-        });
+  const docRef = await db.collection('videos').add({
+    title: title,
+    description: description,
+    videoUrl: videoUrl,
+    thumbnailUrl: thumbnailUrl,
+    fileName: fileName,
+    userId: user.uid,
+    username: user.displayName || 'Utilisateur Anonyme',
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    size: selectedVideoFile.size,
+    type: selectedVideoFile.type, // ← IL MANQUE UNE VIRGULE ICI !
+    views: 0  // ← Erreur à cause de la virgule manquante
+});
         
         console.log("Vidéo publiée avec ID : ", docRef.id);
         console.log("Miniature générée : ", thumbnailUrl);
@@ -1683,18 +2185,8 @@ window.addEventListener('load', function() {
     const urlParams = new URLSearchParams(window.location.search);
     const videoId = urlParams.get('video');
     if (videoId) {
-        // Charger les données de la vidéo spécifique pour mettre à jour les métadonnées
-        db.collection('videos').doc(videoId).get()
-        .then(doc => {
-            if (doc.exists) {
-                const videoData = doc.data();
-                videoData.id = doc.id;
-                updateMetaTags(videoData);
-            }
-        })
-        .catch(error => {
-            console.error("Erreur lors du chargement de la vidéo: ", error);
-        });
+        // Charger la vidéo spécifique dans un modal
+        loadSpecificVideo(videoId);
     }
 });
         // Charger les vidéos depuis Firestore
@@ -1738,50 +2230,69 @@ function loadAllVideos() {
 }
 
 // Charger une vidéo spécifique (NOUVELLE FONCTION)
+// Charger une vidéo spécifique (NOUVELLE VERSION)
 function loadSpecificVideo(videoId) {
-    const videosContainer = document.getElementById('videosContainer');
-    videosContainer.innerHTML = '<div class="loading" style="text-align: center; padding: 20px;">Chargement de la vidéo...</div>';
-    
     db.collection('videos').doc(videoId).get()
     .then((doc) => {
         if (doc.exists) {
             const videoData = doc.data();
             videoData.id = doc.id;
             
-            // 1. Mettre à jour les métadonnées pour le partage social
+            // Mettre à jour les métadonnées pour le partage social
             updateMetaTags(videoData);
             
-            // 2. Afficher UNIQUEMENT cette vidéo
-            videosContainer.innerHTML = '';
-            createVideoCard(videoData, videosContainer);
-            
-            // 3. Mettre à jour l'URL dans la barre d'adresse
-            const newUrl = window.location.origin + window.location.pathname + '?video=' + videoId;
-            window.history.replaceState({}, document.title, newUrl);
-            
-            // 4. Ajouter un bouton "Voir toutes les vidéos"
-            const backButton = document.createElement('div');
-            backButton.innerHTML = `
-                <div style="text-align: center; margin: 20px 0;">
-                    <button onclick="loadAllVideosAndRemoveParam()" style="padding: 10px 20px; background: var(--primary-color); color: white; border: none; border-radius: var(--border-radius); cursor: pointer;">
-                        <i class="fas fa-arrow-left"></i> Voir toutes les vidéos
-                    </button>
-                </div>
-            `;
-            videosContainer.prepend(backButton);
+            // Afficher la vidéo dans un modal
+            showVideoInModal(videoData);
             
         } else {
-            // Si la vidéo n'existe pas, charger toutes les vidéos
             console.error("Vidéo non trouvée avec l'ID:", videoId);
+            // Charger toutes les vidéos si celle spécifiée n'existe pas
             loadAllVideos();
         }
     })
     .catch((error) => {
         console.error("Erreur lors du chargement de la vidéo: ", error);
+        // Charger toutes les vidéos en cas d'erreur
         loadAllVideos();
     });
 }
-
+// Afficher la vidéo dans un modal (NOUVELLE FONCTION)
+function showVideoInModal(videoData) {
+    // Créer ou mettre à jour le modal vidéo
+    let videoModal = document.getElementById('videoModal');
+    if (!videoModal) {
+        videoModal = document.createElement('div');
+        videoModal.id = 'videoModal';
+        videoModal.className = 'modal';
+        videoModal.innerHTML = `
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeModal('videoModal')">&times;</span>
+                <div id="modalVideoContainer"></div>
+                <h3 id="modalVideoTitle" style="color: white; margin-top: 15px;"></h3>
+                <p id="modalVideoDescription" style="color: #ddd;"></p>
+            </div>
+        `;
+        document.body.appendChild(videoModal);
+    }
+    
+    // Remplir le modal avec les données de la vidéo
+    document.getElementById('modalVideoContainer').innerHTML = `
+        <video controls style="width: 100%; max-height: 70vh;">
+            <source src="${videoData.videoUrl}" type="video/mp4">
+        </video>
+    `;
+    document.getElementById('modalVideoTitle').textContent = videoData.title;
+    document.getElementById('modalVideoDescription').textContent = videoData.description;
+    
+    // Afficher le modal
+    videoModal.style.display = 'block';
+    
+    // Charger les autres vidéos en dessous
+    loadAllVideos();
+    
+    // Incrémenter le compteur de vues
+    incrementVideoViews(videoData.id);
+}
 // Fonction pour revenir à toutes les vidéos (NOUVELLE)
 function loadAllVideosAndRemoveParam() {
     // Retirer le paramètre video de l'URL
@@ -1816,7 +2327,50 @@ function loadUserVideos(userId) {
         userVideosContainer.innerHTML = '<p>Erreur lors du chargement de vos vidéos.</p>';
     });
 }
+    // Charger les vidéos d'un utilisateur pour le modal de profil
+function loadUserVideosForModal(userId, username) {
+    document.getElementById('profileModalUsername').textContent = username;
+    const videosContainer = document.getElementById('profileModalVideosContainer');
+    videosContainer.innerHTML = '';
+    
+    db.collection('videos').where('userId', '==', userId).orderBy('timestamp', 'desc').get()
+    .then((querySnapshot) => {
+        if (querySnapshot.empty) {
+            videosContainer.innerHTML = '<p>Cet utilisateur n\'a pas encore publié de vidéos.</p>';
+            document.getElementById('profileModalVideosCount').textContent = '0 vidéos publiées';
+            return;
+        }
         
+        document.getElementById('profileModalVideosCount').textContent = querySnapshot.size + ' vidéos publiées';
+        
+        querySnapshot.forEach((doc) => {
+            const videoData = doc.data();
+            videoData.id = doc.id;
+            
+            // Créer une carte vidéo simplifiée pour le modal
+            const videoElement = document.createElement('div');
+            videoElement.className = 'video-card';
+            videoElement.innerHTML = `
+                <div class="video-thumbnail">
+                    <video>
+                        <source src="${videoData.videoUrl}" type="video/mp4">
+                    </video>
+                </div>
+                <div class="video-info">
+                    <h4 class="video-title">${videoData.title}</h4>
+                    <button class="watch-btn" onclick="showVideoInModal(${JSON.stringify(videoData).replace(/"/g, '&quot;')})">
+                        <i class="fas fa-play"></i> Regarder
+                    </button>
+                </div>
+            `;
+            videosContainer.appendChild(videoElement);
+        });
+    })
+    .catch((error) => {
+        console.error("Erreur lors du chargement des vidéos utilisateur: ", error);
+        videosContainer.innerHTML = '<p>Erreur lors du chargement des vidéos.</p>';
+    });
+}
         // Créer une carte vidéo avec les métadonnées
         // Fonction pour ouvrir le lien publicitaire
 function openAdLink() {
@@ -1831,35 +2385,34 @@ function createVideoCard(videoData, container) {
     videoCard.className = 'video-card';
     
     videoCard.innerHTML = `
-        <div class="video-thumbnail">
-            <video controls onplay="openAdLink(); setCurrentVideo('${videoData.id}')">
-                <source src="${videoData.videoUrl}" type="video/mp4">
-                Votre navigateur ne supporte pas la lecture de vidéos.
-            </video>
-        </div>
-        <div class="video-info">
-            <h3 class="video-title">${videoData.title}</h3>
-            <div class="video-meta">${videoData.description}</div>
+    <div class="video-thumbnail">
+        <video controls onplay="openAdLink(); setCurrentVideo('${videoData.id}'); incrementVideoViews('${videoData.id}')">
+            <source src="${videoData.videoUrl}" type="video/mp4">
+            Votre navigateur ne supporte pas la lecture de vidéos.
+        </video>
+    </div>
+    <div class="video-info">
+        <h3 class="video-title">${videoData.title}</h3>
+        <div class="video-meta">${videoData.description}</div>
+        
+        <!-- Affichage du compteur de vues -->
+        <div class="video-stats">
+            <div class="video-views">
+                <i class="fas fa-eye"></i> ${videoData.views || 0} vues
+            </div>
             <div class="video-author" onclick="viewUserProfile('${videoData.userId}', '${videoData.username}')">
                 <i class="fas fa-user"></i> ${videoData.username}
             </div>
-            <!-- BOUTONS DE PARTAGE -->
-            <div class="share-buttons" style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
-                <button class="share-btn" onclick="shareVideo('${videoData.id}', 'facebook')" style="padding: 8px 12px; background: #1877F2; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                    <i class="fab fa-facebook"></i> Facebook
-                </button>
-                <button class="share-btn" onclick="shareVideo('${videoData.id}', 'twitter')" style="padding: 8px 12px; background: #1DA1F2; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                    <i class="fab fa-twitter"></i> Twitter
-                </button>
-                <button class="share-btn" onclick="shareVideo('${videoData.id}', 'whatsapp')" style="padding: 8px 12px; background: #25D366; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                    <i class="fab fa-whatsapp"></i> WhatsApp
-                </button>
-                <button class="share-btn" onclick="copyShareLink('${videoData.id}')" style="padding: 8px 12px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                    <i class="fas fa-link"></i> Copier lien
-                </button>
-            </div>
         </div>
-    `;
+        
+        <!-- BOUTON PARTAGER (NOUVEAU) -->
+        <div class="share-container" style="text-align: center; margin-top: 15px;">
+            <button class="share-toggle-btn" onclick="openShareModal('${videoData.id}')">
+                <i class="fas fa-share-alt"></i> Partager
+            </button>
+        </div>
+    </div>
+`;
     
     container.appendChild(videoCard);
 }
