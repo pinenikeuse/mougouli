@@ -1360,9 +1360,12 @@
             appId: "1:94288484954:web:cede6d5cf48ede3806d663",
             measurementId: "G-6WK15KWD4L"
         };
-        
+     
         // Initialiser Firebase
-        firebase.initializeApp(firebaseConfig);
+        if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
         const auth = firebase.auth();
         const db = firebase.firestore();
         const storage = firebase.storage();
@@ -1586,6 +1589,7 @@ function setCurrentVideo(videoId) {
     });
 }
 // Variables globales
+// Variables globales
 let isLoginMode = true;
 let selectedVideoFile = null;
 let currentViewedUserId = null;
@@ -1593,6 +1597,115 @@ let currentPage = 1;
 const VIDEOS_PER_PAGE = 45;
 let lastVisibleDoc = null;
 let hasNextPage = false;
+
+// ===== FONCTIONS D'AUTHENTIFICATION =====
+function checkAuthState() {
+    auth.onAuthStateChanged(user => {
+        const profileBtn = document.getElementById('profileBtn');
+        const loginBtn = document.getElementById('loginBtn');
+        const profileUsername = document.getElementById('profileUsername');
+        const profileEmail = document.getElementById('profileEmail');
+        const profileSection = document.getElementById('profileSection');
+        
+        if (user) {
+            console.log("Utilisateur connecté:", user.email);
+            if (profileBtn) profileBtn.style.display = 'block';
+            if (loginBtn) {
+                loginBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Déconnexion';
+                loginBtn.onclick = () => {
+                    auth.signOut().then(() => {
+                        console.log("Utilisateur déconnecté");
+                    }).catch((error) => {
+                        console.error("Erreur de déconnexion:", error);
+                    });
+                };
+            }
+            if (profileUsername) profileUsername.textContent = user.displayName || user.email || 'Utilisateur';
+            if (profileEmail) profileEmail.textContent = user.email || 'Email non disponible';
+            if (profileSection) profileSection.style.display = 'block';
+            
+            loadUserVideos(user.uid);
+        } else {
+            console.log("Aucun utilisateur connecté");
+            if (profileBtn) profileBtn.style.display = 'none';
+            if (loginBtn) {
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Connexion';
+                loginBtn.onclick = () => openAuthModal();
+            }
+            if (profileSection) profileSection.style.display = 'none';
+        }
+    });
+}
+
+function openAuthModal() {
+    const authModal = document.getElementById('authModal');
+    const authError = document.getElementById('authError');
+    const authForm = document.getElementById('authForm');
+    
+    if (authModal) authModal.style.display = 'block';
+    if (authError) {
+        authError.style.display = 'none';
+        authError.textContent = '';
+    }
+    if (authForm) authForm.reset();
+}
+
+function handleAuthFormSubmit() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const username = document.getElementById('username').value;
+    const authError = document.getElementById('authError');
+    
+    if (isLoginMode) {
+        // Connexion
+        auth.signInWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                console.log("Connexion réussie");
+                closeModal('authModal');
+            })
+            .catch((error) => {
+                console.error("Erreur de connexion:", error);
+                if (authError) {
+                    authError.textContent = getAuthErrorMessage(error.code);
+                    authError.style.display = 'block';
+                }
+            });
+    } else {
+        // Inscription
+        auth.createUserWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                console.log("Inscription réussie");
+                // Mettre à jour le profil avec le nom d'utilisateur
+                return userCredential.user.updateProfile({
+                    displayName: username
+                });
+            })
+            .then(() => {
+                closeModal('authModal');
+            })
+            .catch((error) => {
+                console.error("Erreur d'inscription:", error);
+                if (authError) {
+                    authError.textContent = getAuthErrorMessage(error.code);
+                    authError.style.display = 'block';
+                }
+            });
+    }
+}
+
+function getAuthErrorMessage(errorCode) {
+    const errorMessages = {
+        'auth/invalid-email': 'Adresse email invalide',
+        'auth/user-disabled': 'Ce compte a été désactivé',
+        'auth/user-not-found': 'Aucun compte trouvé avec cette adresse email',
+        'auth/wrong-password': 'Mot de passe incorrect',
+        'auth/email-already-in-use': 'Cette adresse email est déjà utilisée',
+        'auth/weak-password': 'Le mot de passe est trop faible',
+        'auth/operation-not-allowed': 'Cette opération n\'est pas autorisée'
+    };
+    
+    return errorMessages[errorCode] || 'Une erreur est survenue lors de l\'authentification';
+}
 
 // ===== FONCTIONS D'AFFICHAGE DES VIDÉOS =====
 function loadVideos() {
@@ -1783,30 +1896,6 @@ function showFeaturedVideo(videoData) {
     incrementVideoViews(videoData.id);
     window.scrollTo(0, 0);
 }
-// Fonction pour ouvrir le modal de publication
-function openPublishModal() {
-    const user = auth.currentUser;
-    if (user) {
-        // Ouvrir le modal de publication si l'utilisateur est connecté
-        document.getElementById('publishModal').style.display = 'block';
-        document.getElementById('publishError').style.display = 'none';
-        document.getElementById('publishForm').reset();
-        document.getElementById('videoPreview').style.display = 'none';
-        selectedVideoFile = null;
-    } else {
-        // Ouvrir le modal d'authentification si l'utilisateur n'est pas connecté
-        openAuthModal();
-    }
-}
-
-// Ajouter l'écouteur d'événement au bouton de publication
-document.addEventListener('DOMContentLoaded', function() {
-    const publishBtn = document.getElementById('publishBtn');
-    if (publishBtn) {
-        publishBtn.addEventListener('click', openPublishModal);
-    }
-});
-
 
 function createVideoCard(videoData, container, minimized = false) {
     if (!container) return;
@@ -2114,47 +2203,88 @@ function loadUserVideosForModal(userId, username) {
     });
 }
 
-// ===== FONCTIONS D'AUTHENTIFICATION =====
-function checkAuthState() {
-    auth.onAuthStateChanged(user => {
-        const profileBtn = document.getElementById('profileBtn');
-        const loginBtn = document.getElementById('loginBtn');
-        const profileUsername = document.getElementById('profileUsername');
-        const profileEmail = document.getElementById('profileEmail');
-        const profileSection = document.getElementById('profileSection');
-        
-        if (user) {
-            if (profileBtn) profileBtn.style.display = 'block';
-            if (loginBtn) {
-                loginBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Déconnexion';
-                loginBtn.onclick = () => auth.signOut();
-            }
-            if (profileUsername) profileUsername.textContent = user.displayName || 'Utilisateur';
-            if (profileEmail) profileEmail.textContent = user.email;
-            
-            loadUserVideos(user.uid);
-        } else {
-            if (profileBtn) profileBtn.style.display = 'none';
-            if (loginBtn) {
-                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Connexion';
-                loginBtn.onclick = () => openAuthModal();
-            }
-            if (profileSection) profileSection.style.display = 'none';
-        }
-    });
-}
-
-function openAuthModal() {
-    const authModal = document.getElementById('authModal');
-    const authError = document.getElementById('authError');
-    const authForm = document.getElementById('authForm');
-    
-    if (authModal) authModal.style.display = 'block';
-    if (authError) authError.style.display = 'none';
-    if (authForm) authForm.reset();
-}
-
 // ===== FONCTIONS DE PUBLICATION =====
+function openPublishModal() {
+    const user = auth.currentUser;
+    if (user) {
+        // Ouvrir le modal de publication si l'utilisateur est connecté
+        document.getElementById('publishModal').style.display = 'block';
+        document.getElementById('publishError').style.display = 'none';
+        document.getElementById('publishForm').reset();
+        document.getElementById('videoPreview').style.display = 'none';
+        selectedVideoFile = null;
+    } else {
+        // Ouvrir le modal d'authentification si l'utilisateur n'est pas connecté
+        openAuthModal();
+    }
+}
+
+function handlePublishFormSubmit() {
+    const user = auth.currentUser;
+    if (!user) {
+        showPublishError('Vous devez être connecté pour publier une vidéo');
+        return;
+    }
+    
+    const title = document.getElementById('videoTitle').value;
+    const description = document.getElementById('videoDescription').value;
+    
+    if (!selectedVideoFile) {
+        showPublishError('Veuillez sélectionner une vidéo');
+        return;
+    }
+    
+    // Afficher l'indicateur de progression
+    showPublishProgress(true);
+    
+    // Upload de la vidéo
+    const fileExtension = selectedVideoFile.name.split('.').pop();
+    const fileName = `videos/${user.uid}/${Date.now()}.${fileExtension}`;
+    const storageRef = storage.ref(fileName);
+    const uploadTask = storageRef.put(selectedVideoFile);
+    
+    // Surveiller la progression
+    uploadTask.on('state_changed',
+        (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            updateProgressBar(progress);
+        },
+        (error) => {
+            console.error('Erreur lors de l\'upload:', error);
+            showPublishError('Erreur lors du téléchargement: ' + error.message);
+            showPublishProgress(false);
+        },
+        () => {
+            // Upload réussi
+            uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                // Ajouter les métadonnées de la vidéo à Firestore
+                db.collection('videos').add({
+                    title: title,
+                    description: description,
+                    videoUrl: downloadURL,
+                    userId: user.uid,
+                    username: user.displayName || 'Utilisateur',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    views: 0
+                }).then((docRef) => {
+                    console.log("Vidéo publiée avec ID: ", docRef.id);
+                    closeModal('publishModal');
+                    showAlert("Succès", "Votre vidéo a été publiée avec succès!");
+                    
+                    // Recharger les vidéos
+                    loadVideos();
+                    loadUserVideos(user.uid);
+                }).catch((error) => {
+                    console.error("Erreur lors de l'ajout de la vidéo: ", error);
+                    showPublishError("Erreur lors de la publication: " + error.message);
+                }).finally(() => {
+                    showPublishProgress(false);
+                });
+            });
+        }
+    );
+}
+
 function generateThumbnail(videoFile, userId) {
     return new Promise((resolve, reject) => {
         console.log("Début de la génération de la miniature...");
@@ -2276,6 +2406,89 @@ function openAdLink() {
     window.open('https://hedwigflooredventure.com/uf868bcft2?key=e8c8806d43592d84d110a00142dc05e8', '_blank');
 }
 
+function showPublishError(message) {
+    const errorElement = document.getElementById('publishError');
+    if (errorElement) {
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+    }
+}
+
+function showPublishProgress(show) {
+    const buttonText = document.getElementById('publishButtonText');
+    const spinner = document.getElementById('publishSpinner');
+    const button = document.getElementById('publishButton');
+    
+    if (buttonText) buttonText.style.display = show ? 'none' : 'block';
+    if (spinner) spinner.style.display = show ? 'block' : 'none';
+    if (button) button.disabled = show;
+    
+    const progressBar = document.getElementById('progressBar');
+    if (progressBar) {
+        progressBar.style.display = show ? 'block' : 'none';
+    }
+}
+
+function updateProgressBar(progress) {
+    const progressElement = document.getElementById('progress');
+    if (progressElement) {
+        progressElement.style.width = progress + '%';
+    }
+}
+
+// Gestion de l'upload de vidéo
+document.getElementById('videoFile').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        selectedVideoFile = file;
+        
+        // Afficher l'aperçu
+        const preview = document.getElementById('videoPreview');
+        const videoElement = preview.querySelector('video');
+        videoElement.src = URL.createObjectURL(file);
+        preview.style.display = 'block';
+        
+        // Masquer les erreurs précédentes
+        document.getElementById('publishError').style.display = 'none';
+    }
+});
+
+// Gestion du drag and drop
+const uploadContainer = document.getElementById('uploadContainer');
+if (uploadContainer) {
+    uploadContainer.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        uploadContainer.classList.add('dragover');
+    });
+    
+    uploadContainer.addEventListener('dragleave', function() {
+        uploadContainer.classList.remove('dragover');
+    });
+    
+    uploadContainer.addEventListener('drop', function(e) {
+        e.preventDefault();
+        uploadContainer.classList.remove('dragover');
+        
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('video/')) {
+            selectedVideoFile = file;
+            document.getElementById('videoFile').files = e.dataTransfer.files;
+            
+            // Afficher l'aperçu
+            const preview = document.getElementById('videoPreview');
+            const videoElement = preview.querySelector('video');
+            videoElement.src = URL.createObjectURL(file);
+            preview.style.display = 'block';
+            
+            // Masquer les erreurs précédentes
+            document.getElementById('publishError').style.display = 'none';
+        } else {
+            document.getElementById('publishError').textContent = 'Veuillez sélectionner un fichier vidéo valide';
+            document.getElementById('publishError').style.display = 'block';
+        }
+    });
+}
+
 // ===== ÉVÉNEMENTS AU CHARGEMENT =====
 window.addEventListener('load', function() {
     checkAgeVerification();
@@ -2287,6 +2500,57 @@ window.addEventListener('load', function() {
     if (videoId) {
         loadSpecificVideo(videoId);
     }
+    
+    // Initialiser les écouteurs d'événements
+    const authForm = document.getElementById('authForm');
+    if (authForm) {
+        authForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleAuthFormSubmit();
+        });
+    }
+    
+    const publishForm = document.getElementById('publishForm');
+    if (publishForm) {
+        publishForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handlePublishFormSubmit();
+        });
+    }
+    
+    const publishBtn = document.getElementById('publishBtn');
+    if (publishBtn) {
+        publishBtn.addEventListener('click', openPublishModal);
+    }
+    
+    const authSwitch = document.getElementById('authSwitch');
+    if (authSwitch) {
+        authSwitch.addEventListener('click', function(e) {
+            e.preventDefault();
+            isLoginMode = !isLoginMode;
+            
+            const authModalTitle = document.getElementById('authModalTitle');
+            const authSubmit = document.getElementById('authSubmit');
+            const usernameField = document.getElementById('usernameField');
+            
+            if (isLoginMode) {
+                authModalTitle.textContent = 'Connexion';
+                authSubmit.textContent = 'Se connecter';
+                authSwitch.textContent = 'Créer un compte';
+                if (usernameField) usernameField.style.display = 'none';
+            } else {
+                authModalTitle.textContent = 'Inscription';
+                authSubmit.textContent = 'Créer un compte';
+                authSwitch.textContent = 'Se connecter';
+                if (usernameField) usernameField.style.display = 'block';
+            }
+            
+            const authError = document.getElementById('authError');
+            if (authError) {
+                authError.style.display = 'none';
+            }
+        });
+    }
 });
 
 // Fermer les modals en cliquant à l'extérieur
@@ -2296,7 +2560,7 @@ window.onclick = function(event) {
     modals.forEach(modalId => {
         const modal = document.getElementById(modalId);
         if (event.target === modal) {
-            modal.style.display = 'none';
+            closeModal(modalId);
         }
     });
 };
