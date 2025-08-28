@@ -1705,7 +1705,29 @@ function loadNextPage() {
         console.error("Erreur lors du chargement de la page suivante: ", error);
     });
 }
+// Fonction pour ouvrir le modal de publication
+function openPublishModal() {
+    const user = auth.currentUser;
+    if (user) {
+        // Ouvrir le modal de publication si l'utilisateur est connecté
+        document.getElementById('publishModal').style.display = 'block';
+        document.getElementById('publishError').style.display = 'none';
+        document.getElementById('publishForm').reset();
+        document.getElementById('videoPreview').style.display = 'none';
+        selectedVideoFile = null;
+    } else {
+        // Ouvrir le modal d'authentification si l'utilisateur n'est pas connecté
+        openAuthModal();
+    }
+}
 
+// Ajouter l'écouteur d'événement au bouton de publication
+document.addEventListener('DOMContentLoaded', function() {
+    const publishBtn = document.getElementById('publishBtn');
+    if (publishBtn) {
+        publishBtn.addEventListener('click', openPublishModal);
+    }
+});
 function loadSpecificVideo(videoId) {
     db.collection('videos').doc(videoId).get()
     .then((doc) => {
