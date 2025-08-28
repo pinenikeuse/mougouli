@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta name="google-adsense-account" content="ca-pub-5904049904040571">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mougouli.com - Visionnage de vidéo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Intégration de Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --success-color: #28a745;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f9;
+            overflow-x: hidden;
+        }
+        
+        /* Désactiver le zoom */
+        html, body {
+            touch-action: manipulation;
+            overflow-x: hidden;
+            width: 100%;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 15px 0;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        #logo {
+            width: 120px;
+            height: auto;
+            margin-right: 15px;
+        }
+        
+        .site-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 24px;
+        }
+        
+        .back-btn {
+            padding: 8px 15px;
+            background-color: var(--dark-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* Video Player Section */
+        .video-player-section {
+            margin: 20px 0;
+        }
+        
+        .video-player-container {
+            background-color: #000;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        #videoPlayer {
+            width: 100%;
+            aspect-ratio: 16/9;
+            display: block;
+        }
+        
+        .video-info {
+            padding: 20px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-top: 20px;
+        }
+        
+        .video-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+        
+        .video-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .video-stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #666;
+        }
+        
+        .video-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .like-btn {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .like-btn:hover {
+            background-color: #e9ecef;
+        }
+        
+        .like-btn.liked {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .share-btn {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+        
+        .share-btn:hover {
+            opacity: 0.9;
+        }
+        
+        /* Author Section */
+        .author-section {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .author-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-right: 15px;
+        }
+        
+        .author-info {
+            flex: 1;
+        }
+        
+        .author-name {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .author-stats {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .subscribe-btn {
+            padding: 8px 15px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        /* Related Videos */
+        .related-videos {
+            margin: 40px 0;
+        }
+        
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            margin: 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--dark-color);
+        }
+        
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .video-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .video-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .video-thumbnail {
+            position: relative;
+            width: 100%;
+            height: 160px;
+            overflow: hidden;
+        }
+        
+        .video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 30px;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        
+        .video-card:hover .play-icon {
+            opacity: 1;
+        }
+        
+        .video-info-small {
+            padding: 12px;
+        }
+        
+        .video-title-small {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .video-author-small {
+            font-size: 14px;
+            color: var(--primary-color);
+        }
+        
+        .video-stats-small {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        /* Modal de partage */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            overflow: auto;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--box-shadow);
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #aaa;
+            background: none;
+            border: none;
+        }
+        
+        .close-modal:hover {
+            color: var(--accent-color);
+        }
+        
+        .share-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .share-option-btn {
+            padding: 12px;
+            border: none;
+            border-radius: var(--border-radius);
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: opacity 0.3s;
+        }
+        
+        .share-option-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .share-facebook {
+            background-color: #1877F2;
+        }
+        
+        .share-twitter {
+            background-color: #1DA1F2;
+        }
+        
+        .share-whatsapp {
+            background-color: #25D366;
+        }
+        
+        .share-link {
+            background-color: #6c757d;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 30px 0;
+            margin-top: 40px;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 20px;
+        }
+        
+        .footer-section h4 {
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: white;
+        }
+        
+        .footer-section p, .footer-section a {
+            color: #ddd;
+            margin-bottom: 10px;
+            display: block;
+            text-decoration: none;
+        }
+        
+        .footer-section a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #555;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .video-stats {
+                flex-wrap: wrap;
+            }
+            
+            .video-actions {
+                flex-wrap: wrap;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+            
+            .video-player-container {
+                border-radius: 0;
+            }
+            
+            .author-section {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .author-avatar {
+                margin-right: 0;
+            }
+            
+            .videos-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .share-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-section {
+                min-width: 100%;
+            }
+        }
+        
+        /* Styles pour les icônes de statistiques */
+        .video-views {
+            color: #3ea6ff;
+        }
+        
+        .video-views i {
+            color: #3ea6ff;
+        }
+        
+        .video-date {
+            color: #f1c40f;
+        }
+        
+        .video-date i {
+            color: #f1c40f;
+        }
+        
+        .video-likes {
+            color: #e74c3c;
+        }
+        
+        .video-likes i {
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-container">
+                    <img id="logo" src="https://raw.githubusercontent.com/pinenikeuse/mougouli/refs/heads/main/1747616058238.jpg" alt="Mougouli Logo">
+                    <h1 class="site-title">Mougouli</h1>
+                </div>
+                <button class="back-btn" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i> Retour à l'accueil
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Video Player Section -->
+        <section class="video-player-section">
+            <div class="video-player-container">
+                <video id="videoPlayer" controls></video>
+            </div>
+            
+            <div class="video-info">
+                <h1 id="videoTitle" class="video-title">Titre de la vidéo</h1>
+                <p id="videoDescription" class="video-description">Description de la vidéo...</p>
+                
+                <div class="video-stats">
+                    <div class="stat-item video-views">
+                        <i class="fas fa-eye"></i>
+                        <span id="videoViews">0</span> vues
+                    </div>
+                    <div class="stat-item video-date">
+                        <i class="far fa-calendar-alt"></i>
+                        <span id="videoDate">Date de publication</span>
+                    </div>
+                    <div class="stat-item video-likes">
+                        <i class="fas fa-heart"></i>
+                        <span id="videoLikes">0</span> j'aime
+                    </div>
+                </div>
+                
+                <div class="video-actions">
+                    <button id="likeButton" class="action-btn like-btn">
+                        <i class="far fa-heart"></i> J'aime
+                    </button>
+                    <button class="action-btn share-btn" onclick="openShareModal()">
+                        <i class="fas fa-share-alt"></i> Partager
+                    </button>
+                </div>
+                
+                <div class="author-section">
+                    <div class="author-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="author-info">
+                        <h3 id="authorName" class="author-name">Nom de l'auteur</h3>
+                        <p id="authorStats" class="author-stats">0 abonnés • 0 vidéos</p>
+                    </div>
+                    <button class="subscribe-btn">S'abonner</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Related Videos Section -->
+        <section class="related-videos">
+            <h2 class="section-title">Vidéos similaires</h2>
+            <div class="videos-grid" id="relatedVideosContainer">
+                <!-- Les vidéos similaires seront chargées ici -->
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal de partage -->
+    <div id="shareModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('shareModal')">&times;</span>
+            <h2>Partager cette vidéo</h2>
+            <div class="share-options">
+                <button class="share-option-btn share-facebook" onclick="shareVideo('facebook')">
+                    <i class="fab fa-facebook"></i> Facebook
+                </button>
+                <button class="share-option-btn share-twitter" onclick="shareVideo('twitter')">
+                    <i class="fab fa-twitter"></i> Twitter
+                </button>
+                <button class="share-option-btn share-whatsapp" onclick="shareVideo('whatsapp')">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </button>
+                <button class="share-option-btn share-link" onclick="copyShareLink()">
+                    <i class="fas fa-link"></i> Copier le lien
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>À propos de Mougouli</h4>
+                    <p>Plateforme de partage de vidéos privées et premium.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Liens rapides</h4>
+                    <a href="index.html">Accueil</a>
+                    <a href="#">Vidéos tendance</a>
+                    <a href="#">Catégories</a>
+                    <a href="#">À propos</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <a href="mailto:baizemi0039@gmail.com">baizemi0039@gmail.com</a>
+                    <p>Pour toute question ou partenariat</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Mougouli. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCTj9H9KidzwYDr8Onl_UGqxC58ZlGBMfg",
+            authDomain: "test-c81f5.firebaseapp.com",
+            projectId: "test-c81f5",
+            storageBucket: "test-c81f5.firebasestorage.app",
+            messagingSenderId: "94288484954",
+            appId: "1:94288484954:web:cede6d5cf48ede3806d663",
+            measurementId: "G-6WK15KWD4L"
+        };
+     
+        // Initialiser Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        // Variables globales
+        let currentVideoId = null;
+        let currentVideoData = null;
+        let isLiked = false;
+
+        // ===== FONCTIONS PRINCIPALES =====
+        function initVideoPage() {
+            // Récupérer l'ID de la vidéo depuis l'URL
+            const urlParams = new URLSearchParams(window.location.search);
+            currentVideoId = urlParams.get('id');
+            
+            if (!currentVideoId) {
+                // Rediriger vers la page d'accueil si aucun ID de vidéo n'est fourni
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Charger les données de la vidéo
+            loadVideoData(currentVideoId);
+            
+            // Charger les vidéos similaires
+            loadRelatedVideos();
+            
+            // Vérifier si l'utilisateur a déjà liké cette vidéo
+            checkIfLiked();
+        }
+
+        function loadVideoData(videoId) {
+            db.collection('videos').doc(videoId).get()
+            .then((doc) => {
+                if (doc.exists) {
+                    currentVideoData = doc.data();
+                    currentVideoData.id = doc.id;
+                    
+                    // Mettre à jour l'interface avec les données de la vidéo
+                    updateVideoUI(currentVideoData);
+                    
+                    // Mettre à jour les métadonnées pour le partage social
+                    updateMetaTags(currentVideoData);
+                    
+                    // Incrémenter le compteur de vues
+                    incrementVideoViews(videoId);
+                } else {
+                    console.error("Vidéo non trouvée");
+                    // Rediriger vers la page d'accueil si la vidéo n'existe pas
+                    window.location.href = 'index.html';
+                }
+            })
+            .catch((error) => {
+                console.error("Erreur lors du chargement de la vidéo:", error);
+                window.location.href = 'index.html';
+            });
+        }
+
+        function updateVideoUI(videoData) {
+            // Mettre à jour le lecteur vidéo
+            const videoPlayer = document.getElementById('videoPlayer');
+            if (videoPlayer) {
+                videoPlayer.innerHTML = `<source src="${videoData.videoUrl}" type="video/mp4">`;
+                videoPlayer.load();
+            }
+            
+            // Mettre à jour les informations de la vidéo
+            document.getElementById('videoTitle').textContent = videoData.title;
+            document.getElementById('videoDescription').textContent = videoData.description;
+            document.getElementById('videoViews').textContent = videoData.views || 0;
+            document.getElementById('videoLikes').textContent = videoData.likes || 0;
+            
+            // Formater et afficher la date
+            if (videoData.timestamp) {
+                const publishDate = new Date(videoData.timestamp.seconds * 1000);
+                document.getElementById('videoDate').textContent = publishDate.toLocaleDateString('fr-FR');
+            }
+            
+            // Mettre à jour les informations de l'auteur
+            document.getElementById('authorName').textContent = videoData.username;
+            
+            // Charger les statistiques de l'auteur
+            loadAuthorStats(videoData.userId);
+        }
+
+        function loadAuthorStats(userId) {
+            // Compter le nombre de vidéos de l'auteur
+            db.collection('videos').where('userId', '==', userId).get()
+            .then((querySnapshot) => {
+                const videoCount = querySnapshot.size;
+                
+                // Pour les abonnés, vous devrez implémenter un système d'abonnement dans votre base de données
+                const subscriberCount = 0; // À remplacer par le vrai compteur d'abonnés
+                
+                document.getElementById('authorStats').textContent = 
+                    `${subscriberCount} abonnés • ${videoCount} vidéos`;
+            })
+            .catch((error) => {
+                console.error("Erreur lors du chargement des statistiques de l'auteur:", error);
+            });
+        }
+
+        function loadRelatedVideos() {
+            const relatedContainer = document.getElementById('relatedVideosContainer');
+            if (!relatedContainer) return;
+            
+            relatedContainer.innerHTML = '';
+            
+            // Charger d'autres vidéos (pour l'exemple, on charge les dernières vidéos)
+            db.collection('videos')
+                .orderBy('timestamp', 'desc')
+                .limit(6)
+                .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    // Ne pas afficher la vidéo actuelle dans les suggestions
+                    if (doc.id !== currentVideoId) {
+                        const videoData = doc.data();
+                        videoData.id = doc.id;
+                        createRelatedVideoCard(videoData, relatedContainer);
+                    }
+                });
+                
+                // Si pas assez de vidéos, charger des vidéos par défaut
+                if (relatedContainer.children.length === 0) {
+                    loadDefaultRelatedVideos(relatedContainer);
+                }
+            })
+            .catch((error) => {
+                console.error("Erreur lors du chargement des vidéos similaires:", error);
+                loadDefaultRelatedVideos(relatedContainer);
+            });
+        }
+
+        function createRelatedVideoCard(videoData, container) {
+            const videoCard = document.createElement('div');
+            videoCard.className = 'video-card';
+            videoCard.onclick = () => {
+                window.location.href = `video.html?id=${videoData.id}`;
+            };
+            
+            // Formater la date de publication
+            const publishDate = videoData.timestamp ? 
+                new Date(videoData.timestamp.seconds * 1000).toLocaleDateString('fr-FR') : 
+                'Date inconnue';
+            
+            // Générer une miniature
+            const thumbnailUrl = videoData.thumbnailUrl || getThumbnailFromVideo(videoData.videoUrl);
+            
+            videoCard.innerHTML = `
+                <div class="video-thumbnail">
+                    <img src="${thumbnailUrl}" alt="${videoData.title}">
+                    <div class="play-icon">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                </div>
+                <div class="video-info-small">
+                    <h3 class="video-title-small">${videoData.title}</h3>
+                    <p class="video-author-small">${videoData.username}</p>
+                    <div class="video-stats-small">
+                        <span class="video-views"><i class="fas fa-eye"></i> ${videoData.views || 0}</span>
+                        <span class="video-date"><i class="far fa-calendar-alt"></i> ${publishDate}</span>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(videoCard);
+        }
+
+        function loadDefaultRelatedVideos(container) {
+            const defaultVideos = [
+                {
+                    id: 'default1',
+                    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                    title: "Vidéo de démonstration 1",
+                    username: "Administrateur",
+                    views: 42,
+                    timestamp: { seconds: Date.now() / 1000 }
+                },
+                {
+                    id: 'default2',
+                    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+                    title: "Vidéo de démonstration 2",
+                    username: "Administrateur",
+                    views: 28,
+                    timestamp: { seconds: Date.now() / 1000 - 86400 }
+                },
+                {
+                    id: 'default3',
+                    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+                    title: "Vidéo de démonstration 3",
+                    username: "Administrateur",
+                    views: 35,
+                    timestamp: { seconds: Date.now() / 1000 - 172800 }
+                }
+            ];
+            
+            defaultVideos.forEach(videoData => {
+                createRelatedVideoCard(videoData, container);
+            });
+        }
+
+        function getThumbnailFromVideo(videoUrl) {
+            // Cette fonction génère une URL de miniature à partir de l'URL de la vidéo
+            // En production, vous devriez générer et stocker des miniatures réelles
+            return 'https://via.placeholder.com/300x180/3498db/ffffff?text=Miniature';
+        }
+
+        // ===== FONCTIONS D'INTERACTION =====
+        function incrementVideoViews(videoId) {
+            const viewedVideos = JSON.parse(sessionStorage.getItem('viewedVideos') || '[]');
+            
+            if (!viewedVideos.includes(videoId)) {
+                const videoRef = db.collection('videos').doc(videoId);
+                videoRef.update({
+                    views: firebase.firestore.FieldValue.increment(1)
+                });
+                
+                viewedVideos.push(videoId);
+                sessionStorage.setItem('viewedVideos', JSON.stringify(viewedVideos));
+            }
+        }
+
+        function checkIfLiked() {
+            const user = auth.currentUser;
+            if (!user) return;
+            
+            // Vérifier si l'utilisateur a déjà liké cette vidéo
+            // Vous devrez implémenter cette fonctionnalité dans votre base de données
+            isLiked = false; // Temporaire, à remplacer par une vérification réelle
+            
+            updateLikeButton();
+        }
+
+        function toggleLike() {
+            const user = auth.currentUser;
+            if (!user) {
+                // Rediriger vers la connexion si l'utilisateur n'est pas connecté
+                alert('Veuillez vous connecter pour aimer cette vidéo');
+                return;
+            }
+            
+            const likeButton = document.getElementById('likeButton');
+            const videoRef = db.collection('videos').doc(currentVideoId);
+            
+            if (isLiked) {
+                // Retirer le like
+                videoRef.update({
+                    likes: firebase.firestore.FieldValue.increment(-1)
+                });
+                isLiked = false;
+            } else {
+                // Ajouter un like
+                videoRef.update({
+                    likes: firebase.firestore.FieldValue.increment(1)
+                });
+                isLiked = true;
+            }
+            
+            // Mettre à jour le compteur affiché
+            const likesElement = document.getElementById('videoLikes');
+            const currentLikes = parseInt(likesElement.textContent);
+            likesElement.textContent = isLiked ? currentLikes + 1 : currentLikes - 1;
+            
+            updateLikeButton();
+            
+            // Ici, vous devriez également enregistrer le like de l'utilisateur dans la base de données
+        }
+
+        function updateLikeButton() {
+            const likeButton = document.getElementById('likeButton');
+            if (!likeButton) return;
+            
+            if (isLiked) {
+                likeButton.innerHTML = '<i class="fas fa-heart"></i> J\'aime';
+                likeButton.classList.add('liked');
+            } else {
+                likeButton.innerHTML = '<i class="far fa-heart"></i> J\'aime';
+                likeButton.classList.remove('liked');
+            }
+        }
+
+        // ===== FONCTIONS DE PARTAGE =====
+        function openShareModal() {
+            document.getElementById('shareModal').style.display = 'block';
+        }
+
+        function shareVideo(platform) {
+            const shareUrl = window.location.origin + window.location.pathname + '?id=' + currentVideoId;
+            const title = "Regardez cette vidéo sur Mougouli: " + currentVideoData.title;
+            
+            let shareWindowUrl = '';
+            
+            switch (platform) {
+                case 'facebook':
+                    shareWindowUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+                    break;
+                case 'twitter':
+                    shareWindowUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(shareUrl)}`;
+                    break;
+                case 'whatsapp':
+                    shareWindowUrl = `https://wa.me/?text=${encodeURIComponent(title + ' ' + shareUrl)}`;
+                    break;
+            }
+            
+            if (shareWindowUrl) {
+                window.open(shareWindowUrl, '_blank');
+            }
+            
+            closeModal('shareModal');
+        }
+
+        function copyShareLink() {
+            const shareUrl = window.location.origin + window.location.pathname + '?id=' + currentVideoId;
+            
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                alert('Lien copié dans le presse-papiers!');
+            }).catch(err => {
+                // Fallback pour les navigateurs plus anciens
+                const textArea = document.createElement("textarea");
+                textArea.value = shareUrl;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    alert('Lien copié dans le presse-papiers!');
+                } catch (err) {
+                    alert('Impossible de copier le lien: ' + err);
+                }
+                document.body.removeChild(textArea);
+            });
+            
+            closeModal('shareModal');
+        }
+
+        function updateMetaTags(videoData) {
+            // Mettre à jour les métadonnées pour le partage social
+            document.querySelector('meta[property="og:title"]').setAttribute('content', videoData.title + ' - Mougouli');
+            document.querySelector('meta[property="og:description"]').setAttribute('content', videoData.description.substring(0, 300));
+            document.querySelector('meta[property="og:image"]').setAttribute('content', videoData.thumbnailUrl || 'https://raw.githubusercontent.com/pinenikeuse/mougouli/main/1747616058238.jpg');
+            document.querySelector('meta[property="og:url"]').setAttribute('content', window.location.href);
+            document.querySelector('meta[property="og:video"]').setAttribute('content', videoData.videoUrl);
+        }
+
+        // ===== FONCTIONS UTILITAIRES =====
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // ===== INITIALISATION =====
+        window.addEventListener('load', function() {
+            initVideoPage();
+            
+            // Ajouter l'écouteur d'événement pour le bouton like
+            const likeButton = document.getElementById('likeButton');
+            if (likeButton) {
+                likeButton.addEventListener('click', toggleLike);
+            }
+            
+            // Fermer le modal en cliquant à l'extérieur
+            window.onclick = function(event) {
+                const modal = document.getElementById('shareModal');
+                if (event.target === modal) {
+                    closeModal('shareModal');
+                }
+            };
+        });
+    </script>
+</body>
+</html>
