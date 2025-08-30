@@ -549,12 +549,32 @@ body {
                 grid-template-columns: 1fr;
             }
         }
+        .user-credits-container {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 20px;
+    padding: 5px 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    color: #ffc107;
+    margin-right: 15px;
+}
+
+.user-credits-container i {
+    color: #ffc107;
+}
     </style>
 </head>
 <body>
     <!-- Site Title Only -->
     <div class="site-title-only">
-        djioukeli.com
+        djoukeli.com
+        <div id="userCredits" class="user-credits-container" style="display: none;">
+    <i class="fas fa-coins"></i>
+    <span class="user-credits">0</span> crédits
+</div>
     </div>
 
     <!-- Ad Overlay (hidden by default) -->
@@ -649,6 +669,7 @@ body {
                     </div>
                 </div>
             </div>
+            
 
             <!-- Sidebar with Ads -->
             <div class="sidebar">
