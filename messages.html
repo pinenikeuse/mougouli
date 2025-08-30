@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - Djoukeli.com</title>
+    <!-- Ajout de Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding-bottom: 70px; /* Pour éviter que le contenu ne soit caché par la navigation */
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #e1e4e8;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-decoration: none;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 25px;
+        }
+        
+        nav ul li a {
+            text-decoration: none;
+            color: #34495e;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: #3498db;
+        }
+        
+        .main-content {
+            display: flex;
+            margin-top: 40px;
+            min-height: 60vh;
+        }
+        
+        .sidebar {
+            width: 250px;
+            padding-right: 30px;
+        }
+        
+        .sidebar-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .sidebar-menu li {
+            border-bottom: 1px solid #f1f1f1;
+        }
+        
+        .sidebar-menu li:last-child {
+            border-bottom: none;
+        }
+        
+        .sidebar-menu a {
+            display: block;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: #34495e;
+            transition: background 0.3s;
+        }
+        
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: #3498db;
+            color: white;
+        }
+        
+        .messages-container {
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .no-messages {
+            text-align: center;
+            color: #7f8c8d;
+        }
+        
+        .no-messages-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: #bdc3c7;
+        }
+        
+        .no-messages h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            font-weight: 400;
+        }
+        
+        .no-messages p {
+            font-size: 16px;
+            max-width: 400px;
+            margin-bottom: 25px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #7f8c8d;
+            border-top: 1px solid #e1e4e8;
+        }
+        
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        
+        .nav-item.active, .nav-item:hover {
+            color: #3498db; /* Utilisation de la couleur principale au lieu de var() */
+        }
+        
+        .nav-item.active .nav-icon, .nav-item:hover .nav-icon {
+            color: #3498db; /* Utilisation de la couleur principale au lieu de var() */
+            transform: scale(1.1);
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+            color: #666;
+            transition: all 0.3s;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                padding-right: 0;
+                margin-bottom: 20px;
+            }
+            
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 15px;
+                justify-content: center;
+            }
+            
+            nav ul li {
+                margin: 0 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="#" class="logo">Djoukeli.com</a>
+            <nav>
+                <ul>
+                    <li><a href="#">Accueil</a></li>
+                    <li><a href="#">Profil</a></li>
+                    <li><a href="#">Messages</a></li>
+                    <li><a href="#">Paramètres</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                <h2 class="sidebar-title">Messagerie</h2>
+                <ul class="sidebar-menu">
+                    <li><a href="#" class="active">Boîte de réception</a></li>
+                    <li><a href="#">Messages envoyés</a></li>
+                    <li><a href="#">Brouillons</a></li>
+                    <li><a href="#">Spam</a></li>
+                    <li><a href="#">Archives</a></li>
+                </ul>
+            </div>
+            
+            <div class="messages-container">
+                <div class="no-messages">
+                    <div class="no-messages-icon">✉️</div>
+                    <h2>Vous n'avez pas encore reçu de message</h2>
+                    <p>Lorsque vous recevrez des messages, ils apparaîtront ici.</p>
+                    <button class="btn">Nouveau message</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Navigation Bar -->
+        <div class="bottom-nav">
+            <a href="index.html" class="nav-item active">
+                <div class="nav-icon"><i class="fas fa-home"></i></div>
+                <span>Accueil</span>
+            </a>
+            <a href="latest.html" class="nav-item">
+                <div class="nav-icon"><i class="fas fa-play-circle"></i></div>
+                <span>Vidéos</span>
+            </a>
+            <a href="photos.html" class="nav-item">
+                <div class="nav-icon"><i class="fas fa-image"></i></div>
+                <span>Photos</span>
+            </a>
+            <a href="upload.html" class="nav-item" onclick="checkAuthBeforeAction('upload.html'); return false;">
+                <div class="nav-icon"><i class="fas fa-plus-circle"></i></div>
+                <span>Ajouter</span>
+            </a>
+        </div>
+
+        <footer>
+            <p>© 2023 Djoukeli.com - Tous droits réservés</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Fonction pour vérifier l'authentification avant certaines actions
+        function checkAuthBeforeAction(page) {
+            // Simulation d'une vérification d'authentification
+            const isAuthenticated = false; // À remplacer par votre logique d'authentification réelle
+            
+            if (!isAuthenticated && (page === 'upload.html' || page === 'publier.html' || page === 'myprofile.html')) {
+                alert("Veuillez vous connecter pour accéder à cette fonctionnalité");
+                return false;
+            }
+            navigateTo(page);
+            return true;
+        }
+
+        // Fonction de navigation fluide
+        function navigateTo(page) {
+            // Animation de transition
+            document.body.style.opacity = "0.8";
+            document.body.style.transition = "opacity 0.3s ease";
+            
+            setTimeout(() => {
+                window.location.href = page;
+            }, 300);
+        }
+
+        // Gestion de la navigation active au chargement de la page
+        function setActiveNavItem() {
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (href === currentPage) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        // Initialiser au chargement de la page
+        window.addEventListener('load', function() {
+            setActiveNavItem();
+            
+            // Ajouter également les autres écouteurs d'événements nécessaires
+            document.querySelectorAll('.nav-item').forEach(item => {
+                if (item.getAttribute('href') === 'upload.html') {
+                    item.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        checkAuthBeforeAction('upload.html');
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
