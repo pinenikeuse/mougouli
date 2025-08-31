@@ -601,30 +601,82 @@
             }
         }
 
-        // Génération d'une miniature à partir de la vidéo
+        // Génération d'une miniature à partir de la vidéo - VERSION CORRIGÉE
         function generateThumbnail(videoElement) {
-            // Attendre que la vidéo soit chargée
-            videoElement.addEventListener('loadeddata', function() {
-                // Aller au milieu de la vidéo pour la miniature
-                videoElement.currentTime = videoElement.duration * 0.5;
-                
-                // Capturer la frame après que la position ait été changée
-                setTimeout(() => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = videoElement.videoWidth;
-                    canvas.height = videoElement.videoHeight;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+            return new Promise((resolve, reject) => {
+                // Réinitialiser l'événement pour éviter les duplications
+                videoElement.onloadedmetadata = function() {
+                    console.log('Métadonnées vidéo chargées, durée:', videoElement.duration);
                     
-                    canvas.toBlob(blob => {
-                        const thumbnailUrl = URL.createObjectURL(blob);
-                        generatedThumbnailBlob = blob;
+                    // Aller au milieu de la vidéo pour la miniature
+                    const targetTime = Math.max(1, videoElement.duration * 0.3); // 30% pour éviter le noir au début
+                    videoElement.currentTime = targetTime;
+                };
+
+                videoElement.onseeked = function() {
+                    console.log('Seek terminé, génération de la miniature...');
+                    try {
+                        const canvas = document.createElement('canvas');
+                        const videoWidth = videoElement.videoWidth;
+                        const videoHeight = videoElement.videoHeight;
                         
-                        // Afficher la miniature générée
-                        const thumbnailImg = document.getElementById('singleThumbnail');
-                        thumbnailImg.src = thumbnailUrl;
-                    });
-                }, 200);
+                        // Définir une taille maximale pour la miniature
+                        const maxWidth = 300;
+                        const maxHeight = 180;
+                        let width = videoWidth;
+                        let height = videoHeight;
+
+                        // Redimensionner proportionnellement si nécessaire
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+                        if (height > maxHeight) {
+                            width = Math.round((width * maxHeight) / height);
+                            height = maxHeight;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(videoElement, 0, 0, width, height);
+                        
+                        canvas.toBlob(blob => {
+                            if (blob) {
+                                const thumbnailUrl = URL.createObjectURL(blob);
+                                generatedThumbnailBlob = blob;
+                                
+                                // Afficher la miniature générée
+                                const thumbnailImg = document.getElementById('singleThumbnail');
+                                thumbnailImg.src = thumbnailUrl;
+                                console.log('Miniature générée avec succès');
+                                resolve(thumbnailUrl);
+                            } else {
+                                reject(new Error('Échec de la génération de la miniature'));
+                            }
+                        }, 'image/jpeg', 0.8);
+                    } catch (error) {
+                        console.error('Erreur lors de la génération de la miniature:', error);
+                        reject(error);
+                    }
+                };
+
+                videoElement.onerror = function() {
+                    reject(new Error('Erreur de chargement de la vidéo'));
+                };
+
+                // Timeout après 30 secondes
+                setTimeout(() => {
+                    reject(new Error('Timeout de génération de miniature'));
+                }, 30000);
+            }).catch(error => {
+                console.error('Erreur dans generateThumbnail:', error);
+                // Utiliser une image de secours en cas d'échec
+                const thumbnailImg = document.getElementById('singleThumbnail');
+                thumbnailImg.src = 'https://via.placeholder.com/300x180/4a6bff/ffffff?text=Erreur+génération';
+                document.getElementById('thumbnailLabel').textContent = 'Erreur de génération - Utilisez une image personnalisée';
+                showStatus('La génération automatique a échoué. Utilisez une miniature personnalisée.', 'error');
             });
         }
 
@@ -722,7 +774,7 @@
                             thumbnailUrl = await thumbnailRef.getDownloadURL();
                             console.log(`URL de la miniature générée: ${thumbnailUrl}`);
                         } else {
-                            // Utiliser une image par défaut
+                            // Utiliser une image par défuit
                             thumbnailUrl = 'https://via.placeholder.com/300x180/4a6bff/ffffff?text=Djoukeli.com';
                             console.log('Utilisation de la miniature par défaut');
                         }
@@ -787,15 +839,6 @@
             videoFile = null;
             thumbnailFile = null;
             generatedThumbnailBlob = null;
-            
-            console.log('Formulaire réinitialisé');
-            
-            // Faire défiler vers le haut
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-    </script>
-</body>
-</html>
             
             console.log('Formulaire réinitialisé');
             
