@@ -18,51 +18,52 @@
             color: #fff;
             line-height: 1.6;
         }
+        
         /* Bottom Navigation Bar */
-.bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: lightpink;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 10px 0;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-}
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: lightpink;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
 
-.nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-    color: ;
-    font-size: 12px;
-    transition: all 0.3s;
-}
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
 
-.nav-item.active, .nav-item:hover {
-    color: var(--primary-color);
-}
+        .nav-item.active, .nav-item:hover {
+            color: #6e48aa;
+        }
 
-.nav-item.active .nav-icon {
-    color: var(--primary-color);
-    transform: scale(1.1);
-}
+        .nav-item.active .nav-icon {
+            color: #6e48aa;
+            transform: scale(1.1);
+        }
 
-.nav-icon {
-    font-size: 20px;
-    margin-bottom: 4px;
-    color: #666;
-    transition: all 0.3s;
-}
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+            color: #666;
+            transition: all 0.3s;
+        }
 
-/* Ajouter un padding au body pour éviter que le contenu ne soit caché par la navigation */
-body {
-    padding-bottom: 70px;
-}
+        /* Ajouter un padding au body pour éviter que le contenu ne soit caché par la navigation */
+        body {
+            padding-bottom: 70px;
+        }
         
         header {
             background: linear-gradient(135deg, #6e48aa, #9d50bb);
@@ -133,6 +134,7 @@ body {
             overflow: hidden;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
         }
         
         .video-card:hover {
@@ -256,128 +258,6 @@ body {
                 align-self: flex-start;
             }
         }
-        /* Conteneur de la grille de vidéos */
-.videos-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-/* Carte vidéo individuelle */
-.video-card {
-    background-color: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-    cursor: pointer;
-}
-
-.video-card:hover {
-    transform: translateY(-5px);
-}
-
-/* Conteneur de la miniature */
-.video-thumbnail-container {
-    position: relative;
-    width: 100%;
-    height: 0;
-    padding-bottom: 66.67%; /* Ratio 3:2 pour le conteneur */
-    overflow: hidden;
-}
-
-/* Image de fond flou (3:2) */
-.thumbnail-background {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: blur(5px);
-    z-index: 1;
-}
-
-/* Image avant-plan centrée (9:16) */
-.thumbnail-foreground {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 56.25%; /* 9:16 dans un conteneur 3:2 */
-    height: 100%;
-    object-fit: contain;
-    z-index: 2;
-}
-
-/* Icône de lecture */
-.play-icon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-size: 40px;
-    opacity: 0.8;
-    transition: opacity 0.3s;
-    z-index: 3;
-}
-
-.video-card:hover .play-icon {
-    opacity: 1;
-}
-
-/* Info de la vidéo */
-.video-info {
-    padding: 15px;
-}
-
-.video-title {
-    font-weight: 600;
-    margin-bottom: 10px;
-    font-size: 18px;
-}
-
-.video-stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 8px;
-    font-size: 14px;
-    color: #666;
-}
-
-.video-views {
-    color: #3ea6ff;
-}
-
-.video-views i {
-    color: #3ea6ff;
-}
-
-.video-date {
-    color: #f1c40f;
-}
-
-.video-date i {
-    color: #f1c40f;
-}
-
-.video-author {
-    color: #aaaaaa;
-    display: flex;
-    align-items: center;
-    margin-top: 8px;
-    cursor: pointer;
-}
-
-.video-author i {
-    color: #aaaaaa;
-    margin-right: 5px;
-}
-
-.video-author:hover {
-    text-decoration: underline;
-}
     </style>
 </head>
 <body>
@@ -391,33 +271,7 @@ body {
     </header>
     
     <h1 class="page-title">Vidéos Récentes</h1>
-    <div class="videos-grid" id="popularVideosContainer">
-    <!-- Structure d'une carte vidéo -->
-    <div class="video-card">
-        <div class="video-thumbnail-container" onclick="navigateToVideo('video-id')">
-            <img class="thumbnail-background" src="URL_DE_L_IMAGE" alt="Titre de la vidéo">
-            <img class="thumbnail-foreground" src="URL_DE_L_IMAGE" alt="Titre de la vidéo">
-            <div class="play-icon">
-                <i class="fas fa-play-circle"></i>
-            </div>
-        </div>
-        <div class="video-info">
-            <h3 class="video-title">Titre de la vidéo</h3>
-            <div class="video-stats">
-                <div class="video-views">
-                    <i class="fas fa-eye"></i> 150 vues
-                </div>
-                <div class="video-date">
-                    <i class="far fa-calendar-alt"></i> 12/05/2023
-                </div>
-                <div class="video-author">
-                    <i class="fas fa-user"></i> Nom de l'auteur
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Répéter cette structure pour chaque vidéo -->
-</div>
+    
     <div class="videos-container" id="videos-container">
         <div class="loading">
             <div class="loading-spinner"></div>
@@ -426,32 +280,32 @@ body {
     </div>
     
     <!-- Bottom Navigation Bar -->
-<div class="bottom-nav">
-    <a href="index.html" class="nav-item active">
-        <div class="nav-icon"><i class="fas fa-home"></i></div>
-        <span>Accueil</span>
-    </a>
-    <a href="latest.html" class="nav-item">
-        <div class="nav-icon"><i class="fas fa-play-circle"></i></div>
-        <span>Vidéos</span>
-    </a>
-    <a href="photos.html" class="nav-item">
-        <div class="nav-icon"><i class="fas fa-image"></i></div>
-        <span>Photos</span>
-    </a>
-    <a href="upload.html" class="nav-item" onclick="checkAuthBeforeAction('upload.html'); return false;">
-        <div class="nav-icon"><i class="fas fa-plus-circle"></i></div>
-        <span>Ajouter</span>
-    </a>
-</div>
-<div>
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <div class="nav-icon"><i class="fas fa-home"></i></div>
+            <span>Accueil</span>
+        </a>
+        <a href="latest.html" class="nav-item active">
+            <div class="nav-icon"><i class="fas fa-play-circle"></i></div>
+            <span>Vidéos</span>
+        </a>
+        <a href="photos.html" class="nav-item">
+            <div class="nav-icon"><i class="fas fa-image"></i></div>
+            <span>Photos</span>
+        </a>
+        <a href="upload.html" class="nav-item" onclick="checkAuthBeforeAction('upload.html'); return false;">
+            <div class="nav-icon"><i class="fas fa-plus-circle"></i></div>
+            <span>Ajouter</span>
+        </a>
+    </div>
+    
     <footer>
         <p>&copy; 2023 Djoukeli.com - Tous droits réservés</p>
     </footer>
 
     <!-- Firebase App (core Firebase SDK) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <!-- Firebase Authentication (AJOUTÉ POUR CORRIGER L'ERREUR) -->
+    <!-- Firebase Authentication -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <!-- Firebase Firestore -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -484,10 +338,6 @@ body {
         // Variables globales
         let currentVideoId = null;
         let currentVideoData = null;
-        let adShown = false;
-        let selectedThumbnail = null;
-        let videoFile = null;
-        let thumbnailFile = null;
         
         // Fonction de navigation
         function navigateToIndex() {
@@ -498,8 +348,9 @@ body {
         function loadVideos() {
             const videosContainer = document.getElementById('videos-container');
             
+            // Essayer d'abord avec le champ createdAt (votre structure actuelle)
             db.collection("videos")
-                .orderBy("timestamp", "desc")
+                .orderBy("createdAt", "desc")
                 .get()
                 .then((querySnapshot) => {
                     videosContainer.innerHTML = ''; // Vider le conteneur
@@ -521,12 +372,51 @@ body {
                     });
                 })
                 .catch((error) => {
-                    console.error("Erreur lors du chargement des vidéos: ", error);
-                    videosContainer.innerHTML = `
-                        <div class="loading">
-                            <p>Erreur lors du chargement des vidéos. Veuillez réessayer.</p>
-                        </div>
-                    `;
+                    console.error("Erreur avec createdAt, essai sans tri: ", error);
+                    
+                    // Fallback: charger sans tri si createdAt n'existe pas
+                    db.collection("videos")
+                        .get()
+                        .then((querySnapshot) => {
+                            videosContainer.innerHTML = '';
+                            
+                            if (querySnapshot.empty) {
+                                videosContainer.innerHTML = `
+                                    <div class="loading">
+                                        <p>Aucune vidéo disponible pour le moment.</p>
+                                    </div>
+                                `;
+                                return;
+                            }
+                            
+                            // Convertir en array pour pouvoir trier manuellement
+                            const videos = [];
+                            querySnapshot.forEach((doc) => {
+                                const videoData = doc.data();
+                                videoData.id = doc.id;
+                                videos.push(videoData);
+                            });
+                            
+                            // Trier par date manuellement si possible
+                            videos.sort((a, b) => {
+                                const dateA = a.createdAt ? (a.createdAt.seconds || a.createdAt.toDate().getTime() / 1000) : 0;
+                                const dateB = b.createdAt ? (b.createdAt.seconds || b.createdAt.toDate().getTime() / 1000) : 0;
+                                return dateB - dateA; // Tri décroissant
+                            });
+                            
+                            // Afficher les vidéos triées
+                            videos.forEach(videoData => {
+                                createVideoCard(videoData, videoData.id);
+                            });
+                        })
+                        .catch((secondError) => {
+                            console.error("Erreur lors du chargement des vidéos: ", secondError);
+                            videosContainer.innerHTML = `
+                                <div class="loading">
+                                    <p>Erreur lors du chargement des vidéos. Veuillez réessayer.</p>
+                                </div>
+                            `;
+                        });
                 });
         }
         
@@ -536,6 +426,17 @@ body {
             
             const videoCard = document.createElement('div');
             videoCard.className = 'video-card';
+            
+            // Déterminer la date à afficher
+            let displayDate = 'Date inconnue';
+            if (videoData.createdAt) {
+                if (videoData.createdAt.seconds) {
+                    displayDate = formatDate(new Date(videoData.createdAt.seconds * 1000));
+                } else if (videoData.createdAt.toDate) {
+                    displayDate = formatDate(videoData.createdAt.toDate());
+                }
+            }
+            
             videoCard.innerHTML = `
                 <div class="thumbnail-container">
                     <img src="${videoData.thumbnailUrl || 'https://via.placeholder.com/300x169/1a1a2e/6e48aa?text=Thumbnail'}" 
@@ -545,7 +446,7 @@ body {
                 <div class="video-info">
                     <h3 class="video-title">${videoData.title || 'Sans titre'}</h3>
                     <div class="video-meta">
-                        <span>${formatDate(videoData.timestamp?.toDate())}</span>
+                        <span>${displayDate}</span>
                         <span>${videoData.views || 0} vues</span>
                     </div>
                 </div>
@@ -578,60 +479,30 @@ body {
             }
         }
         
+        // Fonction pour vérifier l'authentification avant certaines actions
+        function checkAuthBeforeAction(page) {
+            const user = auth.currentUser;
+            if (!user && (page === 'upload.html' || page === 'publier.html' || page === 'myprofile.html')) {
+                alert('Veuillez vous connecter pour accéder à cette fonctionnalité');
+                return false;
+            }
+            navigateTo(page);
+            return true;
+        }
+
+        // Fonction de navigation fluide
+        function navigateTo(page) {
+            // Animation de transition
+            document.body.style.opacity = "0.8";
+            document.body.style.transition = "opacity 0.3s ease";
+            
+            setTimeout(() => {
+                window.location.href = page;
+            }, 300);
+        }
+        
         // Charger les vidéos au chargement de la page
         document.addEventListener('DOMContentLoaded', loadVideos);
-   // Fonction pour vérifier l'authentification avant certaines actions
-function checkAuthBeforeAction(page) {
-    const user = auth.currentUser;
-    if (!user && (page === 'upload.html' || page === 'publier.html' || page === 'myprofile.html')) {
-        openAuthModal();
-        return false;
-    }
-    navigateTo(page);
-    return true;
-}
-
-// Fonction de navigation fluide
-function navigateTo(page) {
-    // Animation de transition
-    document.body.style.opacity = "0.8";
-    document.body.style.transition = "opacity 0.3s ease";
-    
-    setTimeout(() => {
-        window.location.href = page;
-    }, 300);
-}
-
-// Gestion de la navigation active au chargement de la page
-function setActiveNavItem() {
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    const navItems = document.querySelectorAll('.nav-item');
-    
-    navItems.forEach(item => {
-        const href = item.getAttribute('href');
-        if (href === currentPage) {
-            item.classList.add('active');
-        } else {
-            item.classList.remove('active');
-        }
-    });
-}
-
-// Initialiser au chargement de la page
-window.addEventListener('load', function() {
-    setActiveNavItem();
-    
-    // Ajouter également les autres écouteurs d'événements nécessaires
-    document.querySelectorAll('.nav-item').forEach(item => {
-        if (item.getAttribute('href') === 'upload.html') {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-                checkAuthBeforeAction('upload.html');
-            });
-        }
-    });
-});
-
- </script>
+    </script>
 </body>
 </html>
