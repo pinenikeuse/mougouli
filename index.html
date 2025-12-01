@@ -1,0 +1,1994 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta name="google-adsense-account" content="ca-pub-5904049904040571">
+    <meta name="juicyads-site-verification" content="82e857b1ca877d624a78bdcbae66794b">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>djoukeli.com - Plateforme de Vidéos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Intégration de Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #4a9fe3;
+            --secondary-color: #3c8fd8;
+            --accent-color: #ff6b6b;
+            --light-color: #1a1a1a;
+            --dark-color: #f8f9fa;
+            --success-color: #34d058;
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --card-bg: #1e1e1e;
+            --header-bg: linear-gradient(to right, #1a3c5e, #2c5282);
+            --footer-bg: #0a0a0a;
+            --input-bg: #2d2d2d;
+            --input-text: #e0e0e0;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Mode clair - pour ceux qui veulent basculer */
+        .light-mode {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --success-color: #28a745;
+            --bg-color: #f4f4f9;
+            --text-color: #333;
+            --card-bg: white;
+            --header-bg: linear-gradient(to right, #3498db, #2980b9);
+            --footer-bg: #343a40;
+            --input-bg: white;
+            --input-text: #333;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            overflow-x: hidden;
+            position: relative;
+            padding-bottom: 70px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        html, body {
+            touch-action: manipulation;
+            overflow-x: hidden;
+            width: 100%;
+            position: relative;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: var(--header-bg);
+            color: white;
+            padding: 10px 0;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: background 0.3s ease;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            position: relative;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+        
+        #logo {
+            width: 100px;
+            height: auto;
+        }
+        
+        .search-container {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+            margin-right: 20px;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .search-bar input {
+            padding: 10px 15px;
+            border: none;
+            border-radius: var(--border-radius) 0 0 var(--border-radius);
+            font-size: 16px;
+            width: 100%;
+            background-color: var(--input-bg);
+            color: var(--input-text);
+        }
+        
+        .search-bar button {
+            padding: 10px 15px;
+            background-color: var(--dark-color);
+            color: white;
+            border: none;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            cursor: pointer;
+        }
+        
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            z-index: 1000;
+            display: none;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .search-suggestion {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #444;
+            color: var(--text-color);
+        }
+        
+        .search-suggestion:hover {
+            background-color: var(--light-color);
+        }
+        
+        /* Mode sombre/clair toggle */
+        .theme-toggle {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 20px;
+            margin-right: 10px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* User Actions */
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .publish-btn, .profile-btn, .login-btn {
+            padding: 8px 12px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .profile-btn {
+            background-color: var(--success-color);
+        }
+        
+        .login-btn {
+            background-color: #ff9900; /* Orange vif pour meilleure visibilité */
+            color: white;
+        }
+        
+        .login-btn:hover {
+            background-color: #e68a00;
+            transform: translateY(-2px);
+        }
+        
+        .light-mode .login-btn {
+            background-color: #ff9900;
+            color: white;
+        }
+
+        .profile-icon-header {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 8px;
+            font-size: 16px;
+        }
+        
+        .message-icon-header {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+        
+        .credits-display {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 215, 0, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin-left: 10px;
+            cursor: pointer;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .credits-display:hover {
+            background-color: rgba(255, 215, 0, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .credits-display i {
+            margin-right: 5px;
+            color: #FFD700;
+        }
+        
+        .credits-display span {
+            color: white;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .credits-info {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            box-shadow: var(--box-shadow);
+            width: 300px;
+            z-index: 1000;
+            display: none;
+            margin-top: 10px;
+            border: 1px solid #444;
+        }
+        
+        .credits-display:hover .credits-info {
+            display: block;
+        }
+        
+        .credits-info h4 {
+            color: #FFD700;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .credits-info p {
+            font-size: 13px;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        
+        .credits-info ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .credits-info li {
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+        
+        .credits-info .info-note {
+            background-color: rgba(255, 215, 0, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 3px solid #FFD700;
+            font-size: 12px;
+        }
+        
+        /* Main Content */
+        .main-content {
+            display: flex;
+            margin: 15px 0;
+            gap: 20px;
+        }
+        
+        .content {
+            flex: 3;
+        }
+        
+        .sidebar {
+            flex: 1;
+        }
+        
+        /* Video Grid */
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            margin: 15px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--text-color);
+        }
+        
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .video-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .video-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .video-thumbnail-container {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 66.67%; /* Ratio 3:2 pour le conteneur */
+            overflow: hidden;
+        }
+        
+        .thumbnail-background {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(5px);
+            z-index: 1;
+        }
+        
+        .thumbnail-foreground {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 56.25%; /* 9:16 dans un conteneur 3:2 */
+            height: 100%;
+            object-fit: contain;
+            z-index: 2;
+        }
+        
+        .play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 40px;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+            z-index: 3;
+        }
+        
+        .video-card:hover .play-icon {
+            opacity: 1;
+        }
+        
+        .video-info {
+            padding: 15px;
+            position: relative;
+            z-index: 4;
+        }
+        
+        .video-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: var(--text-color);
+        }
+        
+        .video-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 8px;
+            font-size: 14px;
+            color: #aaa;
+        }
+        
+        .light-mode .video-stats {
+            color: #666;
+        }
+        
+        .video-views {
+            color: #3ea6ff;
+        }
+        
+        .video-views i {
+            color: #3ea6ff;
+        }
+        
+        .video-date {
+            color: #f1c40f;
+        }
+        
+        .video-date i {
+            color: #f1c40f;
+        }
+        
+        .video-author {
+            color: #aaaaaa;
+            display: flex;
+            align-items: center;
+            margin-top: 8px;
+            cursor: pointer;
+        }
+        
+        .video-author i {
+            color: #aaaaaa;
+            margin-right: 5px;
+        }
+        
+        .video-author:hover {
+            text-decoration: underline;
+        }
+        
+        /* Advertisements */
+        .ad-container {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+        
+        .ad-title {
+            font-size: 14px;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--footer-bg);
+            color: white;
+            padding: 30px 0;
+            margin-top: 40px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 20px;
+        }
+        
+        .footer-section h4 {
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: white;
+        }
+        
+        .footer-section p, .footer-section a {
+            color: #ddd;
+            margin-bottom: 10px;
+            display: block;
+            text-decoration: none;
+        }
+        
+        .footer-section a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #555;
+        }
+        
+        /* Age Verification Overlay */
+        .age-verification {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .age-content {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .age-content h2 {
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+        
+        .age-content p {
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: var(--text-color);
+        }
+        
+        .age-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .age-confirm {
+            padding: 10px 20px;
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .age-deny {
+            padding: 10px 20px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            overflow: auto;
+        }
+        
+        .modal-content {
+            background-color: var(--card-bg);
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 600px;
+            box-shadow: var(--box-shadow);
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #aaa;
+            background: none;
+            border: none;
+        }
+        
+        .close-modal:hover {
+            color: var(--accent-color);
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #444;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            background-color: var(--input-bg);
+            color: var(--input-text);
+        }
+        
+        .light-mode .form-group input,
+        .light-mode .form-group textarea,
+        .light-mode .form-group select {
+            border: 1px solid #ddd;
+        }
+        
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .submit-btn {
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            display: block;
+            width: 100%;
+        }
+        
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+        
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--card-bg);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #aaa;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        
+        .nav-item.active, .nav-item:hover {
+            color: var(--primary-color);
+        }
+        
+        .nav-item.active .nav-icon {
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+            color: #aaa;
+            transition: all 0.3s;
+        }
+        
+        /* Styles pour les améliorations de performance */
+        .thumbnail-loading {
+            background: linear-gradient(90deg, #2d2d2d 25%, #3d3d3d 50%, #2d2d2d 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        .light-mode .thumbnail-loading {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            gap: 10px;
+        }
+        
+        .pagination button {
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 140px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .pagination button:hover:not(:disabled) {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .pagination button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+            opacity: 0.5;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .light-mode .pagination button:disabled {
+            background-color: #ccc;
+        }
+        
+        .pagination-info {
+            color: var(--text-color);
+            margin: 0 15px;
+            font-weight: 500;
+            font-size: 15px;
+            min-width: 120px;
+            text-align: center;
+        }
+        
+        .error-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #999;
+            font-size: 14px;
+            text-align: center;
+            z-index: 2;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .search-container {
+                max-width: 300px;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                order: -1;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .logo-container {
+                position: relative;
+                left: auto;
+                transform: none;
+                order: -1;
+                margin-bottom: 15px;
+                justify-content: center;
+            }
+            
+            .search-container {
+                margin: 15px 0;
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            .user-actions {
+                margin-top: 15px;
+                justify-content: center;
+            }
+            
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+            }
+            
+            .credits-info {
+                width: 250px;
+                right: -50px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .videos-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .footer-section {
+                min-width: 100%;
+            }
+            
+            .age-buttons {
+                flex-direction: column;
+            }
+            
+            .modal-content {
+                margin: 5% auto;
+                padding: 15px;
+            }
+            
+            .credits-display {
+                position: relative;
+                top: 0;
+                margin-left: 0;
+                margin-top: 10px;
+            }
+            
+            .credits-info {
+                width: 200px;
+                right: 0;
+            }
+            
+            .user-actions {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .pagination {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .pagination button {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .publish-btn, .profile-btn, .login-btn {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+            
+            .profile-icon-header, .message-icon-header {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+            
+            .videos-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+    </style>
+</head>
+<body class="dark-mode">
+    <!-- Vérification d'âge -->
+    <div id="ageVerification" class="age-verification">
+        <div class="age-content">
+            <h2>Avertissement</h2>
+            <p>Ce site contient du contenu réservé aux adultes (18 ans et plus). En accédant à ce site, vous certifiez que vous avez au moins 18 ans et que vous acceptez de visualiser du contenu explicite.</p>
+            <div class="age-buttons">
+                <button class="age-confirm" onclick="confirmAge()">J'ai 18 ans ou plus</button>
+                <button class="age-deny" onclick="denyAge()">Je n'ai pas 18 ans</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal d'inscription/connexion -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('authModal')">&times;</span>
+            <h2 id="authModalTitle">Connexion</h2>
+            <div id="authError" style="color: red; margin-bottom: 15px; display: none;"></div>
+            <form id="authForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" required>
+                </div>
+                <div class="form-group" id="usernameField" style="display: none;">
+                    <label for="username">Nom d'utilisateur</label>
+                    <input type="text" id="username">
+                </div>
+                <button type="submit" class="submit-btn" id="authSubmit">Se connecter</button>
+            </form>
+            <p style="margin-top: 20px; text-align: center;">
+                <a href="#" id="authSwitch">Créer un compte</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-container">
+                    <img id="logo" src="https://raw.githubusercontent.com/pinenikeuse/mougouli/refs/heads/main/1747616058238.jpg" alt="djoukeli.com Logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjQwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzNDk4ZGIiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE4IiBmaWxsPSJ3aGl0ZSI+RGpvdWtlbGk8L3RleHQ+PC9zdmc+'">
+                </div>
+                
+                <div class="search-container">
+                    <div class="search-bar">
+                        <input type="text" id="searchInput" placeholder="Rechercher des vidéos..." autocomplete="off">
+                        <button onclick="performSearch()"><i class="fas fa-search"></i></button>
+                    </div>
+                    <div id="searchSuggestions" class="search-suggestions"></div>
+                </div>
+                
+                <div class="user-actions">
+                    <button id="themeToggle" class="theme-toggle" title="Mode clair/sombre">
+                        <i class="fas fa-sun"></i>
+                    </button>
+                    
+                    <div id="creditsDisplay" class="credits-display" style="display: none;">
+                        <i class="fas fa-coins"></i> <span id="creditsCount">0</span> crédits
+                        <div class="credits-info">
+                            <h4>💎 Système de Crédits</h4>
+                            <p>Vos crédits sont de <strong>l'argent réel retirable</strong> !</p>
+                            <p><strong>Les actions suivantes permettent de gagner des crédits : :</strong></p>
+                            <ul>
+                                <li>📹 Publier des vidéos </li>
+                                <li>⏱️ Passer du temps à regarder des vidéos</li>
+      
+                                <li>⭐ Recevoir des  vues et likes et commentaires sur vos vidéos</li>
+                            </ul>
+                            <p><strong>Retrait :</strong>Ces actions vous permettent de gagner des crédits , c'est à dire chaque action à ses nombres de crédit</p>
+                            <div class="info-note">
+                                <i class="fas fa-info-circle"></i> Connectez-vous pour voir et gagner des crédits !
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button id="publishBtn" class="publish-btn" onclick="checkAuthBeforeAction('publier.html')">
+                        <i class="fas fa-upload"></i> Publier
+                    </button>
+                    <button id="profileBtn" class="profile-btn" style="display: none;" onclick="checkAuthBeforeAction('myprofile.html')">
+                        <i class="fas fa-user"></i> Profil
+                    </button>
+                    <button id="loginBtn" class="login-btn">
+                        <i class="fas fa-sign-in-alt"></i> Connexion
+                    </button>
+                    <div class="message-icon-header" onclick="checkAuthBeforeAction('messages.html')">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div id="profileIconHeader" class="profile-icon-header" style="display: none;" onclick="checkAuthBeforeAction('myprofile.html')">
+                        U
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="main-content">
+            <div class="content">
+                <!-- Popular Videos Section -->
+                <div class="popular-videos-section">
+                    <h2 class="section-title">Vidéos populaires</h2>
+                    <div class="videos-grid" id="popularVideosContainer">
+                        <!-- Les vidéos populaires seront chargées ici -->
+                    </div>
+                    <div class="pagination">
+                        <button id="prevPage" disabled>◀ Précédent</button>
+                        <span id="pageInfo" class="pagination-info">Page 1</span>
+                        <button id="nextPage">Suivant ▶</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sidebar with Ads -->
+            <div class="sidebar">
+                <!-- Banner Ad 1 -->
+                <div class="ad-container">
+                    <div class="ad-title">Annonce</div>
+                  <script type="text/javascript">
+	atOptions = {
+		'key' : '64979ae571aa2ee6ac6a68fd484a2c23',
+		'format' : 'iframe',
+		'height' : 50,
+		'width' : 320,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//robotbagpipe.com/64979ae571aa2ee6ac6a68fd484a2c23/invoke.js"></script>
+                </div>
+
+                <!-- Banner Ad 2 -->
+                <div class="ad-container">
+                    <div class="ad-title">Annonce</div>
+             <script type="text/javascript">
+	atOptions = {
+		'key' : '64979ae571aa2ee6ac6a68fd484a2c23',
+		'format' : 'iframe',
+		'height' : 50,
+		'width' : 320,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//robotbagpipe.com/64979ae571aa2ee6ac6a68fd484a2c23/invoke.js"></script>
+                </div>
+
+                <!-- Additional Ad Space -->
+                <div class="ad-container">
+                    <div class="ad-title">Sponsorisé</div>
+                    <p>Espace disponible</p>
+                    <p>Contactez-nous pour promouvoir votre entreprise</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>À propos de djoukeli.com</h4>
+                    <p>Plateforme de partage de vidéos privées et premium.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Liens rapides</h4>
+                    <a href="#">Accueil</a>
+                    <a href="#">Vidéos tendance</a>
+                    <a href="#">Catégories</a>
+                    <a href="#">À propos</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <a href="mailto:assistance@djoukeli.com">assistance@djoukeli.com</a>
+                    <p>Pour toute question ou partenariat</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 djoukeli.com. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bottom Navigation Bar -->
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item active">
+            <div class="nav-icon"><i class="fas fa-home"></i></div>
+            <span>Accueil</span>
+        </a>
+        <a href="latest.html" class="nav-item">
+            <div class="nav-icon"><i class="fas fa-play-circle"></i></div>
+            <span>Vidéos</span>
+        </a>
+        <a href="photos.html" class="nav-item">
+            <div class="nav-icon"><i class="fas fa-image"></i></div>
+            <span>Photos</span>
+        </a>
+        <a href="upload.html" class="nav-item" onclick="checkAuthBeforeAction('upload.html'); return false;">
+            <div class="nav-icon"><i class="fas fa-plus-circle"></i></div>
+            <span>Ajouter</span>
+        </a>
+    </div>
+
+    <script>
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCTj9H9KidzwYDr8Onl_UGqxC58ZlGBMfg",
+            authDomain: "test-c81f5.firebaseapp.com",
+            projectId: "test-c81f5",
+            storageBucket: "test-c81f5.firebasestorage.app",
+            messagingSenderId: "94288484954",
+            appId: "1:94288484954:web:cede6d5cf48ede3806d663",
+            measurementId: "G-6WK15KWD4L"
+        };
+        
+        // Initialiser Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+        
+        // Variables globales
+        let isLoginMode = true;
+        let currentPage = 1;
+        const VIDEOS_PER_PAGE = 15;
+        let lastVisibleDoc = null;
+        let paginationStack = []; // Pour gérer la navigation arrière
+        let searchTimeout = null;
+        let videoCache = {};
+        let isDarkMode = true;
+        let totalVideos = 0;
+
+        // ===== THÈME (mode sombre par défaut) =====
+        function initTheme() {
+            document.body.classList.add('dark-mode');
+            isDarkMode = true;
+            localStorage.setItem('darkMode', 'true');
+            
+            const themeIcon = document.querySelector('#themeToggle i');
+            if (themeIcon) {
+                themeIcon.className = 'fas fa-sun';
+                themeIcon.title = 'Mode clair';
+            }
+            
+            const themeToggle = document.getElementById('themeToggle');
+            if (themeToggle) {
+                themeToggle.addEventListener('click', toggleTheme);
+            }
+        }
+        
+        function toggleTheme() {
+            if (isDarkMode) {
+                document.body.classList.remove('dark-mode');
+                document.body.classList.add('light-mode');
+                isDarkMode = false;
+                localStorage.setItem('darkMode', 'false');
+                
+                const themeIcon = document.querySelector('#themeToggle i');
+                if (themeIcon) {
+                    themeIcon.className = 'fas fa-moon';
+                    themeIcon.title = 'Mode sombre';
+                }
+            } else {
+                document.body.classList.remove('light-mode');
+                document.body.classList.add('dark-mode');
+                isDarkMode = true;
+                localStorage.setItem('darkMode', 'true');
+                
+                const themeIcon = document.querySelector('#themeToggle i');
+                if (themeIcon) {
+                    themeIcon.className = 'fas fa-sun';
+                    themeIcon.title = 'Mode clair';
+                }
+            }
+        }
+
+        // ===== FONCTIONS D'AUTHENTIFICATION =====
+        function checkAuthState() {
+            auth.onAuthStateChanged(user => {
+                const profileBtn = document.getElementById('profileBtn');
+                const loginBtn = document.getElementById('loginBtn');
+                const profileIconHeader = document.getElementById('profileIconHeader');
+                const creditsDisplay = document.getElementById('creditsDisplay');
+                
+                if (user) {
+                    console.log("Utilisateur connecté:", user.email);
+                    if (profileBtn) profileBtn.style.display = 'block';
+                    if (loginBtn) {
+                        loginBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Déconnexion';
+                        loginBtn.onclick = () => {
+                            auth.signOut().then(() => {
+                                console.log("Utilisateur déconnecté");
+                            }).catch((error) => {
+                                console.error("Erreur de déconnexion:", error);
+                            });
+                        };
+                    }
+                    
+                    if (profileIconHeader) {
+                        profileIconHeader.style.display = 'flex';
+                        const firstLetter = user.displayName ? user.displayName.charAt(0).toUpperCase() : 
+                                            user.email ? user.email.charAt(0).toUpperCase() : 'U';
+                        profileIconHeader.textContent = firstLetter;
+                    }
+                    
+                    if (creditsDisplay) {
+                        creditsDisplay.style.display = 'flex';
+                        loadUserCredits(user.uid);
+                    }
+                } else {
+                    console.log("Aucun utilisateur connecté");
+                    if (profileBtn) profileBtn.style.display = 'none';
+                    if (loginBtn) {
+                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Connexion';
+                        loginBtn.onclick = () => openAuthModal();
+                    }
+                    if (profileIconHeader) profileIconHeader.style.display = 'none';
+                    if (creditsDisplay) {
+                        creditsDisplay.style.display = 'flex';
+                        creditsDisplay.innerHTML = `
+                            <i class="fas fa-coins"></i> <span>Crédits</span>
+                            <div class="credits-info">
+                                <h4>💎 Connectez-vous pour voir vos crédits</h4>
+                                <p>Vos crédits sont de <strong>l'argent réel retirable</strong> !</p>
+                                <p><strong>Pour gagner des crédits :</strong></p>
+                                <ul>
+                                    <li>📹 Publier des vidéos populaires</li>
+                                    <li>⏱️ Passer du temps à regarder des vidéos</li>
+                                    <li>👥 Inviter des amis sur la plateforme</li>
+                                    <li>⭐ Recevoir des likes et commentaires</li>
+                                </ul>
+                                <p><strong>Retrait :</strong> Minimum 1000 crédits (10€) via Mobile Money ou virement bancaire.</p>
+                                <button class="submit-btn" style="margin-top: 10px;" onclick="openAuthModal()">
+                                    <i class="fas fa-sign-in-alt"></i> Se connecter
+                                </button>
+                            </div>
+                        `;
+                    }
+                }
+            });
+        }
+
+        function loadUserCredits(userId) {
+            db.collection('crédit').doc(userId).get()
+            .then(doc => {
+                if (doc.exists) {
+                    const creditsData = doc.data();
+                    let credits = 0;
+                    if (creditsData.credits !== undefined) credits = creditsData.credits;
+                    else if (creditsData.credit !== undefined) credits = creditsData.credit;
+                    else if (creditsData.balance !== undefined) credits = creditsData.balance;
+                    else if (creditsData.solde !== undefined) credits = creditsData.solde;
+                    else if (creditsData.montant !== undefined) credits = creditsData.montant;
+                    
+                    document.getElementById('creditsCount').textContent = credits;
+                    localStorage.setItem(`userCredits_${userId}`, credits);
+                    
+                    if (credits === 0) {
+                        return db.collection('users').doc(userId).get();
+                    }
+                } else {
+                    return db.collection('users').doc(userId).get();
+                }
+            })
+            .then(doc => {
+                if (doc && doc.exists) {
+                    const userData = doc.data();
+                    let credits = 0;
+                    if (userData.credits !== undefined) credits = userData.credits;
+                    else if (userData.credit !== undefined) credits = userData.credit;
+                    
+                    if (credits > 0) {
+                        document.getElementById('creditsCount').textContent = credits;
+                        localStorage.setItem(`userCredits_${userId}`, credits);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error("Erreur lors du chargement des crédits: ", error);
+                const cachedCredits = localStorage.getItem(`userCredits_${userId}`);
+                if (cachedCredits) {
+                    document.getElementById('creditsCount').textContent = cachedCredits;
+                } else {
+                    document.getElementById('creditsCount').textContent = '0';
+                }
+            });
+        }
+
+        function checkAuthBeforeAction(page) {
+            const user = auth.currentUser;
+            if (!user && (page === 'upload.html' || page === 'publier.html' || page === 'myprofile.html')) {
+                openAuthModal();
+                return false;
+            }
+            navigateTo(page);
+            return true;
+        }
+
+        function openAuthModal() {
+            const authModal = document.getElementById('authModal');
+            const authError = document.getElementById('authError');
+            const authForm = document.getElementById('authForm');
+            
+            if (authModal) authModal.style.display = 'block';
+            if (authError) {
+                authError.style.display = 'none';
+                authError.textContent = '';
+            }
+            if (authForm) authForm.reset();
+        }
+
+        function handleAuthFormSubmit() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const username = document.getElementById('username').value;
+            const authError = document.getElementById('authError');
+            
+            if (isLoginMode) {
+                auth.signInWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        console.log("Connexion réussie");
+                        closeModal('authModal');
+                        loadUserCredits(userCredential.user.uid);
+                    })
+                    .catch((error) => {
+                        console.error("Erreur de connexion:", error);
+                        if (authError) {
+                            authError.textContent = getAuthErrorMessage(error.code);
+                            authError.style.display = 'block';
+                        }
+                    });
+            } else {
+                auth.createUserWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        console.log("Inscription réussie");
+                        return userCredential.user.updateProfile({
+                            displayName: username
+                        });
+                    })
+                    .then(() => {
+                        closeModal('authModal');
+                        const userId = auth.currentUser.uid;
+                        db.collection('crédit').doc(userId).set({
+                            credits: 0,
+                            userId: userId,
+                            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                        })
+                        .then(() => {
+                            console.log("Crédits initialisés à 0");
+                            loadUserCredits(userId);
+                        });
+                    })
+                    .catch((error) => {
+                        console.error("Erreur d'inscription:", error);
+                        if (authError) {
+                            authError.textContent = getAuthErrorMessage(error.code);
+                            authError.style.display = 'block';
+                        }
+                    });
+            }
+        }
+
+        function getAuthErrorMessage(errorCode) {
+            const errorMessages = {
+                'auth/invalid-email': 'Adresse email invalide',
+                'auth/user-disabled': 'Ce compte a été désactivé',
+                'auth/user-not-found': 'Aucun compte trouvé avec cette adresse email',
+                'auth/wrong-password': 'Mot de passe incorrect',
+                'auth/email-already-in-use': 'Cette adresse email est déjà utilisée',
+                'auth/weak-password': 'Le mot de passe est trop faible',
+                'auth/operation-not-allowed': 'Cette opération n\'est pas autorisée'
+            };
+            
+            return errorMessages[errorCode] || 'Une erreur est survenue lors de l\'authentification';
+        }
+
+        // ===== PAGINATION SIMPLIFIÉE =====
+        function loadVideos(useCache = false) {
+            const popularVideosContainer = document.getElementById('popularVideosContainer');
+            
+            if (!popularVideosContainer) return;
+            
+            showLoadingSkeletons(popularVideosContainer, VIDEOS_PER_PAGE);
+            
+            document.getElementById('prevPage').disabled = true;
+            document.getElementById('nextPage').disabled = true;
+            
+            console.log(`Chargement page ${currentPage}`);
+            
+            // Essayer différentes méthodes de tri
+            let query = db.collection('videos');
+            
+            // Essayer avec 'createdAt' d'abord
+            try {
+                query = query.orderBy('createdAt', 'desc');
+            } catch (error) {
+                console.log("Champ 'createdAt' non indexé, essai avec 'timestamp'");
+                try {
+                    query = query.orderBy('timestamp', 'desc');
+                } catch (error2) {
+                    console.log("Champ 'timestamp' non indexé, essai avec 'date'");
+                    try {
+                        query = query.orderBy('date', 'desc');
+                    } catch (error3) {
+                        console.log("Aucun champ de date indexé, pas de tri");
+                    }
+                }
+            }
+            
+            query = query.limit(VIDEOS_PER_PAGE);
+            
+            if (currentPage > 1 && lastVisibleDoc) {
+                query = query.startAfter(lastVisibleDoc);
+            }
+            
+            query.get()
+            .then((querySnapshot) => {
+                console.log(`Page ${currentPage}: ${querySnapshot.size} vidéos trouvées`);
+                
+                if (querySnapshot.empty) {
+                    if (currentPage === 1) {
+                        popularVideosContainer.innerHTML = '<p style="text-align: center; color: var(--text-color); grid-column: 1 / -1; padding: 40px;">Aucune vidéo disponible pour le moment.</p>';
+                    } else {
+                        popularVideosContainer.innerHTML = '<p style="text-align: center; color: var(--text-color); grid-column: 1 / -1; padding: 40px;">Fin des vidéos.</p>';
+                    }
+                    updatePaginationButtons();
+                    return;
+                }
+                
+                popularVideosContainer.innerHTML = '';
+                lastVisibleDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
+                
+                let loadedCount = 0;
+                querySnapshot.forEach((doc) => {
+                    const videoData = doc.data();
+                    videoData.id = doc.id;
+                    videoCache[doc.id] = videoData;
+                    createVideoCard(videoData, popularVideosContainer);
+                    loadedCount++;
+                });
+                
+                document.getElementById('pageInfo').textContent = `Page ${currentPage} (${loadedCount} vidéos)`;
+                
+                // Vérifier s'il y a plus de vidéos
+                checkIfMoreVideosExist(loadedCount);
+            })
+            .catch((error) => {
+                console.error("Erreur lors du chargement des vidéos: ", error);
+                
+                // Fallback: charger sans tri
+                db.collection('videos')
+                    .limit(VIDEOS_PER_PAGE)
+                    .get()
+                    .then((querySnapshot) => {
+                        if (querySnapshot.empty) {
+                            popularVideosContainer.innerHTML = '<p style="text-align: center; color: var(--text-color); grid-column: 1 / -1; padding: 40px;">Aucune vidéo disponible.</p>';
+                        } else {
+                            popularVideosContainer.innerHTML = '';
+                            querySnapshot.forEach((doc) => {
+                                const videoData = doc.data();
+                                videoData.id = doc.id;
+                                createVideoCard(videoData, popularVideosContainer);
+                            });
+                            document.getElementById('pageInfo').textContent = `Page ${currentPage}`;
+                        }
+                        updatePaginationButtons();
+                    });
+            });
+        }
+
+        function loadNextPage() {
+            if (!lastVisibleDoc && currentPage > 1) {
+                console.log("Pas de dernier document pour la pagination");
+                return;
+            }
+            
+            // Sauvegarder la position actuelle
+            if (currentPage === 1) {
+                // Pour la première page, on sauvegarde le premier document
+                paginationStack.push({page: currentPage, doc: null});
+            } else {
+                paginationStack.push({page: currentPage, doc: lastVisibleDoc});
+            }
+            
+            currentPage++;
+            console.log(`Navigation vers page ${currentPage}`);
+            loadVideos();
+        }
+
+        function loadPrevPage() {
+            if (currentPage <= 1 || paginationStack.length === 0) {
+                console.log("Déjà à la première page");
+                return;
+            }
+            
+            // Retirer la dernière entrée de la pile
+            const prevState = paginationStack.pop();
+            currentPage = prevState.page;
+            lastVisibleDoc = prevState.doc;
+            
+            console.log(`Retour à page ${currentPage}`);
+            loadVideos(true);
+        }
+
+        function checkIfMoreVideosExist(currentLoadedCount) {
+            if (currentLoadedCount < VIDEOS_PER_PAGE) {
+                // Moins de vidéos que prévu = pas de page suivante
+                updatePaginationButtons(false);
+                return;
+            }
+            
+            // Vérifier s'il y a au moins une vidéo supplémentaire
+            let query = db.collection('videos');
+            
+            try {
+                query = query.orderBy('createdAt', 'desc');
+            } catch (error) {
+                try {
+                    query = query.orderBy('timestamp', 'desc');
+                } catch (error2) {
+                    try {
+                        query = query.orderBy('date', 'desc');
+                    } catch (error3) {
+                        // Pas de tri
+                    }
+                }
+            }
+            
+            if (lastVisibleDoc) {
+                query = query.startAfter(lastVisibleDoc).limit(1);
+            } else {
+                query = query.limit(VIDEOS_PER_PAGE + 1);
+            }
+            
+            query.get()
+            .then((querySnapshot) => {
+                const hasMore = querySnapshot.size > 0;
+                console.log("Plus de vidéos disponibles:", hasMore);
+                updatePaginationButtons(hasMore);
+            })
+            .catch((error) => {
+                console.error("Erreur lors de la vérification des vidéos supplémentaires:", error);
+                updatePaginationButtons(false);
+            });
+        }
+
+        function updatePaginationButtons(hasNext = true) {
+            const hasPrev = currentPage > 1;
+            
+            document.getElementById('prevPage').disabled = !hasPrev;
+            document.getElementById('nextPage').disabled = !hasNext;
+            
+            // Mettre à jour les styles
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+            
+            if (hasPrev) {
+                prevBtn.style.cursor = 'pointer';
+                prevBtn.style.opacity = '1';
+            } else {
+                prevBtn.style.cursor = 'not-allowed';
+                prevBtn.style.opacity = '0.5';
+            }
+            
+            if (hasNext) {
+                nextBtn.style.cursor = 'pointer';
+                nextBtn.style.opacity = '1';
+            } else {
+                nextBtn.style.cursor = 'not-allowed';
+                nextBtn.style.opacity = '0.5';
+            }
+            
+            console.log(`Pagination: Page ${currentPage}, Précédent: ${hasPrev}, Suivant: ${hasNext}`);
+        }
+
+        function showLoadingSkeletons(container, count) {
+            container.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                container.innerHTML += `
+                    <div class="video-card">
+                        <div class="video-thumbnail-container">
+                            <div class="thumbnail-loading"></div>
+                        </div>
+                        <div class="video-info">
+                            <div class="thumbnail-loading" style="height: 20px; width: 80%; margin-bottom: 10px;"></div>
+                            <div class="thumbnail-loading" style="height: 15px; width: 60%;"></div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function createVideoCard(videoData, container) {
+            if (!container) return;
+            
+            const videoCard = document.createElement('div');
+            videoCard.className = 'video-card';
+            videoCard.id = `video-${videoData.id}`;
+            
+            let publishDate = 'Date inconnue';
+            if (videoData.createdAt) {
+                if (videoData.createdAt.seconds) {
+                    publishDate = new Date(videoData.createdAt.seconds * 1000).toLocaleDateString('fr-FR');
+                } else if (videoData.createdAt.toDate) {
+                    publishDate = videoData.createdAt.toDate().toLocaleDateString('fr-FR');
+                }
+            }
+            
+            const thumbnailUrl = videoData.thumbnailUrl || 'https://via.placeholder.com/300x200/3498db/ffffff?text=Miniature';
+            const title = videoData.title || 'Titre inconnu';
+            const views = videoData.views || 0;
+            const userId = videoData.userId || 'default';
+            const username = videoData.username || `Utilisateur ${userId.substring(0, 6)}`;
+            
+            videoCard.innerHTML = `
+                <div class="video-thumbnail-container" onclick="navigateToVideo('${videoData.id}')">
+                    <img class="thumbnail-background" src="https://via.placeholder.com/300x200/3498db/ffffff?text=Chargement" data-src="${thumbnailUrl}" alt="${title}" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200/3498db/ffffff?text=Erreur'">
+                    <img class="thumbnail-foreground" src="https://via.placeholder.com/300x200/3498db/ffffff?text=Chargement" data-src="${thumbnailUrl}" alt="${title}" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200/3498db/ffffff?text=Erreur'">
+                    <div class="play-icon">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                </div>
+                <div class="video-info">
+                    <h3 class="video-title">${title}</h3>
+                    
+                    <div class="video-stats">
+                        <div class="video-views">
+                            <i class="fas fa-eye"></i> ${views} vues
+                        </div>
+                        <div class="video-date">
+                            <i class="far fa-calendar-alt"></i> ${publishDate}
+                        </div>
+                        <div class="video-author" onclick="viewUserProfile('${userId}', '${username}')">
+                            <i class="fas fa-user"></i> ${username}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(videoCard);
+            
+            const images = videoCard.querySelectorAll('img[data-src]');
+            images.forEach(img => {
+                img.src = img.dataset.src;
+                img.removeAttribute('data-src');
+            });
+        }
+
+        function navigateToVideo(videoId) {
+            navigateTo(`video.html?id=${videoId}`);
+        }
+
+        // ===== FONCTIONS DE RECHERCHE =====
+        function performSearch() {
+            const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+            
+            if (searchTerm === '') {
+                currentPage = 1;
+                lastVisibleDoc = null;
+                paginationStack = [];
+                loadVideos();
+                document.querySelector('.pagination').style.display = 'flex';
+                return;
+            }
+            
+            const popularVideosContainer = document.getElementById('popularVideosContainer');
+            if (!popularVideosContainer) return;
+            
+            popularVideosContainer.innerHTML = '<p style="text-align: center; color: var(--text-color); grid-column: 1 / -1; padding: 40px;">Recherche en cours...</p>';
+            
+            db.collection('videos')
+                .get()
+            .then((querySnapshot) => {
+                popularVideosContainer.innerHTML = '';
+                
+                let resultsFound = false;
+                let resultCount = 0;
+                
+                querySnapshot.forEach((doc) => {
+                    const videoData = doc.data();
+                    videoData.id = doc.id;
+                    
+                    if ((videoData.title && videoData.title.toLowerCase().includes(searchTerm)) || 
+                        (videoData.description && videoData.description.toLowerCase().includes(searchTerm))) {
+                        createVideoCard(videoData, popularVideosContainer);
+                        resultsFound = true;
+                        resultCount++;
+                    }
+                });
+                
+                if (!resultsFound) {
+                    popularVideosContainer.innerHTML = '<p style="text-align: center; color: var(--text-color); grid-column: 1 / -1; padding: 40px;">Aucune vidéo trouvée pour votre recherche.</p>';
+                } else {
+                    document.getElementById('pageInfo').textContent = `Résultats (${resultCount} vidéos)`;
+                }
+                
+                document.querySelector('.pagination').style.display = 'none';
+            })
+            .catch((error) => {
+                console.error("Erreur lors de la recherche: ", error);
+                popularVideosContainer.innerHTML = '<p style="text-align: center; color: var(--text-color); grid-column: 1 / -1; padding: 40px;">Erreur lors de la recherche.</p>';
+            });
+        }
+
+        function showSearchSuggestions() {
+            const searchInput = document.getElementById('searchInput');
+            const suggestionsContainer = document.getElementById('searchSuggestions');
+            
+            if (!searchInput || !suggestionsContainer) return;
+            
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            
+            if (searchTerm.length < 2) {
+                suggestionsContainer.style.display = 'none';
+                suggestionsContainer.innerHTML = '';
+                return;
+            }
+            
+            db.collection('videos')
+                .limit(10)
+                .get()
+            .then((querySnapshot) => {
+                suggestionsContainer.innerHTML = '';
+                
+                let suggestions = new Set();
+                
+                querySnapshot.forEach((doc) => {
+                    const videoData = doc.data();
+                    
+                    if (videoData.title && videoData.title.toLowerCase().includes(searchTerm)) {
+                        suggestions.add(videoData.title);
+                    }
+                });
+                
+                if (suggestions.size > 0) {
+                    suggestions.forEach(suggestion => {
+                        const suggestionElement = document.createElement('div');
+                        suggestionElement.className = 'search-suggestion';
+                        suggestionElement.textContent = suggestion;
+                        suggestionElement.onclick = () => {
+                            searchInput.value = suggestion;
+                            suggestionsContainer.style.display = 'none';
+                            performSearch();
+                        };
+                        suggestionsContainer.appendChild(suggestionElement);
+                    });
+                    suggestionsContainer.style.display = 'block';
+                } else {
+                    suggestionsContainer.style.display = 'none';
+                }
+            })
+            .catch((error) => {
+                console.error("Erreur lors de la recherche de suggestions: ", error);
+                suggestionsContainer.style.display = 'none';
+            });
+        }
+
+        // ===== FONCTIONS UTILITAIRES =====
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = 'none';
+        }
+
+        function confirmAge() {
+            try {
+                const now = new Date();
+                const expirationDate = new Date(now.setFullYear(now.getFullYear() + 1));
+                
+                localStorage.setItem('ageVerified', 'true');
+                localStorage.setItem('ageVerifiedExpiration', expirationDate.getTime().toString());
+                
+                const ageVerification = document.getElementById('ageVerification');
+                if (ageVerification) {
+                    ageVerification.style.display = 'none';
+                }
+            } catch (e) {
+                console.error("Erreur lors de la confirmation d'âge:", e);
+                try {
+                    sessionStorage.setItem('ageVerified', 'true');
+                    const ageVerification = document.getElementById('ageVerification');
+                    if (ageVerification) {
+                        ageVerification.style.display = 'none';
+                    }
+                } catch (e2) {
+                    console.error("Erreur avec sessionStorage aussi:", e2);
+                }
+            }
+        }
+
+        function denyAge() {
+            window.location.href = 'https://www.google.com';
+        }
+
+        function checkAgeVerification() {
+            let isAgeVerified = false;
+            let expirationValid = true;
+            
+            try {
+                const expiration = localStorage.getItem('ageVerifiedExpiration');
+                const now = new Date().getTime();
+                
+                if (expiration && now > parseInt(expiration)) {
+                    localStorage.removeItem('ageVerified');
+                    localStorage.removeItem('ageVerifiedExpiration');
+                    expirationValid = false;
+                } else {
+                    isAgeVerified = localStorage.getItem('ageVerified') === 'true';
+                }
+            } catch (e) {
+                console.error("Erreur d'accès au localStorage:", e);
+            }
+            
+            if (!isAgeVerified) {
+                try {
+                    isAgeVerified = sessionStorage.getItem('ageVerified') === 'true';
+                } catch (e) {
+                    console.error("Erreur d'accès au sessionStorage:", e);
+                }
+            }
+            
+            if (!isAgeVerified) {
+                isAgeVerified = document.cookie.includes('ageVerified=true');
+            }
+            
+            const ageVerification = document.getElementById('ageVerification');
+            if (ageVerification) {
+                ageVerification.style.display = isAgeVerified && expirationValid ? 'none' : 'flex';
+            }
+        }
+
+        function navigateTo(page) {
+            document.body.style.opacity = "0.8";
+            document.body.style.transition = "opacity 0.3s ease";
+            
+            setTimeout(() => {
+                window.location.href = page;
+            }, 300);
+        }
+
+        function viewUserProfile(userId, username) {
+            navigateTo(`profile.html?id=${userId}&name=${encodeURIComponent(username)}`);
+        }
+
+        // ===== ÉVÉNEMENTS AU CHARGEMENT =====
+        window.addEventListener('load', function() {
+            checkAgeVerification();
+            initTheme();
+            checkAuthState();
+            loadVideos();
+            
+            // Initialiser les écouteurs d'événements
+            const authForm = document.getElementById('authForm');
+            if (authForm) {
+                authForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    handleAuthFormSubmit();
+                });
+            }
+            
+            const authSwitch = document.getElementById('authSwitch');
+            if (authSwitch) {
+                authSwitch.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    isLoginMode = !isLoginMode;
+                    
+                    const authModalTitle = document.getElementById('authModalTitle');
+                    const authSubmit = document.getElementById('authSubmit');
+                    const usernameField = document.getElementById('usernameField');
+                    
+                    if (isLoginMode) {
+                        authModalTitle.textContent = 'Connexion';
+                        authSubmit.textContent = 'Se connecter';
+                        authSwitch.textContent = 'Créer un compte';
+                        if (usernameField) usernameField.style.display = 'none';
+                    } else {
+                        authModalTitle.textContent = 'Inscription';
+                        authSubmit.textContent = 'Créer un compte';
+                        authSwitch.textContent = 'Se connecter';
+                        if (usernameField) usernameField.style.display = 'block';
+                    }
+                    
+                    const authError = document.getElementById('authError');
+                    if (authError) {
+                        authError.style.display = 'none';
+                    }
+                });
+            }
+
+            // Recherche
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+
+            document.getElementById('searchInput').addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(showSearchSuggestions, 300);
+            });
+
+            // Cacher les suggestions en cliquant ailleurs
+            document.addEventListener('click', function(e) {
+                const suggestionsContainer = document.getElementById('searchSuggestions');
+                const searchInput = document.getElementById('searchInput');
+                
+                if (suggestionsContainer && searchInput && 
+                    e.target !== suggestionsContainer && 
+                    e.target !== searchInput && 
+                    !suggestionsContainer.contains(e.target)) {
+                    suggestionsContainer.style.display = 'none';
+                }
+            });
+
+            // Pagination - Événements de clic
+            document.getElementById('nextPage').addEventListener('click', function() {
+                if (!this.disabled) {
+                    loadNextPage();
+                }
+            });
+            
+            document.getElementById('prevPage').addEventListener('click', function() {
+                if (!this.disabled) {
+                    loadPrevPage();
+                }
+            });
+            
+            // Tester les boutons au chargement
+            setTimeout(() => {
+                updatePaginationButtons(true);
+            }, 1000);
+        });
+
+        // Fermer les modals en cliquant à l'extérieur
+        window.onclick = function(event) {
+            const modals = ['authModal'];
+            
+            modals.forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                if (event.target === modal) {
+                    closeModal(modalId);
+                }
+            });
+        };
+    </script>
+<script type='text/javascript' src='//robotbagpipe.com/8f/4d/6a/8f4d6a78769001cdbc22b3b96cf3fd78.js'></script>
+</body>
+</html>
