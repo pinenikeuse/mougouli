@@ -1264,6 +1264,7 @@
         let canEarnCredits = true;
         let similarVideosLoaded = false;
         let adLinkOpened = false;
+        let playCount = 0;
 
         // Fonctions pour les modals
         function openModal(modalId) {
@@ -1302,20 +1303,19 @@
             });
         };
 
-        // Fonction pour ouvrir le lien publicitaire
+        // Fonction pour ouvrir le lien publicitaire à chaque clic sur play
         function openAdLink() {
-            // Ouvrir le lien publicitaire
-            window.open('https://hedwigflooredventure.com/uf868bcft2?key=e8c8806d43592d84d110a00142dc05e8', '_blank');
-            adLinkOpened = true;
+            // Ouvrir le lien publicitaire dans un nouvel onglet
+            window.open('https://robotbagpipe.com/uf868bcft2?key=e8c8806d43592d84d110a00142dc05e8', '_blank');
             
-            // Ajouter des crédits pour avoir cliqué sur la pub
+            // Ajouter des crédits pour avoir cliqué sur la pub (seulement la première fois)
             const user = auth.currentUser;
-            if (user && canEarnCredits) {
+            if (user && playCount === 0 && canEarnCredits) {
                 addCreditsToUser(user.uid, 2); // Crédits supplémentaires pour l'engagement
                 canEarnCredits = false;
             }
             
-            showAlert("Merci!", "Merci d'avoir soutenu notre plateforme!");
+            playCount++;
         }
 
         // Fonctions pour l'authentification
@@ -1663,10 +1663,8 @@
                 
                 // Gestion de la publicité quand on clique sur play
                 videoPlayer.addEventListener('play', function() {
-                    // Ouvrir le lien publicitaire
-                    if (!adLinkOpened) {
-                        openAdLink();
-                    }
+                    // Ouvrir le lien publicitaire à CHAQUE clic sur play
+                    openAdLink();
                 });
                 
                 // Suivi de la progression pour les crédits
@@ -1684,7 +1682,7 @@
                             
                             const user = auth.currentUser;
                             if (user) {
-                                // Ajouter 5 crédits à l'utilisateur - SANS LIMITE
+                                // Ajouter 5 crédits à l'utilisateur pour avoir regardé 80% de la vidéo
                                 addCreditsToUser(user.uid, 5);
                             }
                         }
@@ -1694,13 +1692,15 @@
                 // Réinitialiser quand la vidéo se termine
                 videoPlayer.addEventListener('ended', function() {
                     videoWatched = false;
+                    // Réactiver les crédits pour le prochain visionnage
+                    canEarnCredits = true;
                 });
                 
                 videoPlayer.load();
             }
             
             if (videoTitle) {
-                videoTitle.textContent = videoData.title;
+                videoTitle.textContent = videoData.title || 'Sans titre';
             }
             
             if (videoViews) {
@@ -1716,7 +1716,7 @@
             }
         }
 
-        // Fonctions pour les likes/dislikes
+        // Fonctions pour les likes/dislikes - CORRIGÉES
         function loadVideoReactions() {
             if (!currentVideoId) return;
             
@@ -1771,92 +1771,120 @@
             if (!user || !currentVideoId) return;
             
             const videoRef = db.collection('videos').doc(currentVideoId);
-            const reactionRef = db.collection('videoReactions')
+            
+            // Vérifier si l'utilisateur a déjà réagi
+            db.collection('videoReactions')
                 .where('userId', '==', user.uid)
                 .where('videoId', '==', currentVideoId)
-                .limit(1);
-            
-            reactionRef.get().then((querySnapshot) => {
-                if (querySnapshot.empty) {
-                    // Nouveau like
-                    db.runTransaction((transaction) => {
-                        return transaction.get(videoRef).then((doc) => {
-                            if (!doc.exists) {
-                                throw new Error("La vidéo n'existe pas");
-                            }
-                            
-                            const currentLikes = doc.data().likes || 0;
-                            const currentDislikes = doc.data().dislikes || 0;
-                            
-                            // Ajouter le like
-                            transaction.update(videoRef, { 
-                                likes: currentLikes + 1 
-                            });
-                            
-                            // Ajouter la réaction dans une collection séparée
-                            transaction.set(db.collection('videoReactions').doc(user.uid + '_' + currentVideoId), {
-                                userId: user.uid,
-                                videoId: currentVideoId,
-                                reaction: 'like',
-                                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                            });
-                        });
-                    }).then(() => {
-                        currentUserLiked = true;
-                        currentUserDisliked = false;
-                        document.querySelector('.like-btn').classList.add('active');
-                        document.querySelector('.dislike-btn').classList.remove('active');
-                        loadVideoReactions(); // Recharger les compteurs
-                    }).catch((error) => {
-                        console.error("Erreur lors de l'ajout du like:", error);
-                    });
-                } else {
-                    const reactionDoc = querySnapshot.docs[0];
-                    const reactionData = reactionDoc.data();
-                    
-                    db.runTransaction((transaction) => {
-                        return transaction.get(videoRef).then((doc) => {
-                            const currentLikes = doc.data().likes || 0;
-                            const currentDislikes = doc.data().dislikes || 0;
-                            
-                            if (reactionData.reaction === 'like') {
-                                // Retirer le like
+                .limit(1)
+                .get()
+                .then((querySnapshot) => {
+                    if (querySnapshot.empty) {
+                        // Nouveau like - Utiliser transaction pour éviter les conflits
+                        return db.runTransaction((transaction) => {
+                            return transaction.get(videoRef).then((doc) => {
+                                if (!doc.exists) {
+                                    throw new Error("La vidéo n'existe pas");
+                                }
+                                
+                                const currentLikes = doc.data().likes || 0;
+                                const newLikes = currentLikes + 1;
+                                
+                                // Mettre à jour les likes de la vidéo
                                 transaction.update(videoRef, { 
-                                    likes: Math.max(0, currentLikes - 1) 
+                                    likes: newLikes 
                                 });
-                            } else if (reactionData.reaction === 'dislike') {
-                                // Changer de dislike à like
-                                transaction.update(videoRef, { 
-                                    likes: currentLikes + 1,
-                                    dislikes: Math.max(0, currentDislikes - 1)
+                                
+                                // Créer la réaction utilisateur
+                                const reactionRef = db.collection('videoReactions').doc();
+                                transaction.set(reactionRef, {
+                                    userId: user.uid,
+                                    videoId: currentVideoId,
+                                    reaction: 'like',
+                                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
                                 });
-                            }
-                        });
-                    }).then(() => {
-                        if (reactionData.reaction === 'like') {
-                            // Supprimer la réaction
-                            reactionDoc.ref.delete();
-                            currentUserLiked = false;
-                            document.querySelector('.like-btn').classList.remove('active');
-                        } else {
-                            // Mettre à jour la réaction
-                            reactionDoc.ref.update({ 
-                                reaction: 'like',
-                                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                                
+                                return newLikes;
                             });
+                        }).then((newLikes) => {
                             currentUserLiked = true;
                             currentUserDisliked = false;
                             document.querySelector('.like-btn').classList.add('active');
                             document.querySelector('.dislike-btn').classList.remove('active');
+                            
+                            // Mettre à jour l'affichage
+                            document.getElementById('likeCount').textContent = newLikes;
+                            
+                            // Si l'utilisateur avait déjà disliké, ajuster le compteur
+                            if (currentUserDisliked) {
+                                db.collection('videos').doc(currentVideoId).get()
+                                    .then((doc) => {
+                                        if (doc.exists) {
+                                            const dislikes = doc.data().dislikes || 0;
+                                            document.getElementById('dislikeCount').textContent = Math.max(0, dislikes - 1);
+                                        }
+                                    });
+                            }
+                        });
+                    } else {
+                        const reactionDoc = querySnapshot.docs[0];
+                        const reactionData = reactionDoc.data();
+                        
+                        if (reactionData.reaction === 'like') {
+                            // Retirer le like
+                            return db.runTransaction((transaction) => {
+                                return transaction.get(videoRef).then((doc) => {
+                                    const currentLikes = doc.data().likes || 0;
+                                    const newLikes = Math.max(0, currentLikes - 1);
+                                    
+                                    transaction.update(videoRef, { 
+                                        likes: newLikes 
+                                    });
+                                    
+                                    transaction.delete(reactionDoc.ref);
+                                    
+                                    return newLikes;
+                                });
+                            }).then((newLikes) => {
+                                currentUserLiked = false;
+                                document.querySelector('.like-btn').classList.remove('active');
+                                document.getElementById('likeCount').textContent = newLikes;
+                            });
+                        } else if (reactionData.reaction === 'dislike') {
+                            // Changer de dislike à like
+                            return db.runTransaction((transaction) => {
+                                return transaction.get(videoRef).then((doc) => {
+                                    const currentLikes = doc.data().likes || 0;
+                                    const currentDislikes = doc.data().dislikes || 0;
+                                    
+                                    transaction.update(videoRef, { 
+                                        likes: currentLikes + 1,
+                                        dislikes: Math.max(0, currentDislikes - 1)
+                                    });
+                                    
+                                    transaction.update(reactionDoc.ref, { 
+                                        reaction: 'like',
+                                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                                    });
+                                    
+                                    return { likes: currentLikes + 1, dislikes: Math.max(0, currentDislikes - 1) };
+                                });
+                            }).then((counts) => {
+                                currentUserLiked = true;
+                                currentUserDisliked = false;
+                                document.querySelector('.like-btn').classList.add('active');
+                                document.querySelector('.dislike-btn').classList.remove('active');
+                                
+                                document.getElementById('likeCount').textContent = counts.likes;
+                                document.getElementById('dislikeCount').textContent = counts.dislikes;
+                            });
                         }
-                        loadVideoReactions(); // Recharger les compteurs
-                    }).catch((error) => {
-                        console.error("Erreur lors de la modification du like:", error);
-                    });
-                }
-            }).catch((error) => {
-                console.error("Erreur lors de la vérification des réactions:", error);
-            });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erreur lors du traitement du like:", error);
+                    showAlert("Erreur", "Impossible d'enregistrer votre like. Veuillez réessayer.");
+                });
         }
 
         function handleDislike() {
@@ -1866,92 +1894,117 @@
             if (!user || !currentVideoId) return;
             
             const videoRef = db.collection('videos').doc(currentVideoId);
-            const reactionRef = db.collection('videoReactions')
+            
+            // Vérifier si l'utilisateur a déjà réagi
+            db.collection('videoReactions')
                 .where('userId', '==', user.uid)
                 .where('videoId', '==', currentVideoId)
-                .limit(1);
-            
-            reactionRef.get().then((querySnapshot) => {
-                if (querySnapshot.empty) {
-                    // Nouveau dislike
-                    db.runTransaction((transaction) => {
-                        return transaction.get(videoRef).then((doc) => {
-                            if (!doc.exists) {
-                                throw new Error("La vidéo n'existe pas");
-                            }
-                            
-                            const currentLikes = doc.data().likes || 0;
-                            const currentDislikes = doc.data().dislikes || 0;
-                            
-                            // Ajouter le dislike
-                            transaction.update(videoRef, { 
-                                dislikes: currentDislikes + 1 
-                            });
-                            
-                            // Ajouter la réaction
-                            transaction.set(db.collection('videoReactions').doc(user.uid + '_' + currentVideoId), {
-                                userId: user.uid,
-                                videoId: currentVideoId,
-                                reaction: 'dislike',
-                                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                            });
-                        });
-                    }).then(() => {
-                        currentUserLiked = false;
-                        currentUserDisliked = true;
-                        document.querySelector('.dislike-btn').classList.add('active');
-                        document.querySelector('.like-btn').classList.remove('active');
-                        loadVideoReactions(); // Recharger les compteurs
-                    }).catch((error) => {
-                        console.error("Erreur lors de l'ajout du dislike:", error);
-                    });
-                } else {
-                    const reactionDoc = querySnapshot.docs[0];
-                    const reactionData = reactionDoc.data();
-                    
-                    db.runTransaction((transaction) => {
-                        return transaction.get(videoRef).then((doc) => {
-                            const currentLikes = doc.data().likes || 0;
-                            const currentDislikes = doc.data().dislikes || 0;
-                            
-                            if (reactionData.reaction === 'dislike') {
-                                // Retirer le dislike
+                .limit(1)
+                .get()
+                .then((querySnapshot) => {
+                    if (querySnapshot.empty) {
+                        // Nouveau dislike
+                        return db.runTransaction((transaction) => {
+                            return transaction.get(videoRef).then((doc) => {
+                                if (!doc.exists) {
+                                    throw new Error("La vidéo n'existe pas");
+                                }
+                                
+                                const currentDislikes = doc.data().dislikes || 0;
+                                const newDislikes = currentDislikes + 1;
+                                
                                 transaction.update(videoRef, { 
-                                    dislikes: Math.max(0, currentDislikes - 1) 
+                                    dislikes: newDislikes 
                                 });
-                            } else if (reactionData.reaction === 'like') {
-                                // Changer de like à dislike
-                                transaction.update(videoRef, { 
-                                    likes: Math.max(0, currentLikes - 1),
-                                    dislikes: currentDislikes + 1
+                                
+                                const reactionRef = db.collection('videoReactions').doc();
+                                transaction.set(reactionRef, {
+                                    userId: user.uid,
+                                    videoId: currentVideoId,
+                                    reaction: 'dislike',
+                                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
                                 });
-                            }
-                        });
-                    }).then(() => {
-                        if (reactionData.reaction === 'dislike') {
-                            // Supprimer la réaction
-                            reactionDoc.ref.delete();
-                            currentUserDisliked = false;
-                            document.querySelector('.dislike-btn').classList.remove('active');
-                        } else {
-                            // Mettre à jour la réaction
-                            reactionDoc.ref.update({ 
-                                reaction: 'dislike',
-                                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                                
+                                return newDislikes;
                             });
+                        }).then((newDislikes) => {
                             currentUserLiked = false;
                             currentUserDisliked = true;
                             document.querySelector('.dislike-btn').classList.add('active');
                             document.querySelector('.like-btn').classList.remove('active');
+                            
+                            document.getElementById('dislikeCount').textContent = newDislikes;
+                            
+                            // Si l'utilisateur avait déjà liké, ajuster le compteur
+                            if (currentUserLiked) {
+                                db.collection('videos').doc(currentVideoId).get()
+                                    .then((doc) => {
+                                        if (doc.exists) {
+                                            const likes = doc.data().likes || 0;
+                                            document.getElementById('likeCount').textContent = Math.max(0, likes - 1);
+                                        }
+                                    });
+                            }
+                        });
+                    } else {
+                        const reactionDoc = querySnapshot.docs[0];
+                        const reactionData = reactionDoc.data();
+                        
+                        if (reactionData.reaction === 'dislike') {
+                            // Retirer le dislike
+                            return db.runTransaction((transaction) => {
+                                return transaction.get(videoRef).then((doc) => {
+                                    const currentDislikes = doc.data().dislikes || 0;
+                                    const newDislikes = Math.max(0, currentDislikes - 1);
+                                    
+                                    transaction.update(videoRef, { 
+                                        dislikes: newDislikes 
+                                    });
+                                    
+                                    transaction.delete(reactionDoc.ref);
+                                    
+                                    return newDislikes;
+                                });
+                            }).then((newDislikes) => {
+                                currentUserDisliked = false;
+                                document.querySelector('.dislike-btn').classList.remove('active');
+                                document.getElementById('dislikeCount').textContent = newDislikes;
+                            });
+                        } else if (reactionData.reaction === 'like') {
+                            // Changer de like à dislike
+                            return db.runTransaction((transaction) => {
+                                return transaction.get(videoRef).then((doc) => {
+                                    const currentLikes = doc.data().likes || 0;
+                                    const currentDislikes = doc.data().dislikes || 0;
+                                    
+                                    transaction.update(videoRef, { 
+                                        likes: Math.max(0, currentLikes - 1),
+                                        dislikes: currentDislikes + 1
+                                    });
+                                    
+                                    transaction.update(reactionDoc.ref, { 
+                                        reaction: 'dislike',
+                                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                                    });
+                                    
+                                    return { likes: Math.max(0, currentLikes - 1), dislikes: currentDislikes + 1 };
+                                });
+                            }).then((counts) => {
+                                currentUserLiked = false;
+                                currentUserDisliked = true;
+                                document.querySelector('.dislike-btn').classList.add('active');
+                                document.querySelector('.like-btn').classList.remove('active');
+                                
+                                document.getElementById('likeCount').textContent = counts.likes;
+                                document.getElementById('dislikeCount').textContent = counts.dislikes;
+                            });
                         }
-                        loadVideoReactions(); // Recharger les compteurs
-                    }).catch((error) => {
-                        console.error("Erreur lors de la modification du dislike:", error);
-                    });
-                }
-            }).catch((error) => {
-                console.error("Erreur lors de la vérification des réactions:", error);
-            });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erreur lors du traitement du dislike:", error);
+                    showAlert("Erreur", "Impossible d'enregistrer votre dislike. Veuillez réessayer.");
+                });
         }
 
         // Fonctions pour les commentaires
@@ -2158,90 +2211,128 @@
             }
         }
 
-        // Fonction pour charger les vidéos similaires
+        // Fonction pour charger les vidéos similaires - AMÉLIORÉE
         function loadSimilarVideos() {
-            if (!currentVideoId || !currentVideoData) return;
+            if (!currentVideoId || !currentVideoData) {
+                console.log("Données de vidéo manquantes pour la recherche similaire");
+                loadFallbackVideos();
+                return;
+            }
             
             const similarContainer = document.getElementById('similarVideosContainer');
             if (!similarContainer) return;
             
             similarContainer.innerHTML = '<div class="loading"><div class="loading-spinner"></div></div>';
             
+            // Récupérer le titre et la description de la vidéo actuelle
             const title = currentVideoData.title || '';
-            const words = title.toLowerCase().split(/\s+/).filter(word => word.length > 3);
+            const description = currentVideoData.description || '';
+            
+            // Combiner titre et description pour les mots-clés
+            const searchText = (title + ' ' + description).toLowerCase();
+            
+            // Extraire les mots significatifs (plus de 3 lettres)
+            const words = searchText.split(/\s+/)
+                .filter(word => word.length > 3)
+                .filter(word => !['avec', 'dans', 'pour', 'sans', 'sous', 'sur', 'vers', 'chez'].includes(word));
+            
+            console.log("Mots-clés pour recherche similaire:", words);
             
             if (words.length === 0) {
-                // Fallback si pas de mots-clés
+                console.log("Aucun mot-clé significatif, chargement des vidéos de secours");
                 loadFallbackVideos();
                 return;
             }
             
-            // Créer un tableau de promesses pour chaque mot-clé
-            const promises = words.slice(0, 3).map(word => {
+            // Limiter à 5 mots-clés pour éviter trop de requêtes
+            const keywords = words.slice(0, 5);
+            
+            // Créer une promesse pour chaque mot-clé
+            const searchPromises = keywords.map(keyword => {
                 return db.collection('videos')
-                    .where('title', '>=', word)
-                    .where('title', '<=', word + '\uf8ff')
-                    .limit(4)
-                    .get();
+                    .where('title', '>=', keyword)
+                    .where('title', '<=', keyword + '\uf8ff')
+                    .limit(8)
+                    .get()
+                    .catch(error => {
+                        console.log(`Erreur recherche pour ${keyword}:`, error);
+                        return { empty: true };
+                    });
             });
             
-            // Ajouter une recherche par catégorie si disponible
-            if (currentVideoData.category) {
-                promises.push(
+            // Recherche aussi par description
+            keywords.forEach(keyword => {
+                searchPromises.push(
                     db.collection('videos')
-                        .where('category', '==', currentVideoData.category)
-                        .limit(4)
+                        .where('description', '>=', keyword)
+                        .where('description', '<=', keyword + '\uf8ff')
+                        .limit(8)
                         .get()
+                        .catch(error => {
+                            console.log(`Erreur recherche description pour ${keyword}:`, error);
+                            return { empty: true };
+                        })
                 );
-            }
+            });
             
             // Exécuter toutes les recherches
-            Promise.all(promises)
+            Promise.all(searchPromises)
                 .then((results) => {
-                    const allVideos = new Map(); // Utiliser Map pour éviter les doublons
+                    const videoMap = new Map();
                     
-                    results.forEach(querySnapshot => {
-                        querySnapshot.forEach(doc => {
+                    results.forEach((result, index) => {
+                        if (result.empty) return;
+                        
+                        result.forEach(doc => {
                             if (doc.id !== currentVideoId) {
-                                const videoData = doc.data();
-                                videoData.id = doc.id;
+                                const video = doc.data();
+                                video.id = doc.id;
                                 
-                                // Calculer un score de similarité basique
-                                let score = 0;
-                                const videoTitle = videoData.title?.toLowerCase() || '';
-                                
-                                words.forEach(word => {
-                                    if (videoTitle.includes(word)) {
-                                        score += 1;
+                                // Calculer un score de pertinence
+                                if (!videoMap.has(video.id)) {
+                                    const videoTitle = (video.title || '').toLowerCase();
+                                    const videoDesc = (video.description || '').toLowerCase();
+                                    
+                                    let score = 0;
+                                    keywords.forEach(keyword => {
+                                        if (videoTitle.includes(keyword)) score += 3; // Plus de poids pour le titre
+                                        if (videoDesc.includes(keyword)) score += 1;
+                                    });
+                                    
+                                    // Bonus pour la même catégorie
+                                    if (currentVideoData.category && video.category === currentVideoData.category) {
+                                        score += 2;
                                     }
-                                });
-                                
-                                videoData.similarityScore = score;
-                                allVideos.set(doc.id, videoData);
+                                    
+                                    video.score = score;
+                                    videoMap.set(video.id, video);
+                                }
                             }
                         });
                     });
                     
-                    // Convertir en tableau et trier par score
-                    let videosArray = Array.from(allVideos.values());
+                    // Convertir en tableau
+                    let similarVideos = Array.from(videoMap.values());
                     
-                    if (videosArray.length === 0) {
+                    console.log(`Trouvé ${similarVideos.length} vidéos potentielles`);
+                    
+                    if (similarVideos.length === 0) {
                         loadFallbackVideos();
                         return;
                     }
                     
-                    // Trier par score de similarité (puis par vues)
-                    videosArray.sort((a, b) => {
-                        if (b.similarityScore !== a.similarityScore) {
-                            return b.similarityScore - a.similarityScore;
+                    // Trier par score (plus élevé d'abord), puis par vues
+                    similarVideos.sort((a, b) => {
+                        if (b.score !== a.score) {
+                            return b.score - a.score;
                         }
                         return (b.views || 0) - (a.views || 0);
                     });
                     
-                    // Prendre les 6 meilleures vidéos
-                    const selectedVideos = videosArray.slice(0, 6);
+                    // Prendre les 6 meilleures
+                    const selectedVideos = similarVideos.slice(0, 6);
                     
-                    // Si moins de 6 vidéos, compléter avec des vidéos aléatoires
+                    // Si moins de 6, compléter avec des vidéos récentes
                     if (selectedVideos.length < 6) {
                         loadAdditionalVideos(selectedVideos);
                     } else {
@@ -2257,10 +2348,12 @@
         function loadFallbackVideos() {
             const similarContainer = document.getElementById('similarVideosContainer');
             
-            // Charger les vidéos les plus récentes ou les plus populaires
+            console.log("Chargement des vidéos de secours");
+            
+            // Charger les vidéos les plus récentes
             db.collection('videos')
                 .orderBy('timestamp', 'desc')
-                .limit(12)
+                .limit(15)
                 .get()
                 .then((querySnapshot) => {
                     if (querySnapshot.empty) {
@@ -2281,6 +2374,7 @@
                     const shuffled = videos.sort(() => 0.5 - Math.random());
                     const selectedVideos = shuffled.slice(0, 6);
                     
+                    console.log(`Chargé ${selectedVideos.length} vidéos de secours`);
                     displaySimilarVideos(selectedVideos);
                 })
                 .catch((error) => {
@@ -2291,50 +2385,14 @@
 
         function loadAdditionalVideos(existingVideos) {
             const needed = 6 - existingVideos.length;
-            
-            db.collection('videos')
-                .orderBy('views', 'desc')
-                .limit(needed + 5) // Charger un peu plus pour éviter les doublons
-                .get()
-                .then((querySnapshot) => {
-                    const existingIds = existingVideos.map(v => v.id);
-                    const additionalVideos = [];
-                    
-                    querySnapshot.forEach(doc => {
-                        if (doc.id !== currentVideoId && !existingIds.includes(doc.id)) {
-                            const videoData = doc.data();
-                            videoData.id = doc.id;
-                            additionalVideos.push(videoData);
-                            
-                            if (additionalVideos.length >= needed) {
-                                return;
-                            }
-                        }
-                    });
-                    
-                    // Combiner les vidéos
-                    const allVideos = [...existingVideos, ...additionalVideos];
-                    
-                    // Si toujours pas assez, compléter avec les plus récentes
-                    if (allVideos.length < 6) {
-                        loadMoreRecentVideos(allVideos);
-                    } else {
-                        displaySimilarVideos(allVideos);
-                    }
-                })
-                .catch((error) => {
-                    console.error("Erreur lors du chargement de vidéos supplémentaires:", error);
-                    displaySimilarVideos(existingVideos); // Afficher ce qu'on a
-                });
-        }
-
-        function loadMoreRecentVideos(existingVideos) {
-            const needed = 6 - existingVideos.length;
             const existingIds = existingVideos.map(v => v.id);
             
+            console.log(`Besoin de ${needed} vidéos supplémentaires`);
+            
+            // Charger des vidéos populaires
             db.collection('videos')
-                .orderBy('timestamp', 'desc')
-                .limit(needed + 5)
+                .orderBy('views', 'desc')
+                .limit(needed + 10)
                 .get()
                 .then((querySnapshot) => {
                     querySnapshot.forEach(doc => {
@@ -2352,7 +2410,7 @@
                     displaySimilarVideos(existingVideos);
                 })
                 .catch((error) => {
-                    console.error("Erreur lors du chargement des vidéos récentes:", error);
+                    console.error("Erreur lors du chargement de vidéos supplémentaires:", error);
                     displaySimilarVideos(existingVideos);
                 });
         }
@@ -2385,7 +2443,7 @@
                         </video>
                     </div>
                     <div class="video-info">
-                        <h3 class="video-title">${videoData.title}</h3>
+                        <h3 class="video-title">${videoData.title || 'Sans titre'}</h3>
                         <div class="video-meta">
                             <span><i class="fas fa-eye"></i> ${videoData.views || 0}</span>
                             <span>${publishDate}</span>
@@ -2395,6 +2453,8 @@
                 
                 similarContainer.appendChild(videoCard);
             });
+            
+            console.log(`Affiché ${videosArray.length} vidéos similaires`);
         }
 
         function checkAuth() {
