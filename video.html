@@ -916,6 +916,38 @@
         .ad-play-button i {
             font-size: 20px;
         }
+        
+        /* Styles pour la suggestion de partie */
+        .part-suggestion {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        
+        .part-suggestion button {
+            background: white;
+            color: var(--primary-color);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 auto;
+        }
+        
+        .part-suggestion button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body>
@@ -1719,7 +1751,7 @@
             }
         }
 
-        // Fonctions pour les likes/dislikes - SIMPLIFIÉES et CORRIGÉES
+        // Fonctions pour les likes/dislikes
         function loadVideoReactions() {
             if (!currentVideoId) return;
             
@@ -1971,7 +2003,6 @@
             
             commentsList.innerHTML = '<div class="loading"><div class="loading-spinner"></div></div>';
             
-            // Essayer avec orderBy d'abord
             commentsListener = db.collection('comments')
                 .where('videoId', '==', currentVideoId)
                 .orderBy('timestamp', 'desc')
@@ -2151,7 +2182,250 @@
             }
         }
 
-        // Fonction SIMPLIFIÉE pour charger les vidéos similaires
+        // NOUVELLES FONCTIONS POUR LES VIDÉOS SIMILAIRES AVEC PARTIES
+        // -------------------------------------------------------------
+
+        // Fonction pour extraire les informations du titre (base et numéro de partie)
+        function extractTitleInfo(title) {
+            const titleStr = title || '';
+            
+            // Détecter différents formats de parties
+            const partPatterns = [
+                /(?:partie|part|épisode|episode|chapitre|chapter|p|ep)\s*(\d+)(?:\s*[:-]\s*)?(.*)/i,
+                /(.*)\s+-\s+(?:partie|part|épisode|episode|chapitre|chapter)\s*(\d+)/i,
+                /(.*?)\s*\(?\s*(?:partie|part|épisode|episode|chapitre|chapter)\s*(\d+)\s*\)?/i
+            ];
+            
+            for (const pattern of partPatterns) {
+                const match = titleStr.match(pattern);
+                if (match) {
+                    const partNumber = parseInt(match[1]);
+                    let baseTitle = '';
+                    
+                    if (match[2]) {
+                        baseTitle = match[2].trim();
+                    } else if (match[1] && match.index > 0) {
+                        baseTitle = titleStr.substring(0, match.index).trim();
+                    }
+                    
+                    // Si le titre de base est vide, utiliser le titre complet sans la partie
+                    if (!baseTitle) {
+                        baseTitle = titleStr.replace(pattern, '').trim();
+                    }
+                    
+                    return {
+                        baseTitle: baseTitle || titleStr,
+                        currentPart: partNumber,
+                        hasPart: true
+                    };
+                }
+            }
+            
+            return {
+                baseTitle: titleStr,
+                currentPart: 0,
+                hasPart: false
+            };
+        }
+
+        // Fonction pour trouver les autres parties d'une série
+        function findOtherParts(allVideos, baseTitle, currentPart) {
+            const otherParts = [];
+            
+            allVideos.forEach(video => {
+                const { baseTitle: videoBaseTitle, currentPart: videoPart, hasPart } = extractTitleInfo(video.title || '');
+                
+                if (hasPart && videoPart > 0 && videoPart !== currentPart) {
+                    // Vérifier la similarité des titres de base
+                    const cleanBaseTitle = baseTitle.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').trim();
+                    const cleanVideoBaseTitle = videoBaseTitle.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').trim();
+                    
+                    // Plusieurs méthodes pour détecter la même série :
+                    const isSameSeries = 
+                        cleanBaseTitle === cleanVideoBaseTitle ||
+                        cleanBaseTitle.includes(cleanVideoBaseTitle) ||
+                        cleanVideoBaseTitle.includes(cleanBaseTitle);
+                    
+                    if (isSameSeries) {
+                        otherParts.push({
+                            id: video.id,
+                            title: video.title,
+                            part: videoPart,
+                            videoData: video
+                        });
+                    }
+                }
+            });
+            
+            // Trier par numéro de partie
+            return otherParts.sort((a, b) => a.part - b.part);
+        }
+
+        // Fonction pour afficher la suggestion de partie
+        function displayPartSuggestion(otherParts, currentPart) {
+            // Trier toutes les parties
+            const sortedParts = otherParts.sort((a, b) => a.part - b.part);
+            
+            // Créer un tableau avec toutes les parties (y compris la courante)
+            const allParts = [...sortedParts.map(p => ({...p, isCurrent: false})), 
+                             {part: currentPart, isCurrent: true}]
+                             .sort((a, b) => a.part - b.part);
+            
+            const currentIndex = allParts.findIndex(p => p.isCurrent);
+            
+            // Déterminer quelle partie suggérer
+            let suggestedPart = null;
+            if (currentIndex < allParts.length - 1) {
+                // Si ce n'est pas la dernière partie, suggérer la suivante
+                suggestedPart = allParts[currentIndex + 1];
+            } else if (allParts.length > 1) {
+                // Si c'est la dernière partie, suggérer la première
+                suggestedPart = allParts[0];
+            }
+            
+            if (suggestedPart && suggestedPart.id) {
+                // Créer le conteneur de suggestion
+                const suggestionDiv = document.createElement('div');
+                suggestionDiv.className = 'part-suggestion';
+                suggestionDiv.style.cssText = `
+                    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+                    color: white;
+                    padding: 20px;
+                    border-radius: var(--border-radius);
+                    margin-bottom: 25px;
+                    text-align: center;
+                    box-shadow: var(--box-shadow);
+                    border: 2px solid rgba(255,255,255,0.1);
+                `;
+                
+                // Déterminer le message en fonction de la position
+                let message = '';
+                if (suggestedPart.part > currentPart) {
+                    message = `Voulez-vous regarder la <strong>Partie ${suggestedPart.part}</strong> de cette série ?`;
+                } else if (suggestedPart.part < currentPart && currentIndex === allParts.length - 1) {
+                    message = `Vous avez regardé la dernière partie. Voulez-vous regarder la <strong>Partie 1</strong> ?`;
+                } else {
+                    message = `Voulez-vous regarder la <strong>Partie ${suggestedPart.part}</strong> ?`;
+                }
+                
+                suggestionDiv.innerHTML = `
+                    <div style="margin-bottom: 15px;">
+                        <i class="fas fa-film" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
+                        <p style="margin: 0; font-size: 16px; line-height: 1.4;">${message}</p>
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <button onclick="playSuggestedPart('${suggestedPart.id}')" 
+                                style="
+                                    background: white;
+                                    color: var(--primary-color);
+                                    border: none;
+                                    padding: 12px 25px;
+                                    border-radius: 25px;
+                                    cursor: pointer;
+                                    font-weight: bold;
+                                    transition: all 0.3s;
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 8px;
+                                "
+                                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)'"
+                                onmouseout="this.style.transform='none'; this.style.boxShadow='none'">
+                            <i class="fas fa-play-circle"></i> 
+                            Oui, regarder
+                        </button>
+                        <button onclick="this.parentElement.parentElement.remove()" 
+                                style="
+                                    background: transparent;
+                                    color: white;
+                                    border: 2px solid rgba(255,255,255,0.3);
+                                    padding: 12px 25px;
+                                    border-radius: 25px;
+                                    cursor: pointer;
+                                    font-weight: bold;
+                                    transition: all 0.3s;
+                                "
+                                onmouseover="this.style.background='rgba(255,255,255,0.1)'"
+                                onmouseout="this.style.background='transparent'">
+                            Non, merci
+                        </button>
+                    </div>
+                `;
+                
+                const similarContainer = document.getElementById('similarVideosContainer');
+                if (similarContainer) {
+                    // Insérer la suggestion au début
+                    similarContainer.insertBefore(suggestionDiv, similarContainer.firstChild);
+                }
+            }
+        }
+
+        // Fonction pour jouer la partie suggérée
+        function playSuggestedPart(videoId) {
+            // Afficher un indicateur de chargement
+            showAlert("Chargement", "Chargement de la partie...");
+            
+            // Charger la vidéo suggérée dans le lecteur principal
+            db.collection('videos').doc(videoId).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const videoData = doc.data();
+                        videoData.id = doc.id;
+                        
+                        // Mettre à jour la vidéo courante
+                        currentVideoId = videoId;
+                        currentVideoData = videoData;
+                        
+                        // Afficher la nouvelle vidéo
+                        displayVideo(videoData);
+                        
+                        // Mettre à jour le titre
+                        document.getElementById('featuredVideoTitle').textContent = videoData.title || 'Sans titre';
+                        
+                        // Réinitialiser les états
+                        videoWatched = false;
+                        adPlayedThisSession = false;
+                        currentUserLiked = false;
+                        currentUserDisliked = false;
+                        
+                        // Réinitialiser les boutons like/dislike
+                        document.querySelector('.like-btn').classList.remove('active');
+                        document.querySelector('.dislike-btn').classList.remove('active');
+                        
+                        // Recharger toutes les données
+                        loadVideoReactions();
+                        loadComments();
+                        loadSimilarVideos();
+                        incrementVideoViews(videoId);
+                        checkUserReaction();
+                        
+                        // Mettre à jour les métadonnées
+                        if (videoData.timestamp) {
+                            document.getElementById('featuredVideoDate').textContent = 
+                                new Date(videoData.timestamp.seconds * 1000).toLocaleDateString('fr-FR');
+                        }
+                        
+                        if (videoData.views !== undefined) {
+                            document.getElementById('featuredVideoViews').textContent = videoData.views;
+                        }
+                        
+                        if (videoData.username) {
+                            document.getElementById('featuredVideoUsername').textContent = videoData.username;
+                        }
+                        
+                        // Faire défiler vers le haut
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        
+                        // Fermer l'alerte
+                        setTimeout(() => closeModal('alertModal'), 500);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erreur lors du chargement de la partie suggérée:", error);
+                    showAlert("Erreur", "Impossible de charger la vidéo suggérée.");
+                });
+        }
+
+        // Fonction pour trouver les vidéos similaires basées sur les titres et gérer les parties
         function loadSimilarVideos() {
             if (!currentVideoId || !currentVideoData) {
                 loadFallbackVideos();
@@ -2163,7 +2437,11 @@
             
             similarContainer.innerHTML = '<div class="loading"><div class="loading-spinner"></div></div>';
             
-            // Charger TOUTES les vidéos et filtrer côté client
+            // Analyser le titre de la vidéo courante pour détecter les parties
+            const currentTitle = currentVideoData.title || '';
+            const { baseTitle, currentPart, hasPart } = extractTitleInfo(currentTitle);
+            
+            // Charger toutes les vidéos
             db.collection('videos').get()
                 .then((querySnapshot) => {
                     if (querySnapshot.empty) {
@@ -2171,29 +2449,102 @@
                         return;
                     }
                     
-                    const videos = [];
+                    const allVideos = [];
                     querySnapshot.forEach(doc => {
                         if (doc.id !== currentVideoId) {
                             const videoData = doc.data();
                             videoData.id = doc.id;
-                            videos.push(videoData);
+                            allVideos.push(videoData);
                         }
                     });
                     
-                    if (videos.length === 0) {
+                    if (allVideos.length === 0) {
                         similarContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 30px;">Aucune autre vidéo disponible.</p>';
                         return;
                     }
                     
-                    // Trier par date (les plus récentes d'abord)
-                    videos.sort((a, b) => {
-                        const timeA = a.timestamp?.seconds || 0;
-                        const timeB = b.timestamp?.seconds || 0;
-                        return timeB - timeA;
+                    // Fonction de similarité basée sur les titres
+                    const getTitleSimilarity = (title1, title2) => {
+                        // Normaliser les titres
+                        const normalize = (str) => {
+                            return str.toLowerCase()
+                                .replace(/partie\s*\d+\s*[:-]?\s*/gi, '')
+                                .replace(/part\s*\d+\s*[:-]?\s*/gi, '')
+                                .replace(/épisode\s*\d+\s*[:-]?\s*/gi, '')
+                                .replace(/episode\s*\d+\s*[:-]?\s*/gi, '')
+                                .replace(/[^a-z0-9\s]/g, ' ')
+                                .replace(/\s+/g, ' ')
+                                .trim();
+                        };
+                        
+                        const norm1 = normalize(title1);
+                        const norm2 = normalize(title2);
+                        
+                        // Si les titres normalisés sont identiques
+                        if (norm1 === norm2) return 1.0;
+                        
+                        // Score de similarité basique (présence de mots communs)
+                        const words1 = norm1.split(' ');
+                        const words2 = norm2.split(' ');
+                        
+                        let commonWords = 0;
+                        words1.forEach(word => {
+                            if (word.length > 2 && words2.includes(word)) {
+                                commonWords++;
+                            }
+                        });
+                        
+                        const maxWords = Math.max(words1.length, words2.length);
+                        return maxWords > 0 ? commonWords / maxWords : 0;
+                    };
+                    
+                    // Calculer la similarité pour chaque vidéo
+                    const videosWithSimilarity = allVideos.map(video => {
+                        const similarity = getTitleSimilarity(currentTitle, video.title || '');
+                        return { ...video, similarity };
                     });
                     
+                    // Filtrer et trier
+                    let similarVideos = videosWithSimilarity
+                        .filter(video => video.similarity > 0.1)
+                        .sort((a, b) => {
+                            // Trier par similarité décroissante
+                            if (b.similarity !== a.similarity) {
+                                return b.similarity - a.similarity;
+                            }
+                            // En cas d'égalité, trier par date (plus récent d'abord)
+                            const timeA = a.timestamp?.seconds || 0;
+                            const timeB = b.timestamp?.seconds || 0;
+                            return timeB - timeA;
+                        });
+                    
+                    // Si pas assez de vidéos similaires, ajouter des vidéos récentes
+                    if (similarVideos.length < 6) {
+                        const recentVideos = allVideos
+                            .filter(v => !similarVideos.some(sv => sv.id === v.id))
+                            .sort((a, b) => {
+                                const timeA = a.timestamp?.seconds || 0;
+                                const timeB = b.timestamp?.seconds || 0;
+                                return timeB - timeA;
+                            })
+                            .slice(0, 6 - similarVideos.length);
+                        
+                        similarVideos = [...similarVideos, ...recentVideos];
+                    }
+                    
                     // Prendre les 6 premières
-                    const selectedVideos = videos.slice(0, 6);
+                    const selectedVideos = similarVideos.slice(0, 6);
+                    
+                    // Vérifier si nous avons des parties pour la vidéo courante
+                    if (hasPart && currentPart > 0) {
+                        // Chercher d'autres parties de la même série
+                        const otherParts = findOtherParts(allVideos, baseTitle, currentPart);
+                        
+                        // Si on trouve d'autres parties, afficher une suggestion spéciale
+                        if (otherParts.length > 0) {
+                            displayPartSuggestion(otherParts, currentPart);
+                        }
+                    }
                     
                     displaySimilarVideos(selectedVideos);
                 })
@@ -2203,18 +2554,165 @@
                 });
         }
 
+        // Fonction pour afficher les vidéos similaires
+        function displaySimilarVideos(videosArray) {
+            const similarContainer = document.getElementById('similarVideosContainer');
+            
+            if (!videosArray || videosArray.length === 0) {
+                const fallbackMessage = document.createElement('div');
+                fallbackMessage.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 30px;">Aucune vidéo similaire trouvée.</p>';
+                similarContainer.appendChild(fallbackMessage);
+                return;
+            }
+            
+            // Vérifier si la grille existe déjà
+            let gridContainer = similarContainer.querySelector('.videos-grid');
+            if (!gridContainer) {
+                gridContainer = document.createElement('div');
+                gridContainer.className = 'videos-grid';
+                similarContainer.appendChild(gridContainer);
+            } else {
+                gridContainer.innerHTML = '';
+            }
+            
+            // Ajouter chaque vidéo
+            videosArray.forEach((videoData) => {
+                const videoCard = document.createElement('div');
+                videoCard.className = 'video-card';
+                
+                // Ajouter un identifiant pour le suivi
+                videoCard.dataset.videoId = videoData.id;
+                
+                // Extraire les informations de partie
+                const { currentPart, hasPart } = extractTitleInfo(videoData.title || '');
+                const displayTitle = videoData.title || 'Sans titre';
+                
+                // Formater la date
+                const publishDate = videoData.timestamp ? 
+                    new Date(videoData.timestamp.seconds * 1000).toLocaleDateString('fr-FR', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                    }) : 
+                    'Date inconnue';
+                
+                // Créer la carte vidéo
+                videoCard.innerHTML = `
+                    <div class="video-thumbnail" style="position: relative; width: 100%; padding-top: 66.66%; overflow: hidden; background: #000;">
+                        <video style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" 
+                               preload="metadata" muted playsinline>
+                            <source src="${videoData.videoUrl}" type="video/mp4">
+                        </video>
+                        ${hasPart ? `
+                            <div style="
+                                position: absolute; 
+                                top: 10px; 
+                                right: 10px; 
+                                background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+                                color: white; 
+                                padding: 4px 10px; 
+                                border-radius: 20px; 
+                                font-size: 12px;
+                                font-weight: bold;
+                                box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+                            ">Partie ${currentPart}</div>
+                        ` : ''}
+                        <div style="
+                            position: absolute; 
+                            bottom: 0; 
+                            left: 0; 
+                            right: 0; 
+                            background: linear-gradient(transparent, rgba(0,0,0,0.8)); 
+                            padding: 12px 15px;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                        ">
+                            <div style="color: white; font-size: 12px; display: flex; align-items: center; gap: 5px;">
+                                <i class="fas fa-eye"></i> <span>${videoData.views || 0}</span>
+                            </div>
+                            <div style="color: rgba(255,255,255,0.8); font-size: 11px;">
+                                ${publishDate}
+                            </div>
+                        </div>
+                        <div style="
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            background: rgba(0,0,0,0.7);
+                            width: 50px;
+                            height: 50px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            opacity: 0;
+                            transition: opacity 0.3s;
+                        ">
+                            <i class="fas fa-play" style="color: white; font-size: 20px;"></i>
+                        </div>
+                    </div>
+                    <div class="video-info" style="padding: 15px;">
+                        <h3 class="video-title" title="${displayTitle}" style="
+                            font-weight: 600;
+                            margin-bottom: 8px;
+                            font-size: 14px;
+                            height: 40px;
+                            overflow: hidden;
+                            display: -webkit-box;
+                            -webkit-line-clamp: 2;
+                            -webkit-box-orient: vertical;
+                            color: var(--text-primary);
+                        ">${displayTitle}</h3>
+                    </div>
+                `;
+                
+                // Ajouter l'événement de clic
+                videoCard.onclick = function() {
+                    if (videoData.id === currentVideoId) {
+                        showAlert("Information", "Cette vidéo est déjà en cours de lecture.");
+                        return;
+                    }
+                    
+                    window.location.href = 'video.html?id=' + videoData.id;
+                };
+                
+                // Gérer l'effet hover
+                const videoElement = videoCard.querySelector('video');
+                const playOverlay = videoCard.querySelector('.video-thumbnail > div:last-child');
+                
+                if (videoElement) {
+                    videoCard.addEventListener('mouseenter', () => {
+                        videoElement.play().catch(e => console.log("Auto-play prévenu:", e));
+                        if (playOverlay) playOverlay.style.opacity = '1';
+                    });
+                    
+                    videoCard.addEventListener('mouseleave', () => {
+                        videoElement.pause();
+                        videoElement.currentTime = 0;
+                        if (playOverlay) playOverlay.style.opacity = '0';
+                    });
+                }
+                
+                gridContainer.appendChild(videoCard);
+            });
+        }
+
+        // Fonction de secours pour charger des vidéos si la similarité échoue
         function loadFallbackVideos() {
             const similarContainer = document.getElementById('similarVideosContainer');
             
-            similarContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 30px;">Chargement des vidéos...</p>';
+            similarContainer.innerHTML = '<div class="loading"><div class="loading-spinner"></div></div>';
             
-            // Essayer de charger quelques vidéos aléatoires
+            // Charger les vidéos les plus récentes
             db.collection('videos')
-                .limit(10)
+                .orderBy('timestamp', 'desc')
+                .limit(8)
                 .get()
                 .then((querySnapshot) => {
                     if (querySnapshot.empty) {
-                        similarContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 30px;">Aucune autre vidéo disponible.</p>';
+                        similarContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 30px;">Aucune vidéo disponible.</p>';
                         return;
                     }
                     
@@ -2232,11 +2730,7 @@
                         return;
                     }
                     
-                    // Mélanger et prendre 6 vidéos
-                    const shuffled = videos.sort(() => 0.5 - Math.random());
-                    const selectedVideos = shuffled.slice(0, Math.min(6, shuffled.length));
-                    
-                    displaySimilarVideos(selectedVideos);
+                    displaySimilarVideos(videos);
                 })
                 .catch((error) => {
                     console.error("Erreur lors du chargement des vidéos de secours:", error);
@@ -2244,46 +2738,7 @@
                 });
         }
 
-        function displaySimilarVideos(videosArray) {
-            const similarContainer = document.getElementById('similarVideosContainer');
-            
-            if (!videosArray || videosArray.length === 0) {
-                similarContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 30px;">Aucune vidéo similaire trouvée.</p>';
-                return;
-            }
-            
-            similarContainer.innerHTML = '';
-            
-            videosArray.forEach((videoData) => {
-                const videoCard = document.createElement('div');
-                videoCard.className = 'video-card';
-                videoCard.onclick = function() {
-                    window.location.href = 'video.html?id=' + videoData.id;
-                };
-                
-                const publishDate = videoData.timestamp ? 
-                    new Date(videoData.timestamp.seconds * 1000).toLocaleDateString('fr-FR') : 
-                    'Date inconnue';
-                
-                videoCard.innerHTML = `
-                    <div class="video-thumbnail" style="position: relative; width: 100%; padding-top: 66.66%; overflow: hidden;">
-                        <video style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" preload="metadata">
-                            <source src="${videoData.videoUrl}" type="video/mp4">
-                        </video>
-                    </div>
-                    <div class="video-info">
-                        <h3 class="video-title">${videoData.title || 'Sans titre'}</h3>
-                        <div class="video-meta">
-                            <span><i class="fas fa-eye"></i> ${videoData.views || 0}</span>
-                            <span>${publishDate}</span>
-                        </div>
-                    </div>
-                `;
-                
-                similarContainer.appendChild(videoCard);
-            });
-        }
-
+        // Fonctions utilitaires
         function checkAuth() {
             const user = auth.currentUser;
             if (!user) {
