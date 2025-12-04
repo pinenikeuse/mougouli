@@ -2,10 +2,9 @@
 <html lang="fr">
 <head>
     <meta name="google-adsense-account" content="ca-pub-5904049904040571">
-    <meta name="juicyads-site-verification" content="82e857b1ca877d624a78bdcbae66794b">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>djoukeli.com - Plateforme de Vidéos</title>
+    <title>djioukeli.com - Visionnage de vidéo</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -17,39 +16,20 @@
     
     <style>
         :root {
-            --primary-color: #4a9fe3;
-            --secondary-color: #3c8fd8;
-            --accent-color: #ff6b6b;
-            --light-color: #1a1a1a;
-            --dark-color: #f8f9fa;
-            --success-color: #34d058;
-            --bg-color: #121212;
-            --text-color: #e0e0e0;
-            --card-bg: #1e1e1e;
-            --header-bg: linear-gradient(to right, #1a3c5e, #2c5282);
-            --footer-bg: #0a0a0a;
-            --input-bg: #2d2d2d;
-            --input-text: #e0e0e0;
-            --border-radius: 8px;
-            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-        
-        /* Mode clair - pour ceux qui veulent basculer */
-        .light-mode {
             --primary-color: #3498db;
             --secondary-color: #2980b9;
             --accent-color: #e74c3c;
-            --light-color: #f8f9fa;
-            --dark-color: #343a40;
+            --dark-bg: #121212;
+            --darker-bg: #0a0a0a;
+            --card-bg: #1e1e1e;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --border-color: #333333;
             --success-color: #28a745;
-            --bg-color: #f4f4f9;
-            --text-color: #333;
-            --card-bg: white;
-            --header-bg: linear-gradient(to right, #3498db, #2980b9);
-            --footer-bg: #343a40;
-            --input-bg: white;
-            --input-text: #333;
-            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --like-color: #2ecc71;
+            --dislike-color: #e74c3c;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
         
         * {
@@ -61,676 +41,59 @@
         body {
             font-family: 'Roboto', sans-serif;
             line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--bg-color);
+            color: var(--text-primary);
+            background-color: var(--dark-bg);
             overflow-x: hidden;
             position: relative;
-            padding-bottom: 70px;
-            transition: background-color 0.3s ease, color 0.3s ease;
         }
         
-        html, body {
-            touch-action: manipulation;
-            overflow-x: hidden;
-            width: 100%;
-            position: relative;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-        
-        /* Header Styles */
-        header {
-            background: var(--header-bg);
-            color: white;
-            padding: 10px 0;
+        .site-header {
+            background-color: var(--darker-bg);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             box-shadow: var(--box-shadow);
+            border-bottom: 1px solid var(--border-color);
             position: sticky;
             top: 0;
             z-index: 1000;
-            transition: background 0.3s ease;
         }
         
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            position: relative;
-        }
-        
-        .logo-container {
-            display: flex;
-            align-items: center;
-            margin-right: 20px;
-        }
-        
-        #logo {
-            width: 100px;
-            height: auto;
-        }
-        
-        .search-container {
-            position: relative;
-            flex: 1;
-            max-width: 400px;
-            margin-right: 20px;
-        }
-        
-        .search-bar {
-            display: flex;
-            align-items: center;
-            width: 100%;
-        }
-        
-        .search-bar input {
-            padding: 10px 15px;
-            border: none;
-            border-radius: var(--border-radius) 0 0 var(--border-radius);
-            font-size: 16px;
-            width: 100%;
-            background-color: var(--input-bg);
-            color: var(--input-text);
-        }
-        
-        .search-bar button {
-            padding: 10px 15px;
-            background-color: var(--dark-color);
-            color: white;
-            border: none;
-            border-radius: 0 var(--border-radius) var(--border-radius) 0;
-            cursor: pointer;
-        }
-        
-        .search-suggestions {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            background-color: var(--card-bg);
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            z-index: 1000;
-            display: none;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        
-        .search-suggestion {
-            padding: 10px 15px;
-            cursor: pointer;
-            border-bottom: 1px solid #444;
-            color: var(--text-color);
-        }
-        
-        .search-suggestion:hover {
-            background-color: var(--light-color);
-        }
-        
-        /* Mode sombre/clair toggle */
-        .theme-toggle {
-            background: transparent;
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-size: 20px;
-            margin-right: 10px;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: background-color 0.3s ease;
-        }
-        
-        .theme-toggle:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-        
-        /* User Actions */
-        .user-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .publish-btn, .profile-btn, .login-btn {
-            padding: 8px 12px;
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-        
-        .profile-btn {
-            background-color: var(--success-color);
-        }
-        
-        .login-btn {
-            background-color: #ff9900; /* Orange vif pour meilleure visibilité */
-            color: white;
-        }
-        
-        .login-btn:hover {
-            background-color: #e68a00;
-            transform: translateY(-2px);
-        }
-        
-        .light-mode .login-btn {
-            background-color: #ff9900;
-            color: white;
-        }
-
-        .profile-icon-header {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background-color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            margin-left: 8px;
-            font-size: 16px;
-        }
-        
-        .message-icon-header {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background-color: var(--accent-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            cursor: pointer;
-            margin-left: 8px;
-        }
-        
-        .credits-display {
-            display: flex;
-            align-items: center;
-            background-color: rgba(255, 215, 0, 0.2);
-            padding: 5px 12px;
-            border-radius: 20px;
-            margin-left: 10px;
-            cursor: pointer;
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        .credits-display:hover {
-            background-color: rgba(255, 215, 0, 0.3);
-            transform: translateY(-2px);
-        }
-        
-        .credits-display i {
-            margin-right: 5px;
-            color: #FFD700;
-        }
-        
-        .credits-display span {
-            color: white;
-            font-weight: 500;
-            font-size: 14px;
-        }
-        
-        .credits-info {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background-color: var(--card-bg);
-            border-radius: var(--border-radius);
-            padding: 15px;
-            box-shadow: var(--box-shadow);
-            width: 320px;
-            z-index: 1000;
-            display: none;
-            margin-top: 10px;
-            border: 1px solid #444;
-        }
-        
-        .credits-display:hover .credits-info {
-            display: block;
-        }
-        
-        .credits-info h4 {
-            color: #FFD700;
-            margin-bottom: 10px;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .credits-info p {
-            font-size: 13px;
-            margin-bottom: 10px;
-            line-height: 1.4;
-        }
-        
-        .credits-info ul {
-            padding-left: 20px;
-            margin-bottom: 15px;
-        }
-        
-        .credits-info li {
-            font-size: 13px;
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .credits-info .info-note {
-            background-color: rgba(255, 215, 0, 0.1);
-            padding: 10px;
-            border-radius: 5px;
-            border-left: 3px solid #FFD700;
-            font-size: 12px;
-            text-align: center;
-            margin-top: 10px;
-        }
-        
-        .credits-info .login-btn-small {
-            background-color: #ff9900;
-            color: white;
-            border: none;
-            border-radius: var(--border-radius);
-            padding: 8px 15px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            width: 100%;
-            margin-top: 10px;
-            transition: background-color 0.3s ease;
-        }
-        
-        .credits-info .login-btn-small:hover {
-            background-color: #e68a00;
-        }
-        
-        /* Main Content */
-        .main-content {
-            display: flex;
-            margin: 15px 0;
-            gap: 20px;
-        }
-        
-        .content {
-            flex: 3;
-        }
-        
-        .sidebar {
-            flex: 1;
-        }
-        
-        /* Video Grid */
-        .section-title {
+        .site-title {
             font-family: 'Poppins', sans-serif;
-            margin: 15px 0;
-            padding-bottom: 8px;
-            border-bottom: 2px solid var(--primary-color);
-            color: var(--text-color);
-        }
-        
-        .videos-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .video-card {
-            background-color: var(--card-bg);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--box-shadow);
-            transition: transform 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .video-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .video-thumbnail-container {
-            position: relative;
-            width: 100%;
-            height: 0;
-            padding-bottom: 66.67%; /* Ratio 3:2 pour le conteneur */
-            overflow: hidden;
-        }
-        
-        .thumbnail-background {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: blur(5px);
-            z-index: 1;
-        }
-        
-        .thumbnail-foreground {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 56.25%; /* 9:16 dans un conteneur 3:2 */
-            height: 100%;
-            object-fit: contain;
-            z-index: 2;
-        }
-        
-        .play-icon {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 40px;
-            opacity: 0.8;
-            transition: opacity 0.3s;
-            z-index: 3;
-        }
-        
-        .video-card:hover .play-icon {
-            opacity: 1;
-        }
-        
-        .video-info {
-            padding: 15px;
-            position: relative;
-            z-index: 4;
-        }
-        
-        .video-title {
-            font-weight: 600;
-            margin-bottom: 10px;
-            font-size: 18px;
-            color: var(--text-color);
-        }
-        
-        .video-stats {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 8px;
-            font-size: 14px;
-            color: #aaa;
-        }
-        
-        .light-mode .video-stats {
-            color: #666;
-        }
-        
-        .video-views {
-            color: #3ea6ff;
-        }
-        
-        .video-views i {
-            color: #3ea6ff;
-        }
-        
-        .video-date {
-            color: #f1c40f;
-        }
-        
-        .video-date i {
-            color: #f1c40f;
-        }
-        
-        .video-author {
-            color: #aaaaaa;
-            display: flex;
-            align-items: center;
-            margin-top: 8px;
-            cursor: pointer;
-        }
-        
-        .video-author i {
-            color: #aaaaaa;
-            margin-right: 5px;
-        }
-        
-        .video-author:hover {
-            text-decoration: underline;
-        }
-        
-        /* Advertisements */
-        .ad-container {
-            background-color: var(--card-bg);
-            border-radius: var(--border-radius);
-            padding: 15px;
-            margin-bottom: 20px;
-            box-shadow: var(--box-shadow);
-            text-align: center;
-            transition: background-color 0.3s ease;
-        }
-        
-        .ad-title {
-            font-size: 14px;
-            color: var(--text-color);
-            margin-bottom: 10px;
-        }
-        
-        /* Footer */
-        footer {
-            background-color: var(--footer-bg);
-            color: white;
-            padding: 30px 0;
-            margin-top: 40px;
-            transition: background-color 0.3s ease;
-        }
-        
-        .footer-content {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-        }
-        
-        .footer-section {
-            flex: 1;
-            min-width: 250px;
-            margin-bottom: 20px;
-        }
-        
-        .footer-section h4 {
-            font-family: 'Poppins', sans-serif;
-            margin-bottom: 15px;
-            font-size: 18px;
-            color: white;
-        }
-        
-        .footer-section p, .footer-section a {
-            color: #ddd;
-            margin-bottom: 10px;
-            display: block;
-            text-decoration: none;
-        }
-        
-        .footer-section a:hover {
-            color: white;
-        }
-        
-        .copyright {
-            text-align: center;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #555;
-        }
-        
-        /* Age Verification Overlay */
-        .age-verification {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-        
-        .age-content {
-            background-color: var(--card-bg);
-            padding: 30px;
-            border-radius: 10px;
-            text-align: center;
-            max-width: 500px;
-            width: 90%;
-        }
-        
-        .age-content h2 {
-            color: var(--accent-color);
-            margin-bottom: 20px;
-        }
-        
-        .age-content p {
-            margin-bottom: 20px;
-            font-size: 18px;
-            color: var(--text-color);
-        }
-        
-        .age-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-        
-        .age-confirm {
-            padding: 10px 20px;
-            background-color: var(--success-color);
-            color: white;
-            border: none;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-size: 16px;
-        }
-        
-        .age-deny {
-            padding: 10px 20px;
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-size: 16px;
-        }
-        
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 10000;
-            overflow: auto;
-        }
-        
-        .modal-content {
-            background-color: var(--card-bg);
-            margin: 5% auto;
-            padding: 20px;
-            border-radius: var(--border-radius);
-            width: 90%;
-            max-width: 600px;
-            box-shadow: var(--box-shadow);
-            position: relative;
-        }
-        
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 15px;
+            font-weight: 700;
             font-size: 24px;
-            cursor: pointer;
-            color: #aaa;
-            background: none;
-            border: none;
+            background: linear-gradient(45deg, var(--primary-color), #9b59b6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
         
-        .close-modal:hover {
-            color: var(--accent-color);
+        .user-credits-container {
+            background: linear-gradient(135deg, var(--darker-bg), #2c3e50);
+            border: 2px solid var(--primary-color);
+            border-radius: 25px;
+            padding: 8px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            color: #ffd700;
+            box-shadow: 0 2px 10px rgba(52, 152, 219, 0.3);
+            transition: all 0.3s ease;
         }
         
-        /* Form Styles */
-        .form-group {
-            margin-bottom: 20px;
+        .user-credits-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
         }
         
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--text-color);
+        .user-credits-container i {
+            color: #ffd700;
+            font-size: 18px;
         }
         
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #444;
-            border-radius: var(--border-radius);
-            font-size: 16px;
-            background-color: var(--input-bg);
-            color: var(--input-text);
-        }
-        
-        .light-mode .form-group input,
-        .light-mode .form-group textarea,
-        .light-mode .form-group select {
-            border: 1px solid #ddd;
-        }
-        
-        .form-group textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-        
-        .submit-btn {
-            background-color: var(--success-color);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            display: block;
-            width: 100%;
-        }
-        
-        .submit-btn:hover {
-            background-color: #218838;
-        }
-        
-        /* Bottom Navigation Bar */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -740,10 +103,10 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
-            padding: 10px 0;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            padding: 12px 0;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.3);
             z-index: 1000;
-            transition: background-color 0.3s ease;
+            border-top: 1px solid var(--border-color);
         }
         
         .nav-item {
@@ -751,7 +114,7 @@
             flex-direction: column;
             align-items: center;
             text-decoration: none;
-            color: #aaa;
+            color: var(--text-secondary);
             font-size: 12px;
             transition: all 0.3s;
         }
@@ -768,97 +131,589 @@
         .nav-icon {
             font-size: 20px;
             margin-bottom: 4px;
-            color: #aaa;
+            color: var(--text-secondary);
             transition: all 0.3s;
         }
         
-        /* Styles pour les améliorations de performance */
-        .thumbnail-loading {
-            background: linear-gradient(90deg, #2d2d2d 25%, #3d3d3d 50%, #2d2d2d 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
+        body {
+            padding-bottom: 70px;
+        } 
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        .main-content {
+            display: flex;
+            margin: 20px 0;
+            gap: 20px;
+        }
+        
+        .content {
+            flex: 3;
+        }
+        
+        .sidebar {
+            flex: 1;
+        }
+        
+        .featured-video {
+            width: 100%;
+            background-color: var(--darker-bg);
+            margin-bottom: 30px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            border: 1px solid var(--border-color);
+        }
+        
+        .featured-video-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .video-container-9-16 {
+            position: relative;
+            width: 100%;
+            padding-top: 177.78%;
+            background-color: #000;
+        }
+        
+        .video-container-9-16 video {
             position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1;
+            object-fit: cover;
         }
         
-        .light-mode .thumbnail-loading {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        .featured-video-info {
+            padding: 20px;
+            color: var(--text-primary);
+            background-color: var(--card-bg);
         }
         
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+        .featured-video-title {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
         }
         
-        .pagination {
+        .featured-video-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .video-views, .video-date, .video-author {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .video-author {
+            color: var(--primary-color);
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .video-author:hover {
+            text-decoration: underline;
+        }
+        
+        .video-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+        
+        .like-dislike-container {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .like-btn:hover {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--like-color);
+            border-color: var(--like-color);
+        }
+        
+        .dislike-btn:hover {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--dislike-color);
+            border-color: var(--dislike-color);
+        }
+        
+        .action-btn.active {
+            background-color: rgba(52, 152, 219, 0.2);
+            border-color: var(--primary-color);
+        }
+        
+        .action-btn.active.like-btn {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: var(--like-color);
+            border-color: var(--like-color);
+        }
+        
+        .action-btn.active.dislike-btn {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: var(--dislike-color);
+            border-color: var(--dislike-color);
+        }
+        
+        .share-container {
             display: flex;
             justify-content: center;
-            align-items: center;
-            margin: 20px 0;
-            gap: 10px;
+            margin-top: 15px;
         }
         
-        .pagination button {
-            padding: 10px 20px;
-            background-color: var(--primary-color);
+        .share-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             border: none;
             border-radius: var(--border-radius);
             cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 140px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             font-weight: 500;
-            font-size: 14px;
+            transition: all 0.3s;
         }
         
-        .pagination button:hover:not(:disabled) {
-            background-color: var(--secondary-color);
+        .share-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
         }
         
-        .pagination button:disabled {
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 20px;
+            background-color: #444;
+            color: white;
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            border: 1px solid var(--border-color);
+        }
+        
+        .back-btn:hover {
             background-color: #555;
-            cursor: not-allowed;
-            opacity: 0.5;
-            transform: none;
-            box-shadow: none;
+            transform: translateY(-2px);
         }
         
-        .light-mode .pagination button:disabled {
-            background-color: #ccc;
+        .comments-section {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: var(--box-shadow);
+            border: 1px solid var(--border-color);
         }
         
-        .pagination-info {
-            color: var(--text-color);
-            margin: 0 15px;
-            font-weight: 500;
-            font-size: 15px;
-            min-width: 120px;
-            text-align: center;
+        .comments-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
         }
         
-        .error-placeholder {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #999;
+        .add-comment-container {
+            margin-bottom: 30px;
+        }
+        
+        .comment-input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .comment-input {
+            flex: 1;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            background-color: var(--darker-bg);
+            color: var(--text-primary);
             font-size: 14px;
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .comment-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .submit-comment-btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            align-self: flex-start;
+        }
+        
+        .submit-comment-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        .submit-comment-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .comments-list {
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .comment-item {
+            background-color: var(--darker-bg);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .comment-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), #9b59b6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .user-info h4 {
+            color: var(--text-primary);
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+        
+        .comment-date {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .comment-content {
+            color: var(--text-primary);
+            line-height: 1.5;
+            font-size: 14px;
+        }
+        
+        .comment-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .comment-action-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.3s;
+        }
+        
+        .comment-action-btn:hover {
+            color: var(--primary-color);
+        }
+        
+        .comment-action-btn.active {
+            color: var(--primary-color);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 10000;
+            overflow: auto;
+        }
+        
+        .modal-content {
+            background-color: var(--card-bg);
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 450px;
+            box-shadow: var(--box-shadow);
+            position: relative;
+            border: 1px solid var(--border-color);
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            background: none;
+            border: none;
+        }
+        
+        .close-modal:hover {
+            color: var(--accent-color);
+        }
+        
+        .ad-container {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin: 20px 0;
+            box-shadow: var(--box-shadow);
             text-align: center;
-            z-index: 2;
+            border: 1px solid var(--border-color);
         }
         
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .search-container {
-                max-width: 300px;
+        .ad-title {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+        
+        .similar-videos-section {
+            margin-top: 30px;
+        }
+        
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            margin: 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--text-primary);
+            font-size: 1.3rem;
+        }
+        
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .video-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+        }
+        
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+        
+        .video-thumbnail {
+            position: relative;
+            width: 100%;
+            height: 120px;
+            overflow: hidden;
+        }
+        
+        .video-thumbnail video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: none;
+        }
+        
+        .video-info {
+            padding: 15px;
+        }
+        
+        .video-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+            height: 40px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            color: var(--text-primary);
+        }
+        
+        .video-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .sidebar .ad-container {
+            margin-bottom: 20px;
+        }
+        
+        footer {
+            background-color: var(--darker-bg);
+            color: var(--text-primary);
+            padding: 30px 0;
+            margin-top: 50px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 20px;
+        }
+        
+        .footer-section h4 {
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: var(--text-primary);
+        }
+        
+        .footer-section p, .footer-section a {
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            display: block;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .footer-section a:hover {
+            color: var(--primary-color);
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 150px;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--darker-bg);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
+        }
+        
+        @media (max-width: 768px) {
+            .video-actions {
+                flex-direction: column;
+                gap: 15px;
             }
-        }
-        
-        @media (max-width: 992px) {
+            
+            .comment-input-container {
+                flex-direction: column;
+            }
+            
+            .submit-comment-btn {
+                align-self: stretch;
+            }
+            
             .main-content {
                 flex-direction: column;
             }
@@ -866,230 +721,416 @@
             .sidebar {
                 order: -1;
             }
-            
-            .header-content {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .logo-container {
-                position: relative;
-                left: auto;
-                transform: none;
-                order: -1;
-                margin-bottom: 15px;
-                justify-content: center;
-            }
-            
-            .search-container {
-                margin: 15px 0;
-                width: 100%;
-                max-width: 100%;
-            }
-            
-            .user-actions {
-                margin-top: 15px;
-                justify-content: center;
-            }
-            
-            .modal-content {
-                margin: 10% auto;
-                width: 95%;
-            }
-            
-            .credits-info {
-                width: 280px;
-                right: -50px;
-            }
         }
         
-        @media (max-width: 768px) {
-            .videos-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            }
-            
-            .footer-section {
-                min-width: 100%;
-            }
-            
-            .age-buttons {
-                flex-direction: column;
-            }
-            
-            .modal-content {
-                margin: 5% auto;
-                padding: 15px;
-            }
-            
-            .credits-display {
-                position: relative;
-                top: 0;
-                margin-left: 0;
-                margin-top: 10px;
-            }
-            
-            .credits-info {
-                width: 250px;
-                right: 0;
-            }
-            
-            .user-actions {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .pagination {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .pagination button {
-                width: 100%;
-                max-width: 250px;
-            }
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
         }
         
-        @media (max-width: 576px) {
-            .publish-btn, .profile-btn, .login-btn {
-                font-size: 12px;
-                padding: 6px 10px;
-            }
-            
-            .profile-icon-header, .message-icon-header {
-                width: 32px;
-                height: 32px;
-                font-size: 14px;
-            }
-            
-            .videos-grid {
-                grid-template-columns: 1fr;
-            }
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
         }
         
+        .auth-tab.active {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        .auth-form {
+            display: block;
+        }
+        
+        .auth-form.hidden {
+            display: none;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            background-color: var(--darker-bg);
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .auth-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 16px;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        .auth-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .auth-error {
+            background-color: rgba(231, 76, 60, 0.1);
+            border: 1px solid var(--dislike-color);
+            color: var(--dislike-color);
+            padding: 12px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .auth-success {
+            background-color: rgba(46, 204, 113, 0.1);
+            border: 1px solid var(--like-color);
+            color: var(--like-color);
+            padding: 12px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .auth-switch {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        .auth-switch button {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .share-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .share-option-btn {
+            padding: 15px;
+            border: none;
+            border-radius: var(--border-radius);
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        
+        .share-option-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+        
+        .share-option-btn:nth-child(1) {
+            background: linear-gradient(135deg, #1877F2, #0d5bb5); /* Facebook */
+        }
+        
+        .share-option-btn:nth-child(2) {
+            background: linear-gradient(135deg, #1DA1F2, #0c85d0); /* Twitter */
+        }
+        
+        .share-option-btn:nth-child(3) {
+            background: linear-gradient(135deg, #25D366, #1da851); /* WhatsApp */
+        }
+        
+        .share-option-btn:nth-child(4) {
+            background: linear-gradient(135deg, #6c757d, #495057); /* Copier lien */
+        }
+        
+        /* Styles pour le bouton publicitaire */
+        .ad-play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+            transition: all 0.3s;
+        }
+        
+        .ad-play-button:hover {
+            transform: translate(-50%, -50%) scale(1.05);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.6);
+        }
+        
+        .ad-play-button i {
+            font-size: 20px;
+        }
     </style>
 </head>
-<body class="dark-mode">
-    <!-- Vérification d'âge -->
-    <div id="ageVerification" class="age-verification">
-        <div class="age-content">
-            <h2>Avertissement</h2>
-            <p>Ce site contient du contenu réservé aux adultes (18 ans et plus). En accédant à ce site, vous certifiez que vous avez au moins 18 ans et que vous acceptez de visualiser du contenu explicite.</p>
-            <div class="age-buttons">
-                <button class="age-confirm" onclick="confirmAge()">J'ai 18 ans ou plus</button>
-                <button class="age-deny" onclick="denyAge()">Je n'ai pas 18 ans</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal d'inscription/connexion -->
-    <div id="authModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('authModal')">&times;</span>
-            <h2 id="authModalTitle">Connexion</h2>
-            <div id="authError" style="color: red; margin-bottom: 15px; display: none;"></div>
-            <form id="authForm">
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Mot de passe</label>
-                    <input type="password" id="password" required>
-                </div>
-                <div class="form-group" id="usernameField" style="display: none;">
-                    <label for="username">Nom d'utilisateur</label>
-                    <input type="text" id="username">
-                </div>
-                <button type="submit" class="submit-btn" id="authSubmit">Se connecter</button>
-            </form>
-            <p style="margin-top: 20px; text-align: center;">
-                <a href="#" id="authSwitch">Créer un compte</a>
-            </p>
-        </div>
-    </div>
-
-    <!-- Header Section -->
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo-container">
-                    <img id="logo" src="https://raw.githubusercontent.com/pinenikeuse/mougouli/refs/heads/main/1747616058238.jpg" alt="djoukeli.com Logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjQwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzNDk4ZGIiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE4IiBmaWxsPSJ3aGl0ZSI+RGpvdWtlbGk8L3RleHQ+PC9zdmc+'">
-                </div>
-                
-                <div class="search-container">
-                    <div class="search-bar">
-                        <input type="text" id="searchInput" placeholder="Rechercher des vidéos..." autocomplete="off">
-                        <button onclick="performSearch()"><i class="fas fa-search"></i></button>
-                    </div>
-                    <div id="searchSuggestions" class="search-suggestions"></div>
-                </div>
-                
-                <div class="user-actions">
-                    <button id="themeToggle" class="theme-toggle" title="Mode clair/sombre">
-                        <i class="fas fa-sun"></i>
-                    </button>
-                    
-                    <div id="creditsDisplay" class="credits-display">
-                        <i class="fas fa-coins"></i> <span id="creditsCount">0</span> crédits
-                        <div class="credits-info">
-                            <h4><i class="fas fa-gem"></i> Système de Crédits</h4>
-                            <p>Vos crédits sont de <strong>l'argent réel retirable</strong> !</p>
-                            <p><strong>Les actions suivantes permettent de gagner des crédits :</strong></p>
-                            <ul>
-                                <li><i class="fas fa-video"></i> Publier des vidéos</li>
-                                <li><i class="fas fa-clock"></i> Passer du temps à regarder des vidéos</li>
-                                <li><i class="fas fa-eye"></i> Recevoir des vues, likes et commentaires sur vos vidéos</li>
-                            </ul>
-                            <p><strong>Retrait :</strong> Ces actions vous permettent de gagner des crédits, chaque action ayant son propre nombre de crédits.</p>
-                            <div class="info-note">
-                                <i class="fas fa-info-circle"></i> Connectez-vous pour voir et gagner des crédits !
-                            </div>
-                            <button class="login-btn-small" onclick="openAuthModal()">
-                                <i class="fas fa-sign-in-alt"></i> Se connecter
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <button id="publishBtn" class="publish-btn" onclick="checkAuthBeforeAction('publier.html')">
-                        <i class="fas fa-upload"></i> Publier
-                    </button>
-                    <button id="profileBtn" class="profile-btn" style="display: none;" onclick="checkAuthBeforeAction('myprofile.html')">
-                        <i class="fas fa-user"></i> Profil
-                    </button>
-                    <button id="loginBtn" class="login-btn">
-                        <i class="fas fa-sign-in-alt"></i> Connexion
-                    </button>
-                    <div class="message-icon-header" onclick="checkAuthBeforeAction('messages.html')">
-                        <i class="fas fa-envelope"></i>
-                    </div>
-                    <div id="profileIconHeader" class="profile-icon-header" style="display: none;" onclick="checkAuthBeforeAction('myprofile.html')">
-                        U
-                    </div>
-                </div>
-            </div>
+<body>
+    <!-- Header avec crédits -->
+    <header class="site-header">
+        <div class="site-title">djoukeli.com</div>
+        <div id="userCredits" class="user-credits-container" style="display: none;">
+            <i class="fas fa-coins"></i>
+            <span class="user-credits">0</span> crédits
         </div>
     </header>
 
+    <!-- Share Modal -->
+    <div id="shareModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('shareModal')">&times;</span>
+            <h2>Partager cette vidéo</h2>
+            <div class="share-options">
+                <button class="share-option-btn" onclick="shareVideo(currentVideoId, 'facebook')">
+                    <i class="fab fa-facebook"></i> Facebook
+                </button>
+                <button class="share-option-btn" onclick="shareVideo(currentVideoId, 'twitter')">
+                    <i class="fab fa-twitter"></i> Twitter
+                </button>
+                <button class="share-option-btn" onclick="shareVideo(currentVideoId, 'whatsapp')">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </button>
+                <button class="share-option-btn" onclick="copyShareLink(currentVideoId)">
+                    <i class="fas fa-link"></i> Copier le lien
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div id="alertModal" class="modal">
+        <div class="modal-content">
+            <h2 id="alertModalTitle">Alerte</h2>
+            <p id="alertModalMessage">Message d'alerte</p>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="auth-btn" onclick="closeModal('alertModal')">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('authModal')">&times;</span>
+            <h2>Connexion / Inscription</h2>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchAuthTab('login')">Connexion</button>
+                <button class="auth-tab" onclick="switchAuthTab('register')">Inscription</button>
+            </div>
+            
+            <div id="loginForm" class="auth-form">
+                <div id="loginError" class="auth-error"></div>
+                <div id="loginSuccess" class="auth-success"></div>
+                
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" class="form-input" placeholder="votre@email.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword">Mot de passe</label>
+                    <input type="password" id="loginPassword" class="form-input" placeholder="Votre mot de passe">
+                </div>
+                
+                <button class="auth-btn" onclick="loginWithEmail()">
+                    <i class="fas fa-sign-in-alt"></i> Se connecter
+                </button>
+                
+                <div class="auth-switch">
+                    Pas encore de compte ? <button onclick="switchAuthTab('register')">S'inscrire</button>
+                </div>
+            </div>
+            
+            <div id="registerForm" class="auth-form hidden">
+                <div id="registerError" class="auth-error"></div>
+                <div id="registerSuccess" class="auth-success"></div>
+                
+                <div class="form-group">
+                    <label for="registerUsername">Nom d'utilisateur</label>
+                    <input type="text" id="registerUsername" class="form-input" placeholder="Votre nom d'utilisateur">
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" class="form-input" placeholder="votre@email.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerPassword">Mot de passe</label>
+                    <input type="password" id="registerPassword" class="form-input" placeholder="Mot de passe (min. 6 caractères)">
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerConfirmPassword">Confirmer le mot de passe</label>
+                    <input type="password" id="registerConfirmPassword" class="form-input" placeholder="Confirmez votre mot de passe">
+                </div>
+                
+                <button class="auth-btn" onclick="registerWithEmail()">
+                    <i class="fas fa-user-plus"></i> S'inscrire
+                </button>
+                
+                <div class="auth-switch">
+                    Déjà un compte ? <button onclick="switchAuthTab('login')">Se connecter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <!-- Main Content -->
     <div class="container">
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Retour à l'accueil
+        </a>
+
+        <!-- Featured Video Section -->
+        <div id="featuredVideoContainer" class="featured-video">
+            <div class="featured-video-container">
+                <div class="video-container-9-16">
+                    <video id="featuredVideoPlayer" controls></video>
+                    <!-- Bouton publicitaire -->
+                    <button id="adPlayButton" class="ad-play-button" style="display: none;">
+                        <i class="fas fa-play-circle"></i> Regarder la vidéo 
+                    </button>
+                </div>
+            </div>
+            <div class="featured-video-info">
+                <h2 id="featuredVideoTitle" class="featured-video-title">Chargement de la vidéo...</h2>
+                
+                <div class="featured-video-stats">
+                    <div class="video-views">
+                        <i class="fas fa-eye"></i> <span id="featuredVideoViews">0</span> vues
+                    </div>
+                    <div class="video-date">
+                        <i class="far fa-calendar-alt"></i> <span id="featuredVideoDate">Date inconnue</span>
+                    </div>
+                    <div class="video-author" id="featuredVideoAuthor">
+                        <i class="fas fa-user"></i> <span id="featuredVideoUsername">Utilisateur</span>
+                    </div>
+                </div>
+                
+                <!-- Likes/Dislikes Actions -->
+                <div class="video-actions">
+                    <div class="like-dislike-container">
+                        <button class="action-btn like-btn" onclick="handleLike()">
+                            <i class="fas fa-thumbs-up"></i>
+                            <span id="likeCount">0</span>
+                        </button>
+                        <button class="action-btn dislike-btn" onclick="handleDislike()">
+                            <i class="fas fa-thumbs-down"></i>
+                            <span id="dislikeCount">0</span>
+                        </button>
+                    </div>
+                    <div class="share-container">
+                        <button class="share-btn" onclick="openModal('shareModal')">
+                            <i class="fas fa-share-alt"></i> Partager cette vidéo
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+<script async="async" data-cfasync="false" src="//robotbagpipe.com/2654af2a1396b430b3cfcb5137325693/invoke.js"></script>
+<div id="container-2654af2a1396b430b3cfcb5137325693"></div>
+
+
+        <!-- Comments Section -->
+        <div class="comments-section">
+            <h2 class="comments-title">Commentaires</h2>
+            
+            <!-- Add Comment Form -->
+            <div class="add-comment-container">
+                <div class="comment-input-container">
+                    <textarea 
+                        id="commentInput" 
+                        class="comment-input" 
+                        placeholder="Ajouter un commentaire..."
+                        maxlength="500"
+                    ></textarea>
+                    <button id="submitCommentBtn" class="submit-comment-btn" onclick="submitComment()">
+                        <i class="fas fa-paper-plane"></i> Publier
+                    </button>
+                </div>
+                <div id="commentChars" style="text-align: right; color: var(--text-secondary); font-size: 12px;">
+                    0/500 caractères
+                </div>
+            </div>
+            
+            <!-- Comments List -->
+            <div id="commentsList" class="comments-list">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                </div>
+            </div>
+        </div>
+
+ 
         <div class="main-content">
             <div class="content">
-                <!-- Popular Videos Section -->
-                <script async="async" data-cfasync="false" src="//robotbagpipe.com/2654af2a1396b430b3cfcb5137325693/invoke.js"></script>
-<div id="container-2654af2a1396b430b3cfcb5137325693"></div>
-                <div class="popular-videos-section">
-                    <h2 class="section-title">Vidéos populaires</h2>
-                    <script async="async" data-cfasync="false" src="//robotbagpipe.com/3a829a68e73fdd3fd446fec2e8eae8d0/invoke.js"></script>
-<div id="container-3a829a68e73fdd3fd446fec2e8eae8d0"></div>
-                    <div class="videos-grid" id="popularVideosContainer">
-                        <!-- Les vidéos populaires seront chargées ici -->
-                    </div>
-         <script async="async" data-cfasync="false" src="//robotbagpipe.com/80d47181f1e3f1fc6d5eecdcfb2d4bcf/invoke.js"></script>
+                <!-- Similar Videos Section -->
+                
+                <div class="similar-videos-section">
+                
+                    <h2 class="section-title">Vidéos similaires</h2>
+                    <script async="async" data-cfasync="false" src="//robotbagpipe.com/80d47181f1e3f1fc6d5eecdcfb2d4bcf/invoke.js"></script>
 <div id="container-80d47181f1e3f1fc6d5eecdcfb2d4bcf"></div>
-                    <div class="pagination">
-                        <button id="prevPage" disabled>◀ Précédent</button>
-                        <span id="pageInfo" class="pagination-info">Page 1</span>
-                        <button id="nextPage">Suivant ▶</button>
+                    <div class="videos-grid" id="similarVideosContainer">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1099,7 +1140,7 @@
                 <!-- Banner Ad 1 -->
                 <div class="ad-container">
                     <div class="ad-title">Annonce</div>
-                  <script type="text/javascript">
+         <script type="text/javascript">
 	atOptions = {
 		'key' : '64979ae571aa2ee6ac6a68fd484a2c23',
 		'format' : 'iframe',
@@ -1114,7 +1155,7 @@
                 <!-- Banner Ad 2 -->
                 <div class="ad-container">
                     <div class="ad-title">Annonce</div>
-             <script type="text/javascript">
+        <script type="text/javascript">
 	atOptions = {
 		'key' : '64979ae571aa2ee6ac6a68fd484a2c23',
 		'format' : 'iframe',
@@ -1141,12 +1182,14 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h4>À propos de djoukeli.com</h4>
+                <script async="async" data-cfasync="false" src="//robotbagpipe.com/3a829a68e73fdd3fd446fec2e8eae8d0/invoke.js"></script>
+<div id="container-3a829a68e73fdd3fd446fec2e8eae8d0"></div>
+                    <h4>À propos de djioukeli.com</h4>
                     <p>Plateforme de partage de vidéos privées et premium.</p>
                 </div>
                 <div class="footer-section">
                     <h4>Liens rapides</h4>
-                    <a href="#">Accueil</a>
+                    <a href="index.html">Accueil</a>
                     <a href="#">Vidéos tendance</a>
                     <a href="#">Catégories</a>
                     <a href="#">À propos</a>
@@ -1158,18 +1201,18 @@
                 </div>
             </div>
             <div class="copyright">
-                <p>&copy; 2023 djoukeli.com. Tous droits réservés.</p>
+                <p>&copy; 2023 djioukeli.com. Tous droits réservés.</p>
             </div>
         </div>
     </footer>
 
     <!-- Bottom Navigation Bar -->
     <div class="bottom-nav">
-        <a href="index.html" class="nav-item active">
+        <a href="index.html" class="nav-item">
             <div class="nav-icon"><i class="fas fa-home"></i></div>
             <span>Accueil</span>
         </a>
-        <a href="latest.html" class="nav-item">
+        <a href="latest.html" class="nav-item active">
             <div class="nav-icon"><i class="fas fa-play-circle"></i></div>
             <span>Vidéos</span>
         </a>
@@ -1194,909 +1237,60 @@
             appId: "1:94288484954:web:cede6d5cf48ede3806d663",
             measurementId: "G-6WK15KWD4L"
         };
-        
+     
         // Initialiser Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
+        } else {
+            firebase.app();
         }
 
         const auth = firebase.auth();
         const db = firebase.firestore();
         const storage = firebase.storage();
-        
+       
         // Variables globales
-        let isLoginMode = true;
-        let currentPage = 1;
-        const VIDEOS_PER_PAGE = 15;
-        let lastVisibleDoc = null;
-        let paginationStack = [];
-        let searchTimeout = null;
-        let videoCache = {};
-        let isDarkMode = true;
+        let currentVideoId = null;
+        let currentVideoData = null;
+        let videoWatched = false;
+        let currentUserLiked = false;
+        let currentUserDisliked = false;
+        let currentUserReaction = null;
+        let commentsListener = null;
+        let canEarnCredits = true;
+        let similarVideosLoaded = false;
+        let adLinkOpened = false;
+        let playCount = 0;
+        let adPlayedThisSession = false;
 
-        // ===== THÈME (mode sombre par défaut) =====
-        function initTheme() {
-            document.body.classList.add('dark-mode');
-            isDarkMode = true;
-            localStorage.setItem('darkMode', 'true');
-            
-            const themeIcon = document.querySelector('#themeToggle i');
-            if (themeIcon) {
-                themeIcon.className = 'fas fa-sun';
-                themeIcon.title = 'Mode clair';
-            }
-            
-            const themeToggle = document.getElementById('themeToggle');
-            if (themeToggle) {
-                themeToggle.addEventListener('click', toggleTheme);
-            }
-        }
-        
-        function toggleTheme() {
-            if (isDarkMode) {
-                document.body.classList.remove('dark-mode');
-                document.body.classList.add('light-mode');
-                isDarkMode = false;
-                localStorage.setItem('darkMode', 'false');
-                
-                const themeIcon = document.querySelector('#themeToggle i');
-                if (themeIcon) {
-                    themeIcon.className = 'fas fa-moon';
-                    themeIcon.title = 'Mode sombre';
-                }
-            } else {
-                document.body.classList.remove('light-mode');
-                document.body.classList.add('dark-mode');
-                isDarkMode = true;
-                localStorage.setItem('darkMode', 'true');
-                
-                const themeIcon = document.querySelector('#themeToggle i');
-                if (themeIcon) {
-                    themeIcon.className = 'fas fa-sun';
-                    themeIcon.title = 'Mode clair';
-                }
+        // Fonctions pour les modals
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'block';
             }
         }
 
-        // ===== FONCTIONS D'AUTHENTIFICATION =====
-        function checkAuthState() {
-            auth.onAuthStateChanged(user => {
-                const profileBtn = document.getElementById('profileBtn');
-                const loginBtn = document.getElementById('loginBtn');
-                const profileIconHeader = document.getElementById('profileIconHeader');
-                const creditsDisplay = document.getElementById('creditsDisplay');
-                
-                if (user) {
-                    console.log("Utilisateur connecté:", user.email);
-                    if (profileBtn) profileBtn.style.display = 'block';
-                    if (loginBtn) {
-                        loginBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Déconnexion';
-                        loginBtn.onclick = () => {
-                            auth.signOut().then(() => {
-                                console.log("Utilisateur déconnecté");
-                            }).catch((error) => {
-                                console.error("Erreur de déconnexion:", error);
-                            });
-                        };
-                    }
-                    
-                    if (profileIconHeader) {
-                        profileIconHeader.style.display = 'flex';
-                        const firstLetter = user.displayName ? user.displayName.charAt(0).toUpperCase() : 
-                                            user.email ? user.email.charAt(0).toUpperCase() : 'U';
-                        profileIconHeader.textContent = firstLetter;
-                    }
-                    
-                    if (creditsDisplay) {
-                        creditsDisplay.style.display = 'flex';
-                        // Charger les crédits depuis la collection users
-                        loadUserCreditsFromUsers(user.uid);
-                    }
-                } else {
-                    console.log("Aucun utilisateur connecté");
-                    if (profileBtn) profileBtn.style.display = 'none';
-                    if (loginBtn) {
-                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Connexion';
-                        loginBtn.onclick = () => openAuthModal();
-                    }
-                    if (profileIconHeader) profileIconHeader.style.display = 'none';
-                    if (creditsDisplay) {
-                        creditsDisplay.style.display = 'flex';
-                        // Afficher 0 crédits pour les non-connectés
-                        document.getElementById('creditsCount').textContent = '0';
-                        
-                        // Mettre à jour le contenu de l'info-bulle
-                        const creditsInfo = creditsDisplay.querySelector('.credits-info');
-                        if (creditsInfo) {
-                            creditsInfo.innerHTML = `
-                                <h4><i class="fas fa-gem"></i> Système de Crédits</h4>
-                                <p>Vos crédits sont de <strong>l'argent réel retirable</strong> !</p>
-                                <p><strong>Les actions suivantes permettent de gagner des crédits :</strong></p>
-                                <ul>
-                                    <li><i class="fas fa-video"></i> Publier des vidéos</li>
-                                    <li><i class="fas fa-clock"></i> Passer du temps à regarder des vidéos</li>
-                                    <li><i class="fas fa-eye"></i> Recevoir des vues, likes et commentaires sur vos vidéos</li>
-                                </ul>
-                                <p><strong>Retrait :</strong> Ces actions vous permettent de gagner des crédits, chaque action ayant son propre nombre de crédits.</p>
-                                <div class="info-note">
-                                    <i class="fas fa-info-circle"></i> Connectez-vous pour voir et gagner des crédits !
-                                </div>
-                                <button class="login-btn-small" onclick="openAuthModal()">
-                                    <i class="fas fa-sign-in-alt"></i> Se connecter
-                                </button>
-                            `;
-                        }
-                    }
-                }
-            });
-        }
-
-        // Fonction pour charger les crédits depuis la collection users
-        function loadUserCreditsFromUsers(userId) {
-            console.log("Chargement des crédits pour l'utilisateur:", userId);
-            
-            // Chercher dans la collection 'users' avec l'ID de l'utilisateur
-            db.collection('users').doc(userId).get()
-            .then((doc) => {
-                if (doc.exists) {
-                    const userData = doc.data();
-                    console.log("Données utilisateur trouvées:", userData);
-                    
-                    // Chercher le champ 'credits' dans les données utilisateur
-                    let credits = 0;
-                    
-                    if (userData.credits !== undefined && userData.credits !== null) {
-                        credits = userData.credits;
-                        console.log("Crédits trouvés dans 'credits':", credits);
-                    } else if (userData.credit !== undefined && userData.credit !== null) {
-                        credits = userData.credit;
-                        console.log("Crédits trouvés dans 'credit':", credits);
-                    } else if (userData.balance !== undefined && userData.balance !== null) {
-                        credits = userData.balance;
-                        console.log("Crédits trouvés dans 'balance':", credits);
-                    } else if (userData.solde !== undefined && userData.solde !== null) {
-                        credits = userData.solde;
-                        console.log("Crédits trouvés dans 'solde':", credits);
-                    }
-                    
-                    // Mettre à jour l'affichage
-                    document.getElementById('creditsCount').textContent = credits;
-                    console.log("Crédits affichés:", credits);
-                    
-                    // Mettre à jour l'info-bulle avec le montant réel
-                    const creditsDisplay = document.getElementById('creditsDisplay');
-                    const creditsInfo = creditsDisplay.querySelector('.credits-info');
-                    if (creditsInfo) {
-                        creditsInfo.innerHTML = `
-                            <h4><i class="fas fa-gem"></i> Vos Crédits: ${credits}</h4>
-                            <p>Vos crédits sont de <strong>l'argent réel retirable</strong> !</p>
-                            <p><strong>Les actions suivantes permettent de gagner des crédits :</strong></p>
-                            <ul>
-                                <li><i class="fas fa-video"></i> Publier des vidéos</li>
-                                <li><i class="fas fa-clock"></i> Passer du temps à regarder des vidéos</li>
-                                <li><i class="fas fa-eye"></i> Recevoir des vues, likes et commentaires sur vos vidéos</li>
-                            </ul>
-                            <p><strong>Retrait :</strong> Ces actions vous permettent de gagner des crédits, chaque action ayant son propre nombre de crédits.</p>
-                            <div class="info-note">
-                                <i class="fas fa-info-circle"></i> Continuez à utiliser la plateforme pour gagner plus de crédits !
-                            </div>
-                        `;
-                    }
-                    
-                } else {
-                    console.log("Aucun document utilisateur trouvé avec l'ID:", userId);
-                    document.getElementById('creditsCount').textContent = '0';
-                    
-                    // Créer un document utilisateur avec 0 crédits si inexistant
-                    db.collection('users').doc(userId).set({
-                        credits: 0,
-                        email: auth.currentUser.email,
-                        displayName: auth.currentUser.displayName || auth.currentUser.email,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
-                    }, { merge: true })
-                    .then(() => {
-                        console.log("Document utilisateur créé avec 0 crédits");
-                    })
-                    .catch((error) => {
-                        console.error("Erreur lors de la création du document utilisateur:", error);
-                    });
-                }
-            })
-            .catch((error) => {
-                console.error("Erreur lors du chargement des crédits depuis 'users':", error);
-                document.getElementById('creditsCount').textContent = '0';
-            });
-        }
-
-        function checkAuthBeforeAction(page) {
-            const user = auth.currentUser;
-            if (!user && (page === 'upload.html' || page === 'publier.html' || page === 'myprofile.html')) {
-                openAuthModal();
-                return false;
-            }
-            navigateTo(page);
-            return true;
-        }
-
-        function openAuthModal() {
-            const authModal = document.getElementById('authModal');
-            const authError = document.getElementById('authError');
-            const authForm = document.getElementById('authForm');
-            
-            if (authModal) authModal.style.display = 'block';
-            if (authError) {
-                authError.style.display = 'none';
-                authError.textContent = '';
-            }
-            if (authForm) authForm.reset();
-        }
-
-        function handleAuthFormSubmit() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const username = document.getElementById('username').value;
-            const authError = document.getElementById('authError');
-            
-            if (isLoginMode) {
-                auth.signInWithEmailAndPassword(email, password)
-                    .then((userCredential) => {
-                        console.log("Connexion réussie");
-                        closeModal('authModal');
-                        // Recharger les crédits après connexion
-                        loadUserCreditsFromUsers(userCredential.user.uid);
-                    })
-                    .catch((error) => {
-                        console.error("Erreur de connexion:", error);
-                        if (authError) {
-                            authError.textContent = getAuthErrorMessage(error.code);
-                            authError.style.display = 'block';
-                        }
-                    });
-            } else {
-                auth.createUserWithEmailAndPassword(email, password)
-                    .then((userCredential) => {
-                        console.log("Inscription réussie");
-                        return userCredential.user.updateProfile({
-                            displayName: username
-                        });
-                    })
-                    .then(() => {
-                        closeModal('authModal');
-                        const userId = auth.currentUser.uid;
-                        // Créer un document utilisateur avec 0 crédits
-                        db.collection('users').doc(userId).set({
-                            credits: 0,
-                            email: email,
-                            displayName: username,
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
-                        })
-                        .then(() => {
-                            console.log("Document utilisateur créé avec 0 crédits");
-                            loadUserCreditsFromUsers(userId);
-                        });
-                    })
-                    .catch((error) => {
-                        console.error("Erreur d'inscription:", error);
-                        if (authError) {
-                            authError.textContent = getAuthErrorMessage(error.code);
-                            authError.style.display = 'block';
-                        }
-                    });
-            }
-        }
-
-        function getAuthErrorMessage(errorCode) {
-            const errorMessages = {
-                'auth/invalid-email': 'Adresse email invalide',
-                'auth/user-disabled': 'Ce compte a été désactivé',
-                'auth/user-not-found': 'Aucun compte trouvé avec cette adresse email',
-                'auth/wrong-password': 'Mot de passe incorrect',
-                'auth/email-already-in-use': 'Cette adresse email est déjà utilisée',
-                'auth/weak-password': 'Le mot de passe est trop faible',
-                'auth/operation-not-allowed': 'Cette opération n\'est pas autorisée'
-            };
-            
-            return errorMessages[errorCode] || 'Une erreur est survenue lors de l\'authentification';
-        }
-
-        // ===== PAGINATION =====
-        function loadVideos(useCache = false) {
-            const popularVideosContainer = document.getElementById('popularVideosContainer');
-            
-            if (!popularVideosContainer) return;
-            
-            showLoadingSkeletons(popularVideosContainer, VIDEOS_PER_PAGE);
-            
-            document.getElementById('prevPage').disabled = true;
-            document.getElementById('nextPage').disabled = true;
-            
-            console.log(`Chargement page ${currentPage}`);
-            
-            let query = db.collection('videos');
-            
-            // Essayer différentes méthodes de tri
-            try {
-                query = query.orderBy('createdAt', 'desc');
-            } catch (error) {
-                console.log("Champ 'createdAt' non indexé, essai avec 'timestamp'");
-                try {
-                    query = query.orderBy('timestamp', 'desc');
-                } catch (error2) {
-                    console.log("Champ 'timestamp' non indexé, essai avec 'date'");
-                    try {
-                        query = query.orderBy('date', 'desc');
-                    } catch (error3) {
-                        console.log("Aucun champ de date indexé, pas de tri");
-                    }
-                }
-            }
-            
-            query = query.limit(VIDEOS_PER_PAGE);
-            
-            if (currentPage > 1 && lastVisibleDoc) {
-                query = query.startAfter(lastVisibleDoc);
-            }
-            
-            query.get()
-            .then((querySnapshot) => {
-                console.log(`Page ${currentPage}: ${querySnapshot.size} vidéos trouvées`);
-                
-                if (querySnapshot.empty) {
-                    if (currentPage === 1) {
-                        popularVideosContainer.innerHTML = '<p style="text-align: center; color: var(--text-color); grid-column: 1 / -1; padding: 40px;">Aucune vidéo disponible pour le moment.</p>';
-                    } else {
-                        popularVideosContainer.innerHTML = '<p style="text-align: center; color: var(--text-color); grid-column: 1 / -1; padding: 40px;">Fin des vidéos.</p>';
-                    }
-                    updatePaginationButtons();
-                    return;
-                }
-                
-                popularVideosContainer.innerHTML = '';
-                lastVisibleDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
-                
-                let loadedCount = 0;
-                querySnapshot.forEach((doc) => {
-                    const videoData = doc.data();
-                    videoData.id = doc.id;
-                    videoCache[doc.id] = videoData;
-                    createVideoCard(videoData, popularVideosContainer);
-                    loadedCount++;
-                });
-                
-                document.getElementById('pageInfo').textContent = `Page ${currentPage} (${loadedCount} vidéos)`;
-                
-                // Vérifier s'il y a plus de vidéos
-                checkIfMoreVideosExist(loadedCount);
-            })
-            .catch((error) => {
-                console.error("Erreur lors du chargement des vidéos: ", error);
-                
-                // Fallback: charger sans tri
-                db.collection('videos')
-                    .limit(VIDEOS_PER_PAGE)
-                    .get()
-                    .then((querySnapshot) => {
-                        if (querySnapshot.empty) {
-                            popularVideosContainer.innerHTML = '<p style="text-align: center; color: var(--text-color); grid-column: 1 / -1; padding: 40px;">Aucune vidéo disponible.</p>';
-                        } else {
-                            popularVideosContainer.innerHTML = '';
-                            querySnapshot.forEach((doc) => {
-                                const videoData = doc.data();
-                                videoData.id = doc.id;
-                                createVideoCard(videoData, popularVideosContainer);
-                            });
-                            document.getElementById('pageInfo').textContent = `Page ${currentPage}`;
-                        }
-                        updatePaginationButtons();
-                    });
-            });
-        }
-
-        function loadNextPage() {
-            if (!lastVisibleDoc && currentPage > 1) {
-                console.log("Pas de dernier document pour la pagination");
-                return;
-            }
-            
-            // Sauvegarder la position actuelle
-            if (currentPage === 1) {
-                paginationStack.push({page: currentPage, doc: null});
-            } else {
-                paginationStack.push({page: currentPage, doc: lastVisibleDoc});
-            }
-            
-            currentPage++;
-            console.log(`Navigation vers page ${currentPage}`);
-            
-            // MODIFICATION : Faire défiler jusqu'à la section des vidéos populaires
-            scrollToVideosSection();
-            
-            // Attendre un court instant pour que l'animation de défilement commence
-            setTimeout(() => {
-                loadVideos();
-            }, 300);
-        }
-
-        function loadPrevPage() {
-            if (currentPage <= 1 || paginationStack.length === 0) {
-                console.log("Déjà à la première page");
-                return;
-            }
-            
-            // Retirer la dernière entrée de la pile
-            const prevState = paginationStack.pop();
-            currentPage = prevState.page;
-            lastVisibleDoc = prevState.doc;
-            
-            console.log(`Retour à page ${currentPage}`);
-            
-            // MODIFICATION : Faire défiler jusqu'à la section des vidéos populaires
-            scrollToVideosSection();
-            
-            // Attendre un court instant pour que l'animation de défilement commence
-            setTimeout(() => {
-                loadVideos(true);
-            }, 300);
-        }
-
-        // NOUVELLE FONCTION : Défiler jusqu'à la section des vidéos
-        function scrollToVideosSection() {
-            const videosSection = document.querySelector('.popular-videos-section');
-            if (videosSection) {
-                // Calculer la position de la section
-                const header = document.querySelector('header');
-                const headerHeight = header ? header.offsetHeight : 80;
-                
-                // Obtenir la position de la section par rapport au haut de la page
-                const sectionTop = videosSection.getBoundingClientRect().top + window.pageYOffset;
-                
-                // Défiler jusqu'à la section, en tenant compte de la hauteur du header
-                window.scrollTo({
-                    top: sectionTop - headerHeight - 20, // -20 pour un peu d'espace
-                    behavior: 'smooth'
-                });
-            } else {
-                // Fallback : défiler vers le haut
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            }
-        }
-
-        function checkIfMoreVideosExist(currentLoadedCount) {
-            if (currentLoadedCount < VIDEOS_PER_PAGE) {
-                // Moins de vidéos que prévu = pas de page suivante
-                updatePaginationButtons(false);
-                return;
-            }
-            
-            // Vérifier s'il y a au moins une vidéo supplémentaire
-            let query = db.collection('videos');
-            
-            try {
-                query = query.orderBy('createdAt', 'desc');
-            } catch (error) {
-                try {
-                    query = query.orderBy('timestamp', 'desc');
-                } catch (error2) {
-                    try {
-                        query = query.orderBy('date', 'desc');
-                    } catch (error3) {
-                        // Pas de tri
-                    }
-                }
-            }
-            
-            if (lastVisibleDoc) {
-                query = query.startAfter(lastVisibleDoc).limit(1);
-            } else {
-                query = query.limit(VIDEOS_PER_PAGE + 1);
-            }
-            
-            query.get()
-            .then((querySnapshot) => {
-                const hasMore = querySnapshot.size > 0;
-                console.log("Plus de vidéos disponibles:", hasMore);
-                updatePaginationButtons(hasMore);
-            })
-            .catch((error) => {
-                console.error("Erreur lors de la vérification des vidéos supplémentaires:", error);
-                updatePaginationButtons(false);
-            });
-        }
-
-        function updatePaginationButtons(hasNext = true) {
-            const hasPrev = currentPage > 1;
-            
-            document.getElementById('prevPage').disabled = !hasPrev;
-            document.getElementById('nextPage').disabled = !hasNext;
-            
-            // Mettre à jour les styles
-            const prevBtn = document.getElementById('prevPage');
-            const nextBtn = document.getElementById('nextPage');
-            
-            if (hasPrev) {
-                prevBtn.style.cursor = 'pointer';
-                prevBtn.style.opacity = '1';
-            } else {
-                prevBtn.style.cursor = 'not-allowed';
-                prevBtn.style.opacity = '0.5';
-            }
-            
-            if (hasNext) {
-                nextBtn.style.cursor = 'pointer';
-                nextBtn.style.opacity = '1';
-            } else {
-                nextBtn.style.cursor = 'not-allowed';
-                nextBtn.style.opacity = '0.5';
-            }
-            
-            console.log(`Pagination: Page ${currentPage}, Précédent: ${hasPrev}, Suivant: ${hasNext}`);
-        }
-
-        function showLoadingSkeletons(container, count) {
-            container.innerHTML = '';
-            for (let i = 0; i < count; i++) {
-                container.innerHTML += `
-                    <div class="video-card">
-                        <div class="video-thumbnail-container">
-                            <div class="thumbnail-loading"></div>
-                        </div>
-                        <div class="video-info">
-                            <div class="thumbnail-loading" style="height: 20px; width: 80%; margin-bottom: 10px;"></div>
-                            <div class="thumbnail-loading" style="height: 15px; width: 60%;"></div>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        function createVideoCard(videoData, container) {
-            if (!container) return;
-            
-            const videoCard = document.createElement('div');
-            videoCard.className = 'video-card';
-            videoCard.id = `video-${videoData.id}`;
-            
-            let publishDate = 'Date inconnue';
-            if (videoData.createdAt) {
-                if (videoData.createdAt.seconds) {
-                    publishDate = new Date(videoData.createdAt.seconds * 1000).toLocaleDateString('fr-FR');
-                } else if (videoData.createdAt.toDate) {
-                    publishDate = videoData.createdAt.toDate().toLocaleDateString('fr-FR');
-                }
-            }
-            
-            const thumbnailUrl = videoData.thumbnailUrl || 'https://via.placeholder.com/300x200/3498db/ffffff?text=Miniature';
-            const title = videoData.title || 'Titre inconnu';
-            const views = videoData.views || 0;
-            const userId = videoData.userId || 'default';
-            const username = videoData.username || `Utilisateur ${userId.substring(0, 6)}`;
-            
-            videoCard.innerHTML = `
-                <div class="video-thumbnail-container" onclick="navigateToVideo('${videoData.id}')">
-                    <img class="thumbnail-background" src="https://via.placeholder.com/300x200/3498db/ffffff?text=Chargement" data-src="${thumbnailUrl}" alt="${title}" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200/3498db/ffffff?text=Erreur'">
-                    <img class="thumbnail-foreground" src="https://via.placeholder.com/300x200/3498db/ffffff?text=Chargement" data-src="${thumbnailUrl}" alt="${title}" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200/3498db/ffffff?text=Erreur'">
-                    <div class="play-icon">
-                        <i class="fas fa-play-circle"></i>
-                    </div>
-                </div>
-                <div class="video-info">
-                    <h3 class="video-title">${title}</h3>
-                    
-                    <div class="video-stats">
-                        <div class="video-views">
-                            <i class="fas fa-eye"></i> ${views} vues
-                        </div>
-                        <div class="video-date">
-                            <i class="far fa-calendar-alt"></i> ${publishDate}
-                        </div>
-                        <div class="video-author" onclick="viewUserProfile('${userId}', '${username}')">
-                            <i class="fas fa-user"></i> ${username}
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            container.appendChild(videoCard);
-            
-            const images = videoCard.querySelectorAll('img[data-src]');
-            images.forEach(img => {
-                img.src = img.dataset.src;
-                img.removeAttribute('data-src');
-            });
-        }
-
-        function navigateToVideo(videoId) {
-            navigateTo(`video.html?id=${videoId}`);
-        }
-
-        // ===== FONCTIONS DE RECHERCHE =====
-        function performSearch() {
-            const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
-            
-            if (searchTerm === '') {
-                currentPage = 1;
-                lastVisibleDoc = null;
-                paginationStack = [];
-                loadVideos();
-                document.querySelector('.pagination').style.display = 'flex';
-                return;
-            }
-            
-            const popularVideosContainer = document.getElementById('popularVideosContainer');
-            if (!popularVideosContainer) return;
-            
-            popularVideosContainer.innerHTML = '<p style="text-align: center; color: var(--text-color); grid-column: 1 / -1; padding: 40px;">Recherche en cours...</p>';
-            
-            db.collection('videos')
-                .get()
-            .then((querySnapshot) => {
-                popularVideosContainer.innerHTML = '';
-                
-                let resultsFound = false;
-                let resultCount = 0;
-                
-                querySnapshot.forEach((doc) => {
-                    const videoData = doc.data();
-                    videoData.id = doc.id;
-                    
-                    if ((videoData.title && videoData.title.toLowerCase().includes(searchTerm)) || 
-                        (videoData.description && videoData.description.toLowerCase().includes(searchTerm))) {
-                        createVideoCard(videoData, popularVideosContainer);
-                        resultsFound = true;
-                        resultCount++;
-                    }
-                });
-                
-                if (!resultsFound) {
-                    popularVideosContainer.innerHTML = '<p style="text-align: center; color: var(--text-color); grid-column: 1 / -1; padding: 40px;">Aucune vidéo trouvée pour votre recherche.</p>';
-                } else {
-                    document.getElementById('pageInfo').textContent = `Résultats (${resultCount} vidéos)`;
-                }
-                
-                document.querySelector('.pagination').style.display = 'none';
-            })
-            .catch((error) => {
-                console.error("Erreur lors de la recherche: ", error);
-                popularVideosContainer.innerHTML = '<p style="text-align: center; color: var(--text-color); grid-column: 1 / -1; padding: 40px;">Erreur lors de la recherche.</p>';
-            });
-        }
-
-        function showSearchSuggestions() {
-            const searchInput = document.getElementById('searchInput');
-            const suggestionsContainer = document.getElementById('searchSuggestions');
-            
-            if (!searchInput || !suggestionsContainer) return;
-            
-            const searchTerm = searchInput.value.trim().toLowerCase();
-            
-            if (searchTerm.length < 2) {
-                suggestionsContainer.style.display = 'none';
-                suggestionsContainer.innerHTML = '';
-                return;
-            }
-            
-            db.collection('videos')
-                .limit(10)
-                .get()
-            .then((querySnapshot) => {
-                suggestionsContainer.innerHTML = '';
-                
-                let suggestions = new Set();
-                
-                querySnapshot.forEach((doc) => {
-                    const videoData = doc.data();
-                    
-                    if (videoData.title && videoData.title.toLowerCase().includes(searchTerm)) {
-                        suggestions.add(videoData.title);
-                    }
-                });
-                
-                if (suggestions.size > 0) {
-                    suggestions.forEach(suggestion => {
-                        const suggestionElement = document.createElement('div');
-                        suggestionElement.className = 'search-suggestion';
-                        suggestionElement.textContent = suggestion;
-                        suggestionElement.onclick = () => {
-                            searchInput.value = suggestion;
-                            suggestionsContainer.style.display = 'none';
-                            performSearch();
-                        };
-                        suggestionsContainer.appendChild(suggestionElement);
-                    });
-                    suggestionsContainer.style.display = 'block';
-                } else {
-                    suggestionsContainer.style.display = 'none';
-                }
-            })
-            .catch((error) => {
-                console.error("Erreur lors de la recherche de suggestions: ", error);
-                suggestionsContainer.style.display = 'none';
-            });
-        }
-
-        // ===== FONCTIONS UTILITAIRES =====
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
-            if (modal) modal.style.display = 'none';
-        }
-
-        function confirmAge() {
-            try {
-                const now = new Date();
-                const expirationDate = new Date(now.setFullYear(now.getFullYear() + 1));
-                
-                localStorage.setItem('ageVerified', 'true');
-                localStorage.setItem('ageVerifiedExpiration', expirationDate.getTime().toString());
-                
-                const ageVerification = document.getElementById('ageVerification');
-                if (ageVerification) {
-                    ageVerification.style.display = 'none';
-                }
-            } catch (e) {
-                console.error("Erreur lors de la confirmation d'âge:", e);
-                try {
-                    sessionStorage.setItem('ageVerified', 'true');
-                    const ageVerification = document.getElementById('ageVerification');
-                    if (ageVerification) {
-                        ageVerification.style.display = 'none';
-                    }
-                } catch (e2) {
-                    console.error("Erreur avec sessionStorage aussi:", e2);
-                }
+            if (modal) {
+                modal.style.display = 'none';
             }
         }
 
-        function denyAge() {
-            window.location.href = 'https://www.google.com';
+        function showAlert(title, message) {
+            const alertModalTitle = document.getElementById('alertModalTitle');
+            const alertModalMessage = document.getElementById('alertModalMessage');
+            
+            if (alertModalTitle) alertModalTitle.textContent = title;
+            if (alertModalMessage) alertModalMessage.textContent = message;
+            
+            openModal('alertModal');
         }
-
-        function checkAgeVerification() {
-            let isAgeVerified = false;
-            let expirationValid = true;
-            
-            try {
-                const expiration = localStorage.getItem('ageVerifiedExpiration');
-                const now = new Date().getTime();
-                
-                if (expiration && now > parseInt(expiration)) {
-                    localStorage.removeItem('ageVerified');
-                    localStorage.removeItem('ageVerifiedExpiration');
-                    expirationValid = false;
-                } else {
-                    isAgeVerified = localStorage.getItem('ageVerified') === 'true';
-                }
-            } catch (e) {
-                console.error("Erreur d'accès au localStorage:", e);
-            }
-            
-            if (!isAgeVerified) {
-                try {
-                    isAgeVerified = sessionStorage.getItem('ageVerified') === 'true';
-                } catch (e) {
-                    console.error("Erreur d'accès au sessionStorage:", e);
-                }
-            }
-            
-            if (!isAgeVerified) {
-                isAgeVerified = document.cookie.includes('ageVerified=true');
-            }
-            
-            const ageVerification = document.getElementById('ageVerification');
-            if (ageVerification) {
-                ageVerification.style.display = isAgeVerified && expirationValid ? 'none' : 'flex';
-            }
-        }
-
-        function navigateTo(page) {
-            document.body.style.opacity = "0.8";
-            document.body.style.transition = "opacity 0.3s ease";
-            
-            setTimeout(() => {
-                window.location.href = page;
-            }, 300);
-        }
-
-        function viewUserProfile(userId, username) {
-            navigateTo(`profile.html?id=${userId}&name=${encodeURIComponent(username)}`);
-        }
-
-        // ===== ÉVÉNEMENTS AU CHARGEMENT =====
-        window.addEventListener('load', function() {
-            checkAgeVerification();
-            initTheme();
-            checkAuthState();
-            loadVideos();
-            
-            // Initialiser les écouteurs d'événements
-            const authForm = document.getElementById('authForm');
-            if (authForm) {
-                authForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    handleAuthFormSubmit();
-                });
-            }
-            
-            const authSwitch = document.getElementById('authSwitch');
-            if (authSwitch) {
-                authSwitch.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    isLoginMode = !isLoginMode;
-                    
-                    const authModalTitle = document.getElementById('authModalTitle');
-                    const authSubmit = document.getElementById('authSubmit');
-                    const usernameField = document.getElementById('usernameField');
-                    
-                    if (isLoginMode) {
-                        authModalTitle.textContent = 'Connexion';
-                        authSubmit.textContent = 'Se connecter';
-                        authSwitch.textContent = 'Créer un compte';
-                        if (usernameField) usernameField.style.display = 'none';
-                    } else {
-                        authModalTitle.textContent = 'Inscription';
-                        authSubmit.textContent = 'Créer un compte';
-                        authSwitch.textContent = 'Se connecter';
-                        if (usernameField) usernameField.style.display = 'block';
-                    }
-                    
-                    const authError = document.getElementById('authError');
-                    if (authError) {
-                        authError.style.display = 'none';
-                    }
-                });
-            }
-
-            // Recherche
-            document.getElementById('searchInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    performSearch();
-                }
-            });
-
-            document.getElementById('searchInput').addEventListener('input', function() {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(showSearchSuggestions, 300);
-            });
-
-            // Cacher les suggestions en cliquant ailleurs
-            document.addEventListener('click', function(e) {
-                const suggestionsContainer = document.getElementById('searchSuggestions');
-                const searchInput = document.getElementById('searchInput');
-                
-                if (suggestionsContainer && searchInput && 
-                    e.target !== suggestionsContainer && 
-                    e.target !== searchInput && 
-                    !suggestionsContainer.contains(e.target)) {
-                    suggestionsContainer.style.display = 'none';
-                }
-            });
-
-            // Pagination - Événements de clic
-            document.getElementById('nextPage').addEventListener('click', function() {
-                if (!this.disabled) {
-                    loadNextPage();
-                }
-            });
-            
-            document.getElementById('prevPage').addEventListener('click', function() {
-                if (!this.disabled) {
-                    loadPrevPage();
-                }
-            });
-            
-            // Tester les boutons au chargement
-            setTimeout(() => {
-                updatePaginationButtons(true);
-            }, 1000);
-        });
 
         // Fermer les modals en cliquant à l'extérieur
         window.onclick = function(event) {
-            const modals = ['authModal'];
+            const modals = ['shareModal', 'alertModal', 'authModal'];
             
             modals.forEach(modalId => {
                 const modal = document.getElementById(modalId);
@@ -2105,11 +1299,1408 @@
                 }
             });
         };
+
+        // Fonction pour ouvrir le lien publicitaire
+        function openAdLink() {
+            if (!adPlayedThisSession) {
+                // Le lien publicitaire
+                const adUrl = 'https://robotbagpipe.com/uf868bcft2?key=e8c8806d43592d84d110a00142dc05e8';
+                
+                // Ouvrir le lien publicitaire dans un nouvel onglet
+                window.open(adUrl, '_blank');
+                
+                // Ajouter des crédits pour avoir cliqué sur la pub
+                const user = auth.currentUser;
+                if (user && canEarnCredits) {
+                    addCreditsToUser(user.uid, 2);
+                    canEarnCredits = false;
+                }
+                
+                adPlayedThisSession = true;
+                
+                // Cacher le bouton publicitaire après avoir cliqué
+                const adButton = document.getElementById('adPlayButton');
+                if (adButton) {
+                    adButton.style.display = 'none';
+                }
+                
+                // Réactiver les contrôles vidéo
+                const videoPlayer = document.getElementById('featuredVideoPlayer');
+                if (videoPlayer) {
+                    videoPlayer.controls = true;
+                }
+            }
+        }
+
+        // Fonctions pour l'authentification
+        function switchAuthTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(tabElement => {
+                tabElement.classList.remove('active');
+            });
+            
+            if (tab === 'login') {
+                document.querySelector('.auth-tab:nth-child(1)').classList.add('active');
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('registerForm').classList.add('hidden');
+            } else {
+                document.querySelector('.auth-tab:nth-child(2)').classList.add('active');
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('registerForm').classList.remove('hidden');
+            }
+        }
+
+        function showAuthError(form, message) {
+            const errorElement = document.getElementById(`${form}Error`);
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+                
+                setTimeout(() => {
+                    errorElement.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        function showAuthSuccess(form, message) {
+            const successElement = document.getElementById(`${form}Success`);
+            if (successElement) {
+                successElement.textContent = message;
+                successElement.style.display = 'block';
+                
+                setTimeout(() => {
+                    successElement.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        function loginWithEmail() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                showAuthError('login', 'Veuillez remplir tous les champs');
+                return;
+            }
+            
+            const loginBtn = document.querySelector('#loginForm .auth-btn');
+            const originalText = loginBtn.innerHTML;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connexion...';
+            loginBtn.disabled = true;
+            
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    showAuthSuccess('login', 'Connexion réussie!');
+                    setTimeout(() => {
+                        closeModal('authModal');
+                        initCreditsDisplay();
+                        loadComments();
+                        checkUserReaction();
+                    }, 1500);
+                })
+                .catch((error) => {
+                    let errorMessage = 'Erreur de connexion';
+                    switch (error.code) {
+                        case 'auth/user-not-found':
+                            errorMessage = 'Aucun compte trouvé avec cet email';
+                            break;
+                        case 'auth/wrong-password':
+                            errorMessage = 'Mot de passe incorrect';
+                            break;
+                        case 'auth/invalid-email':
+                            errorMessage = 'Email invalide';
+                            break;
+                        case 'auth/user-disabled':
+                            errorMessage = 'Ce compte a été désactivé';
+                            break;
+                    }
+                    showAuthError('login', errorMessage);
+                })
+                .finally(() => {
+                    loginBtn.innerHTML = originalText;
+                    loginBtn.disabled = false;
+                });
+        }
+
+        function registerWithEmail() {
+            const username = document.getElementById('registerUsername').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            
+            if (!username || !email || !password || !confirmPassword) {
+                showAuthError('register', 'Veuillez remplir tous les champs');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showAuthError('register', 'Le mot de passe doit contenir au moins 6 caractères');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showAuthError('register', 'Les mots de passe ne correspondent pas');
+                return;
+            }
+            
+            const registerBtn = document.querySelector('#registerForm .auth-btn');
+            const originalText = registerBtn.innerHTML;
+            registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Inscription...';
+            registerBtn.disabled = true;
+            
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    
+                    return db.collection('users').doc(user.uid).set({
+                        username: username,
+                        email: email,
+                        credits: 0,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                })
+                .then(() => {
+                    showAuthSuccess('register', 'Inscription réussie! Bienvenue!');
+                    setTimeout(() => {
+                        closeModal('authModal');
+                        initCreditsDisplay();
+                        loadComments();
+                    }, 1500);
+                })
+                .catch((error) => {
+                    let errorMessage = "Erreur d'inscription";
+                    switch (error.code) {
+                        case 'auth/email-already-in-use':
+                            errorMessage = 'Cet email est déjà utilisé';
+                            break;
+                        case 'auth/invalid-email':
+                            errorMessage = 'Email invalide';
+                            break;
+                        case 'auth/weak-password':
+                            errorMessage = 'Mot de passe trop faible';
+                            break;
+                        case 'auth/operation-not-allowed':
+                            errorMessage = "L'inscription par email n'est pas activée";
+                            break;
+                    }
+                    showAuthError('register', errorMessage);
+                })
+                .finally(() => {
+                    registerBtn.innerHTML = originalText;
+                    registerBtn.disabled = false;
+                });
+        }
+
+        // Fonction pour charger la vidéo principale
+        function loadVideo() {
+            const urlParams = new URLSearchParams(window.location.search);
+            currentVideoId = urlParams.get('id');
+            
+            if (!currentVideoId) {
+                showError("Aucune vidéo spécifiée", "L'URL ne contient pas d'ID de vidéo.");
+                return;
+            }
+            
+            db.collection('videos').doc(currentVideoId).get()
+            .then((doc) => {
+                if (doc.exists) {
+                    currentVideoData = doc.data();
+                    currentVideoData.id = doc.id;
+                    
+                    displayVideo(currentVideoData);
+                    loadVideoReactions();
+                    loadComments();
+                    loadSimilarVideos();
+                    incrementVideoViews(currentVideoId);
+                    checkUserReaction();
+                } else {
+                    showError("Vidéo non trouvée", "Cette vidéo n'existe pas ou a été supprimée.");
+                }
+            })
+            .catch((error) => {
+                console.error("Erreur de chargement:", error);
+                showError("Erreur de chargement", "Une erreur s'est produite lors du chargement de la vidéo.");
+            });
+        }
+
+        function showError(title, message) {
+            const featuredContainer = document.getElementById('featuredVideoContainer');
+            if (featuredContainer) featuredContainer.style.display = 'none';
+            
+            showAlert(title, message);
+        }
+
+        // Fonction pour ajouter des crédits à l'utilisateur
+        function addCreditsToUser(userId, creditsToAdd) {
+            if (!userId) return;
+            
+            const userRef = db.collection('users').doc(userId);
+            
+            db.runTransaction((transaction) => {
+                return transaction.get(userRef).then((doc) => {
+                    if (!doc.exists) {
+                        transaction.set(userRef, {
+                            credits: creditsToAdd,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            lastCreditUpdate: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        return creditsToAdd;
+                    }
+                    
+                    const currentCredits = doc.data().credits || 0;
+                    const newCredits = currentCredits + creditsToAdd;
+                    
+                    transaction.update(userRef, {
+                        credits: newCredits,
+                        lastCreditUpdate: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    return newCredits;
+                });
+            }).then((newCredits) => {
+                console.log(`Crédits ajoutés avec succès. Nouveau total: ${newCredits}`);
+                if (auth.currentUser && auth.currentUser.uid === userId) {
+                    updateCreditsDisplay(newCredits);
+                }
+                
+                db.collection('creditHistory').add({
+                    userId: userId,
+                    videoId: currentVideoId,
+                    creditsEarned: creditsToAdd,
+                    earnedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    reason: 'Visionnage vidéo'
+                }).catch(error => {
+                    console.error("Erreur lors de l'enregistrement de l'historique:", error);
+                });
+                
+                showAlert("Crédits gagnés!", `Vous avez reçu ${creditsToAdd} crédits!`);
+            }).catch((error) => {
+                console.error("Erreur lors de l'ajout des crédits:", error);
+            });
+        }
+
+        function updateCreditsDisplay(credits) {
+            const creditsElements = document.querySelectorAll('.user-credits');
+            creditsElements.forEach(element => {
+                element.textContent = credits;
+            });
+            
+            const user = auth.currentUser;
+            const creditsContainer = document.getElementById('userCredits');
+            
+            if (creditsContainer) {
+                if (user) {
+                    creditsContainer.style.display = 'flex';
+                } else {
+                    creditsContainer.style.display = 'none';
+                }
+            }
+        }
+
+        function initCreditsDisplay() {
+            const user = auth.currentUser;
+            if (user) {
+                db.collection('users').doc(user.uid).get()
+                    .then((doc) => {
+                        if (doc.exists) {
+                            const credits = doc.data().credits || 0;
+                            updateCreditsDisplay(credits);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Erreur lors du chargement des crédits:", error);
+                    });
+            } else {
+                updateCreditsDisplay(0);
+            }
+        }
+
+        function handleCreditsDisplayOnAuthState(user) {
+            const creditsContainer = document.getElementById('userCredits');
+            
+            if (creditsContainer) {
+                if (user) {
+                    creditsContainer.style.display = 'flex';
+                    initCreditsDisplay();
+                } else {
+                    creditsContainer.style.display = 'none';
+                }
+            }
+        }
+
+        // Afficher la vidéo dans l'interface
+        function displayVideo(videoData) {
+            const videoPlayer = document.getElementById('featuredVideoPlayer');
+            const videoTitle = document.getElementById('featuredVideoTitle');
+            const videoViews = document.getElementById('featuredVideoViews');
+            const videoDate = document.getElementById('featuredVideoDate');
+            const videoUsername = document.getElementById('featuredVideoUsername');
+            const adButton = document.getElementById('adPlayButton');
+            
+            if (videoPlayer) {
+                videoPlayer.innerHTML = `<source src="${videoData.videoUrl}" type="video/mp4">`;
+                
+                // Désactiver le téléchargement
+                videoPlayer.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    return false;
+                });
+                
+                videoPlayer.addEventListener('dragstart', function(e) {
+                    e.preventDefault();
+                    return false;
+                });
+                
+                // Quand l'utilisateur veut jouer la vidéo, montrer le bouton publicitaire
+                videoPlayer.addEventListener('play', function(e) {
+                    if (!adPlayedThisSession) {
+                        e.preventDefault();
+                        videoPlayer.pause();
+                        
+                        // Afficher le bouton publicitaire
+                        if (adButton) {
+                            adButton.style.display = 'block';
+                        }
+                        
+                        // Désactiver les contrôles vidéo temporairement
+                        videoPlayer.controls = false;
+                    }
+                });
+                
+                // Suivi de la progression pour les crédits
+                videoPlayer.addEventListener('timeupdate', function() {
+                    if (videoPlayer.duration > 0) {
+                        const progress = (videoPlayer.currentTime / videoPlayer.duration) * 100;
+                        
+                        if (progress < 10 && videoWatched) {
+                            videoWatched = false;
+                        }
+                        
+                        if (!videoWatched && progress >= 80) {
+                            videoWatched = true;
+                            
+                            const user = auth.currentUser;
+                            if (user) {
+                                addCreditsToUser(user.uid, 5);
+                            }
+                        }
+                    }
+                });
+                
+                // Réinitialiser quand la vidéo se termine
+                videoPlayer.addEventListener('ended', function() {
+                    videoWatched = false;
+                    canEarnCredits = true;
+                    adPlayedThisSession = false; // Réactiver la pub pour le prochain visionnage
+                });
+                
+                videoPlayer.load();
+                
+                // Configurer le bouton publicitaire
+                if (adButton) {
+                    adButton.onclick = openAdLink;
+                }
+            }
+            
+            if (videoTitle) {
+                videoTitle.textContent = videoData.title || 'Sans titre';
+            }
+            
+            if (videoViews) {
+                videoViews.textContent = videoData.views || 0;
+            }
+            
+            if (videoDate && videoData.timestamp) {
+                videoDate.textContent = new Date(videoData.timestamp.seconds * 1000).toLocaleDateString('fr-FR');
+            }
+            
+            if (videoUsername) {
+                videoUsername.textContent = videoData.username || 'Utilisateur';
+            }
+        }
+
+        // Fonctions pour les likes/dislikes - SIMPLIFIÉES et CORRIGÉES
+        function loadVideoReactions() {
+            if (!currentVideoId) return;
+            
+            db.collection('videos').doc(currentVideoId).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        const likes = data.likes || 0;
+                        const dislikes = data.dislikes || 0;
+                        
+                        document.getElementById('likeCount').textContent = likes;
+                        document.getElementById('dislikeCount').textContent = dislikes;
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erreur lors du chargement des réactions:", error);
+                });
+        }
+
+        function checkUserReaction() {
+            const user = auth.currentUser;
+            if (!user || !currentVideoId) return;
+            
+            db.collection('videoReactions')
+                .where('userId', '==', user.uid)
+                .where('videoId', '==', currentVideoId)
+                .limit(1)
+                .get()
+                .then((querySnapshot) => {
+                    if (!querySnapshot.empty) {
+                        const reaction = querySnapshot.docs[0].data();
+                        currentUserReaction = reaction.reaction;
+                        
+                        if (reaction.reaction === 'like') {
+                            currentUserLiked = true;
+                            document.querySelector('.like-btn').classList.add('active');
+                        } else if (reaction.reaction === 'dislike') {
+                            currentUserDisliked = true;
+                            document.querySelector('.dislike-btn').classList.add('active');
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erreur lors de la vérification de la réaction:", error);
+                });
+        }
+
+        function handleLike() {
+            if (!checkAuth()) return;
+            
+            const user = auth.currentUser;
+            if (!user || !currentVideoId) return;
+            
+            const videoRef = db.collection('videos').doc(currentVideoId);
+            
+            // Vérifier la réaction actuelle
+            db.collection('videoReactions')
+                .where('userId', '==', user.uid)
+                .where('videoId', '==', currentVideoId)
+                .limit(1)
+                .get()
+                .then((querySnapshot) => {
+                    if (querySnapshot.empty) {
+                        // Pas de réaction existante - ajouter un like
+                        return db.runTransaction((transaction) => {
+                            return transaction.get(videoRef).then((doc) => {
+                                if (!doc.exists) {
+                                    throw new Error("La vidéo n'existe pas");
+                                }
+                                
+                                const currentLikes = doc.data().likes || 0;
+                                transaction.update(videoRef, { 
+                                    likes: currentLikes + 1 
+                                });
+                                
+                                // Créer la réaction
+                                const reactionId = `${user.uid}_${currentVideoId}`;
+                                const reactionRef = db.collection('videoReactions').doc(reactionId);
+                                transaction.set(reactionRef, {
+                                    userId: user.uid,
+                                    videoId: currentVideoId,
+                                    reaction: 'like',
+                                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                                });
+                            });
+                        }).then(() => {
+                            currentUserLiked = true;
+                            document.querySelector('.like-btn').classList.add('active');
+                            document.querySelector('.dislike-btn').classList.remove('active');
+                            loadVideoReactions();
+                        });
+                    } else {
+                        const reactionDoc = querySnapshot.docs[0];
+                        const reactionData = reactionDoc.data();
+                        
+                        if (reactionData.reaction === 'like') {
+                            // Retirer le like
+                            return db.runTransaction((transaction) => {
+                                return transaction.get(videoRef).then((doc) => {
+                                    const currentLikes = doc.data().likes || 0;
+                                    transaction.update(videoRef, { 
+                                        likes: Math.max(0, currentLikes - 1) 
+                                    });
+                                });
+                            }).then(() => {
+                                reactionDoc.ref.delete();
+                                currentUserLiked = false;
+                                document.querySelector('.like-btn').classList.remove('active');
+                                loadVideoReactions();
+                            });
+                        } else if (reactionData.reaction === 'dislike') {
+                            // Changer de dislike à like
+                            return db.runTransaction((transaction) => {
+                                return transaction.get(videoRef).then((doc) => {
+                                    const currentLikes = doc.data().likes || 0;
+                                    const currentDislikes = doc.data().dislikes || 0;
+                                    transaction.update(videoRef, { 
+                                        likes: currentLikes + 1,
+                                        dislikes: Math.max(0, currentDislikes - 1)
+                                    });
+                                });
+                            }).then(() => {
+                                reactionDoc.ref.update({ 
+                                    reaction: 'like',
+                                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                                });
+                                currentUserLiked = true;
+                                currentUserDisliked = false;
+                                document.querySelector('.like-btn').classList.add('active');
+                                document.querySelector('.dislike-btn').classList.remove('active');
+                                loadVideoReactions();
+                            });
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erreur lors du traitement du like:", error);
+                    showAlert("Erreur", "Impossible d'enregistrer votre like. Veuillez réessayer.");
+                });
+        }
+
+        function handleDislike() {
+            if (!checkAuth()) return;
+            
+            const user = auth.currentUser;
+            if (!user || !currentVideoId) return;
+            
+            const videoRef = db.collection('videos').doc(currentVideoId);
+            
+            db.collection('videoReactions')
+                .where('userId', '==', user.uid)
+                .where('videoId', '==', currentVideoId)
+                .limit(1)
+                .get()
+                .then((querySnapshot) => {
+                    if (querySnapshot.empty) {
+                        // Pas de réaction existante - ajouter un dislike
+                        return db.runTransaction((transaction) => {
+                            return transaction.get(videoRef).then((doc) => {
+                                if (!doc.exists) {
+                                    throw new Error("La vidéo n'existe pas");
+                                }
+                                
+                                const currentDislikes = doc.data().dislikes || 0;
+                                transaction.update(videoRef, { 
+                                    dislikes: currentDislikes + 1 
+                                });
+                                
+                                // Créer la réaction
+                                const reactionId = `${user.uid}_${currentVideoId}`;
+                                const reactionRef = db.collection('videoReactions').doc(reactionId);
+                                transaction.set(reactionRef, {
+                                    userId: user.uid,
+                                    videoId: currentVideoId,
+                                    reaction: 'dislike',
+                                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                                });
+                            });
+                        }).then(() => {
+                            currentUserDisliked = true;
+                            document.querySelector('.dislike-btn').classList.add('active');
+                            document.querySelector('.like-btn').classList.remove('active');
+                            loadVideoReactions();
+                        });
+                    } else {
+                        const reactionDoc = querySnapshot.docs[0];
+                        const reactionData = reactionDoc.data();
+                        
+                        if (reactionData.reaction === 'dislike') {
+                            // Retirer le dislike
+                            return db.runTransaction((transaction) => {
+                                return transaction.get(videoRef).then((doc) => {
+                                    const currentDislikes = doc.data().dislikes || 0;
+                                    transaction.update(videoRef, { 
+                                        dislikes: Math.max(0, currentDislikes - 1) 
+                                    });
+                                });
+                            }).then(() => {
+                                reactionDoc.ref.delete();
+                                currentUserDisliked = false;
+                                document.querySelector('.dislike-btn').classList.remove('active');
+                                loadVideoReactions();
+                            });
+                        } else if (reactionData.reaction === 'like') {
+                            // Changer de like à dislike
+                            return db.runTransaction((transaction) => {
+                                return transaction.get(videoRef).then((doc) => {
+                                    const currentLikes = doc.data().likes || 0;
+                                    const currentDislikes = doc.data().dislikes || 0;
+                                    transaction.update(videoRef, { 
+                                        likes: Math.max(0, currentLikes - 1),
+                                        dislikes: currentDislikes + 1
+                                    });
+                                });
+                            }).then(() => {
+                                reactionDoc.ref.update({ 
+                                    reaction: 'dislike',
+                                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                                });
+                                currentUserLiked = false;
+                                currentUserDisliked = true;
+                                document.querySelector('.dislike-btn').classList.add('active');
+                                document.querySelector('.like-btn').classList.remove('active');
+                                loadVideoReactions();
+                            });
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erreur lors du traitement du dislike:", error);
+                    showAlert("Erreur", "Impossible d'enregistrer votre dislike. Veuillez réessayer.");
+                });
+        }
+
+        // Fonctions pour les commentaires
+        function loadComments() {
+            if (!currentVideoId) {
+                console.error("currentVideoId est null");
+                return;
+            }
+            
+            const commentsList = document.getElementById('commentsList');
+            if (!commentsList) return;
+            
+            if (commentsListener) {
+                commentsListener();
+                commentsListener = null;
+            }
+            
+            commentsList.innerHTML = '<div class="loading"><div class="loading-spinner"></div></div>';
+            
+            // Essayer avec orderBy d'abord
+            commentsListener = db.collection('comments')
+                .where('videoId', '==', currentVideoId)
+                .orderBy('timestamp', 'desc')
+                .limit(50)
+                .onSnapshot((querySnapshot) => {
+                    if (querySnapshot.empty) {
+                        commentsList.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 30px;">Aucun commentaire pour le moment. Soyez le premier à commenter!</p>';
+                        return;
+                    }
+                    
+                    commentsList.innerHTML = '';
+                    
+                    querySnapshot.forEach((doc) => {
+                        const comment = doc.data();
+                        comment.id = doc.id;
+                        displayComment(comment);
+                    });
+                }, (error) => {
+                    console.error("Erreur lors du chargement des commentaires:", error);
+                    
+                    // Fallback sans orderBy
+                    db.collection('comments')
+                        .where('videoId', '==', currentVideoId)
+                        .limit(50)
+                        .get()
+                        .then((querySnapshot) => {
+                            if (querySnapshot.empty) {
+                                commentsList.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 30px;">Aucun commentaire pour le moment.</p>';
+                                return;
+                            }
+                            
+                            commentsList.innerHTML = '';
+                            const comments = [];
+                            
+                            querySnapshot.forEach((doc) => {
+                                comments.push(doc.data());
+                            });
+                            
+                            // Trier manuellement
+                            comments.sort((a, b) => {
+                                return (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0);
+                            });
+                            
+                            comments.forEach(comment => {
+                                displayComment(comment);
+                            });
+                        })
+                        .catch((error) => {
+                            console.error("Erreur lors du chargement des commentaires (sans orderBy):", error);
+                            commentsList.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 30px;">Erreur lors du chargement des commentaires.</p>';
+                        });
+                });
+        }
+
+        function displayComment(comment) {
+            const commentsList = document.getElementById('commentsList');
+            if (!commentsList) return;
+            
+            const commentDate = comment.timestamp ? 
+                new Date(comment.timestamp.seconds * 1000).toLocaleDateString('fr-FR', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }) : 
+                'Date inconnue';
+            
+            const userInitial = comment.username ? comment.username.charAt(0).toUpperCase() : 'U';
+            
+            const commentElement = document.createElement('div');
+            commentElement.className = 'comment-item';
+            commentElement.innerHTML = `
+                <div class="comment-header">
+                    <div class="comment-user">
+                        <div class="user-avatar">${userInitial}</div>
+                        <div class="user-info">
+                            <h4>${comment.username || 'Utilisateur'}</h4>
+                            <span class="comment-date">${commentDate}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="comment-content">
+                    ${comment.content.replace(/\n/g, '<br>')}
+                </div>
+                <div class="comment-actions">
+                    <button class="comment-action-btn" onclick="likeComment('${comment.id}')">
+                        <i class="fas fa-thumbs-up"></i> <span class="comment-like-count">${comment.likes || 0}</span>
+                    </button>
+                </div>
+            `;
+            
+            commentsList.appendChild(commentElement);
+        }
+
+        function submitComment() {
+            if (!checkAuth()) return;
+            
+            const user = auth.currentUser;
+            if (!user || !currentVideoId) return;
+            
+            const commentInput = document.getElementById('commentInput');
+            const commentContent = commentInput.value.trim();
+            
+            if (!commentContent) {
+                showAlert("Erreur", "Le commentaire ne peut pas être vide.");
+                return;
+            }
+            
+            if (commentContent.length > 500) {
+                showAlert("Erreur", "Le commentaire ne peut pas dépasser 500 caractères.");
+                return;
+            }
+            
+            const submitBtn = document.getElementById('submitCommentBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publication...';
+            
+            db.collection('users').doc(user.uid).get()
+                .then((userDoc) => {
+                    let username = 'Utilisateur';
+                    if (userDoc.exists && userDoc.data().username) {
+                        username = userDoc.data().username;
+                    } else if (user.displayName) {
+                        username = user.displayName;
+                    } else if (user.email) {
+                        username = user.email.split('@')[0];
+                    }
+                    
+                    return db.collection('comments').add({
+                        userId: user.uid,
+                        videoId: currentVideoId,
+                        username: username,
+                        content: commentContent,
+                        likes: 0,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                })
+                .then(() => {
+                    commentInput.value = '';
+                    updateCommentChars();
+                })
+                .catch((error) => {
+                    console.error("Erreur lors de l'ajout du commentaire:", error);
+                    showAlert("Erreur", "Impossible de publier le commentaire.");
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Publier';
+                });
+        }
+
+        function likeComment(commentId) {
+            if (!checkAuth()) return;
+            
+            const user = auth.currentUser;
+            if (!user) return;
+            
+            showAlert("Info", "Fonctionnalité de like de commentaire bientôt disponible!");
+        }
+
+        function updateCommentChars() {
+            const commentInput = document.getElementById('commentInput');
+            const charsElement = document.getElementById('commentChars');
+            
+            if (commentInput && charsElement) {
+                const length = commentInput.value.length;
+                charsElement.textContent = `${length}/500 caractères`;
+                
+                if (length > 450) {
+                    charsElement.style.color = '#e74c3c';
+                } else if (length > 300) {
+                    charsElement.style.color = '#f39c12';
+                } else {
+                    charsElement.style.color = 'var(--text-secondary)';
+                }
+            }
+        }
+
+  // Fonction pour trouver les vidéos similaires basées sur les titres et gérer les parties
+function loadSimilarVideos() {
+    if (!currentVideoId || !currentVideoData) {
+        loadFallbackVideos();
+        return;
+    }
+    
+    const similarContainer = document.getElementById('similarVideosContainer');
+    if (!similarContainer) return;
+    
+    similarContainer.innerHTML = '<div class="loading"><div class="loading-spinner"></div></div>';
+    
+    // Analyser le titre de la vidéo courante pour détecter les parties
+    const currentTitle = currentVideoData.title || '';
+    const { baseTitle, currentPart, hasPart } = extractTitleInfo(currentTitle);
+    
+    // Charger toutes les vidéos
+    db.collection('videos').get()
+        .then((querySnapshot) => {
+            if (querySnapshot.empty) {
+                similarContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 30px;">Aucune autre vidéo disponible.</p>';
+                return;
+            }
+            
+            const allVideos = [];
+            querySnapshot.forEach(doc => {
+                if (doc.id !== currentVideoId) {
+                    const videoData = doc.data();
+                    videoData.id = doc.id;
+                    allVideos.push(videoData);
+                }
+            });
+            
+            if (allVideos.length === 0) {
+                similarContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 30px;">Aucune autre vidéo disponible.</p>';
+                return;
+            }
+            
+            // Fonction de similarité basée sur les titres
+            const getTitleSimilarity = (title1, title2) => {
+                // Normaliser les titres
+                const normalize = (str) => {
+                    return str.toLowerCase()
+                        .replace(/partie\s*\d+\s*[:-]?\s*/gi, '')
+                        .replace(/part\s*\d+\s*[:-]?\s*/gi, '')
+                        .replace(/épisode\s*\d+\s*[:-]?\s*/gi, '')
+                        .replace(/episode\s*\d+\s*[:-]?\s*/gi, '')
+                        .replace(/[^a-z0-9\s]/g, ' ')
+                        .replace(/\s+/g, ' ')
+                        .trim();
+                };
+                
+                const norm1 = normalize(title1);
+                const norm2 = normalize(title2);
+                
+                // Si les titres normalisés sont identiques
+                if (norm1 === norm2) return 1.0;
+                
+                // Score de similarité basique (présence de mots communs)
+                const words1 = norm1.split(' ');
+                const words2 = norm2.split(' ');
+                
+                let commonWords = 0;
+                words1.forEach(word => {
+                    if (word.length > 2 && words2.includes(word)) {
+                        commonWords++;
+                    }
+                });
+                
+                const maxWords = Math.max(words1.length, words2.length);
+                return maxWords > 0 ? commonWords / maxWords : 0;
+            };
+            
+            // Calculer la similarité pour chaque vidéo
+            const videosWithSimilarity = allVideos.map(video => {
+                const similarity = getTitleSimilarity(currentTitle, video.title || '');
+                return { ...video, similarity };
+            });
+            
+            // Filtrer et trier
+            let similarVideos = videosWithSimilarity
+                .filter(video => video.similarity > 0.1)
+                .sort((a, b) => {
+                    // Trier par similarité décroissante
+                    if (b.similarity !== a.similarity) {
+                        return b.similarity - a.similarity;
+                    }
+                    // En cas d'égalité, trier par date (plus récent d'abord)
+                    const timeA = a.timestamp?.seconds || 0;
+                    const timeB = b.timestamp?.seconds || 0;
+                    return timeB - timeA;
+                });
+            
+            // Si pas assez de vidéos similaires, ajouter des vidéos récentes
+            if (similarVideos.length < 6) {
+                const recentVideos = allVideos
+                    .filter(v => !similarVideos.some(sv => sv.id === v.id))
+                    .sort((a, b) => {
+                        const timeA = a.timestamp?.seconds || 0;
+                        const timeB = b.timestamp?.seconds || 0;
+                        return timeB - timeA;
+                    })
+                    .slice(0, 6 - similarVideos.length);
+                
+                similarVideos = [...similarVideos, ...recentVideos];
+            }
+            
+            // Prendre les 6 premières
+            const selectedVideos = similarVideos.slice(0, 6);
+            
+            // Vérifier si nous avons des parties pour la vidéo courante
+            if (hasPart && currentPart > 0) {
+                // Chercher d'autres parties de la même série
+                const otherParts = findOtherParts(allVideos, baseTitle, currentPart);
+                
+                // Si on trouve d'autres parties, afficher une suggestion spéciale
+                if (otherParts.length > 0) {
+                    displayPartSuggestion(otherParts, currentPart);
+                }
+            }
+            
+            displaySimilarVideos(selectedVideos);
+        })
+        .catch((error) => {
+            console.error("Erreur lors du chargement des vidéos similaires:", error);
+            similarContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 30px;">Erreur de chargement des vidéos.</p>';
+        });
+}
+
+// Fonction pour extraire les informations du titre (base et numéro de partie)
+function extractTitleInfo(title) {
+    const titleStr = title || '';
+    
+    // Détecter différents formats de parties
+    const partPatterns = [
+        /(?:partie|part|épisode|episode|chapitre|chapter|p|ep)\s*(\d+)(?:\s*[:-]\s*)?(.*)/i,
+        /(.*)\s+-\s+(?:partie|part|épisode|episode|chapitre|chapter)\s*(\d+)/i,
+        /(.*?)\s*\(?\s*(?:partie|part|épisode|episode|chapitre|chapter)\s*(\d+)\s*\)?/i
+    ];
+    
+    for (const pattern of partPatterns) {
+        const match = titleStr.match(pattern);
+        if (match) {
+            const partNumber = parseInt(match[1]);
+            let baseTitle = '';
+            
+            if (match[2]) {
+                baseTitle = match[2].trim();
+            } else if (match[1] && match.index > 0) {
+                baseTitle = titleStr.substring(0, match.index).trim();
+            }
+            
+            // Si le titre de base est vide, utiliser le titre complet sans la partie
+            if (!baseTitle) {
+                baseTitle = titleStr.replace(pattern, '').trim();
+            }
+            
+            return {
+                baseTitle: baseTitle || titleStr,
+                currentPart: partNumber,
+                hasPart: true
+            };
+        }
+    }
+    
+    return {
+        baseTitle: titleStr,
+        currentPart: 0,
+        hasPart: false
+    };
+}
+
+// Fonction pour trouver les autres parties d'une série
+function findOtherParts(allVideos, baseTitle, currentPart) {
+    const otherParts = [];
+    
+    allVideos.forEach(video => {
+        const { baseTitle: videoBaseTitle, currentPart: videoPart, hasPart } = extractTitleInfo(video.title || '');
         
-    </script>
-<script async="async" data-cfasync="false" src="//robotbagpipe.com/2654af2a1396b430b3cfcb5137325693/invoke.js"></script>
-<div id="container-2654af2a1396b430b3cfcb5137325693"></div>
-<div id="container-2654af2a1396b430b3cfcb5137325693"></div>
-<script type='text/javascript' src='//robotbagpipe.com/8f/4d/6a/8f4d6a78769001cdbc22b3b96cf3fd78.js'></script>
-</body>
+        if (hasPart && videoPart > 0 && videoPart !== currentPart) {
+            // Vérifier la similarité des titres de base
+            const cleanBaseTitle = baseTitle.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').trim();
+            const cleanVideoBaseTitle = videoBaseTitle.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').trim();
+            
+            // Plusieurs méthodes pour détecter la même série :
+            const isSameSeries = 
+                cleanBaseTitle === cleanVideoBaseTitle ||
+                cleanBaseTitle.includes(cleanVideoBaseTitle) ||
+                cleanVideoBaseTitle.includes(cleanBaseTitle);
+            
+            if (isSameSeries) {
+                otherParts.push({
+                    id: video.id,
+                    title: video.title,
+                    part: videoPart,
+                    videoData: video
+                });
+            }
+        }
+    });
+    
+    // Trier par numéro de partie
+    return otherParts.sort((a, b) => a.part - b.part);
+}
+
+// Fonction pour afficher la suggestion de partie
+function displayPartSuggestion(otherParts, currentPart) {
+    // Trier toutes les parties
+    const sortedParts = otherParts.sort((a, b) => a.part - b.part);
+    
+    // Créer un tableau avec toutes les parties (y compris la courante)
+    const allParts = [...sortedParts.map(p => ({...p, isCurrent: false})), 
+                     {part: currentPart, isCurrent: true}]
+                     .sort((a, b) => a.part - b.part);
+    
+    const currentIndex = allParts.findIndex(p => p.isCurrent);
+    
+    // Déterminer quelle partie suggérer
+    let suggestedPart = null;
+    if (currentIndex < allParts.length - 1) {
+        // Si ce n'est pas la dernière partie, suggérer la suivante
+        suggestedPart = allParts[currentIndex + 1];
+    } else if (allParts.length > 1) {
+        // Si c'est la dernière partie, suggérer la première
+        suggestedPart = allParts[0];
+    }
+    
+    if (suggestedPart && suggestedPart.id) {
+        // Créer le conteneur de suggestion
+        const suggestionDiv = document.createElement('div');
+        suggestionDiv.className = 'part-suggestion';
+        suggestionDiv.style.cssText = `
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+            border: 2px solid rgba(255,255,255,0.1);
+        `;
+        
+        // Déterminer le message en fonction de la position
+        let message = '';
+        if (suggestedPart.part > currentPart) {
+            message = `Voulez-vous regarder la <strong>Partie ${suggestedPart.part}</strong> de cette série ?`;
+        } else if (suggestedPart.part < currentPart && currentIndex === allParts.length - 1) {
+            message = `Vous avez regardé la dernière partie. Voulez-vous regarder la <strong>Partie 1</strong> ?`;
+        } else {
+            message = `Voulez-vous regarder la <strong>Partie ${suggestedPart.part}</strong> ?`;
+        }
+        
+        suggestionDiv.innerHTML = `
+            <div style="margin-bottom: 15px;">
+                <i class="fas fa-film" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
+                <p style="margin: 0; font-size: 16px; line-height: 1.4;">${message}</p>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button onclick="playSuggestedPart('${suggestedPart.id}')" 
+                        style="
+                            background: white;
+                            color: var(--primary-color);
+                            border: none;
+                            padding: 12px 25px;
+                            border-radius: 25px;
+                            cursor: pointer;
+                            font-weight: bold;
+                            transition: all 0.3s;
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                        "
+                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)'"
+                        onmouseout="this.style.transform='none'; this.style.boxShadow='none'">
+                    <i class="fas fa-play-circle"></i> 
+                    Oui, regarder
+                </button>
+                <button onclick="this.parentElement.parentElement.remove()" 
+                        style="
+                            background: transparent;
+                            color: white;
+                            border: 2px solid rgba(255,255,255,0.3);
+                            padding: 12px 25px;
+                            border-radius: 25px;
+                            cursor: pointer;
+                            font-weight: bold;
+                            transition: all 0.3s;
+                        "
+                        onmouseover="this.style.background='rgba(255,255,255,0.1)'"
+                        onmouseout="this.style.background='transparent'">
+                    Non, merci
+                </button>
+            </div>
+        `;
+        
+        const similarContainer = document.getElementById('similarVideosContainer');
+        if (similarContainer) {
+            // Insérer la suggestion au début
+            similarContainer.insertBefore(suggestionDiv, similarContainer.firstChild);
+        }
+    }
+}
+
+// Fonction pour jouer la partie suggérée
+function playSuggestedPart(videoId) {
+    // Afficher un indicateur de chargement
+    showAlert("Chargement", "Chargement de la partie...");
+    
+    // Charger la vidéo suggérée dans le lecteur principal
+    db.collection('videos').doc(videoId).get()
+        .then((doc) => {
+            if (doc.exists) {
+                const videoData = doc.data();
+                videoData.id = doc.id;
+                
+                // Mettre à jour la vidéo courante
+                currentVideoId = videoId;
+                currentVideoData = videoData;
+                
+                // Afficher la nouvelle vidéo
+                displayVideo(videoData);
+                
+                // Mettre à jour le titre
+                document.getElementById('featuredVideoTitle').textContent = videoData.title || 'Sans titre';
+                
+                // Réinitialiser les états
+                videoWatched = false;
+                adPlayedThisSession = false;
+                currentUserLiked = false;
+                currentUserDisliked = false;
+                
+                // Réinitialiser les boutons like/dislike
+                document.querySelector('.like-btn').classList.remove('active');
+                document.querySelector('.dislike-btn').classList.remove('active');
+                
+                // Recharger toutes les données
+                loadVideoReactions();
+                loadComments();
+                loadSimilarVideos();
+                incrementVideoViews(videoId);
+                checkUserReaction();
+                
+                // Mettre à jour les métadonnées
+                if (videoData.timestamp) {
+                    document.getElementById('featuredVideoDate').textContent = 
+                        new Date(videoData.timestamp.seconds * 1000).toLocaleDateString('fr-FR');
+                }
+                
+                if (videoData.views !== undefined) {
+                    document.getElementById('featuredVideoViews').textContent = videoData.views;
+                }
+                
+                if (videoData.username) {
+                    document.getElementById('featuredVideoUsername').textContent = videoData.username;
+                }
+                
+                // Faire défiler vers le haut
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                // Fermer l'alerte
+                setTimeout(() => closeModal('alertModal'), 500);
+            }
+        })
+        .catch((error) => {
+            console.error("Erreur lors du chargement de la partie suggérée:", error);
+            showAlert("Erreur", "Impossible de charger la vidéo suggérée.");
+        });
+}
+
+// Fonction pour afficher les vidéos similaires
+function displaySimilarVideos(videosArray) {
+    const similarContainer = document.getElementById('similarVideosContainer');
+    
+    if (!videosArray || videosArray.length === 0) {
+        const fallbackMessage = document.createElement('div');
+        fallbackMessage.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 30px;">Aucune vidéo similaire trouvée.</p>';
+        similarContainer.appendChild(fallbackMessage);
+        return;
+    }
+    
+    // Vérifier si la grille existe déjà
+    let gridContainer = similarContainer.querySelector('.videos-grid');
+    if (!gridContainer) {
+        gridContainer = document.createElement('div');
+        gridContainer.className = 'videos-grid';
+        similarContainer.appendChild(gridContainer);
+    } else {
+        gridContainer.innerHTML = '';
+    }
+    
+    // Ajouter chaque vidéo
+    videosArray.forEach((videoData) => {
+        const videoCard = document.createElement('div');
+        videoCard.className = 'video-card';
+        
+        // Ajouter un identifiant pour le suivi
+        videoCard.dataset.videoId = videoData.id;
+        
+        // Extraire les informations de partie
+        const { currentPart, hasPart } = extractTitleInfo(videoData.title || '');
+        const displayTitle = videoData.title || 'Sans titre';
+        
+        // Formater la date
+        const publishDate = videoData.timestamp ? 
+            new Date(videoData.timestamp.seconds * 1000).toLocaleDateString('fr-FR', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            }) : 
+            'Date inconnue';
+        
+        // Créer la carte vidéo
+        videoCard.innerHTML = `
+            <div class="video-thumbnail" style="position: relative; width: 100%; padding-top: 66.66%; overflow: hidden; background: #000;">
+                <video style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" 
+                       preload="metadata" muted playsinline>
+                    <source src="${videoData.videoUrl}" type="video/mp4">
+                </video>
+                ${hasPart ? `
+                    <div style="
+                        position: absolute; 
+                        top: 10px; 
+                        right: 10px; 
+                        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+                        color: white; 
+                        padding: 4px 10px; 
+                        border-radius: 20px; 
+                        font-size: 12px;
+                        font-weight: bold;
+                        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+                    ">Partie ${currentPart}</div>
+                ` : ''}
+                <div style="
+                    position: absolute; 
+                    bottom: 0; 
+                    left: 0; 
+                    right: 0; 
+                    background: linear-gradient(transparent, rgba(0,0,0,0.8)); 
+                    padding: 12px 15px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                ">
+                    <div style="color: white; font-size: 12px; display: flex; align-items: center; gap: 5px;">
+                        <i class="fas fa-eye"></i> <span>${videoData.views || 0}</span>
+                    </div>
+                    <div style="color: rgba(255,255,255,0.8); font-size: 11px;">
+                        ${publishDate}
+                    </div>
+                </div>
+                <div style="
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: rgba(0,0,0,0.7);
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    opacity: 0;
+                    transition: opacity 0.3s;
+                ">
+                    <i class="fas fa-play" style="color: white; font-size: 20px;"></i>
+                </div>
+            </div>
+            <div class="video-info" style="padding: 15px;">
+                <h3 class="video-title" title="${displayTitle}" style="
+                    font-weight: 600;
+                    margin-bottom: 8px;
+                    font-size: 14px;
+                    height: 40px;
+                    overflow: hidden;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    color: var(--text-primary);
+                ">${displayTitle}</h3>
+            </div>
+        `;
+        
+        // Ajouter l'événement de clic
+        videoCard.onclick = function() {
+            if (videoData.id === currentVideoId) {
+                showAlert("Information", "Cette vidéo est déjà en cours de lecture.");
+                return;
+            }
+            
+            window.location.href = 'video.html?id=' + videoData.id;
+        };
+        
+        // Gérer l'effet hover
+        const videoElement = videoCard.querySelector('video');
+        const playOverlay = videoCard.querySelector('.video-thumbnail > div:last-child');
+        
+        if (videoElement) {
+            videoCard.addEventListener('mouseenter', () => {
+                videoElement.play().catch(e => console.log("Auto-play prévenu:", e));
+                if (playOverlay) playOverlay.style.opacity = '1';
+            });
+            
+            videoCard.addEventListener('mouseleave', () => {
+                videoElement.pause();
+                videoElement.currentTime = 0;
+                if (playOverlay) playOverlay.style.opacity = '0';
+            });
+        }
+        
+        gridContainer.appendChild(videoCard);
+    });
+}
+
+// Fonction de secours pour charger des vidéos si la similarité échoue
+function loadFallbackVideos() {
+    const similarContainer = document.getElementById('similarVideosContainer');
+    
+    similarContainer.innerHTML = '<div class="loading"><div class="loading-spinner"></div></div>';
+    
+    // Charger les vidéos les plus récentes
+    db.collection('videos')
+        .orderBy('timestamp', 'desc')
+        .limit(8)
+        .get()
+        .then((querySnapshot) => {
+            if (querySnapshot.empty) {
+                similarContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 30px;">Aucune vidéo disponible.</p>';
+                return;
+            }
+            
+            const videos = [];
+            querySnapshot.forEach(doc => {
+                if (doc.id !== currentVideoId) {
+                    const videoData = doc.data();
+                    videoData.id = doc.id;
+                    videos.push(videoData);
+                }
+            });
+            
+            if (videos.length === 0) {
+                similarContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 30px;">Aucune autre vidéo disponible.</p>';
+                return;
+            }
+            
+            displaySimilarVideos(videos);
+        })
+        .catch((error) => {
+            console.error("Erreur lors du chargement des vidéos de secours:", error);
+            similarContainer.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 30px;">Erreur de chargement des vidéos.</p>';
+        });
+}
 </html>
