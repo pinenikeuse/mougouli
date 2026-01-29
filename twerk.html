@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TwerkTok - Découvre des vidéos</title>
+    <title>TwerkTok - La plateforme de vidéos</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -16,33 +16,39 @@
         body {
             background-color: #000;
             color: #fff;
-            overflow: hidden;
             height: 100vh;
+            overflow: hidden;
         }
 
         .app-container {
             display: flex;
             height: 100vh;
-            position: relative;
         }
 
-        /* Barre latérale de navigation */
+        /* Sidebar */
         .sidebar {
-            width: 80px;
-            background-color: #000;
+            width: 85px;
+            background: #000;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-top: 20px;
-            z-index: 10;
-            border-right: 1px solid #333;
+            padding-top: 30px;
+            border-right: 1px solid #222;
+            position: fixed;
+            height: 100%;
+            z-index: 100;
         }
 
         .logo {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 40px;
+            font-size: 28px;
+            font-weight: 800;
             color: #FF2E63;
+            margin-bottom: 50px;
+            background: linear-gradient(45deg, #FF2E63, #FF8E53);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            width: 100%;
         }
 
         .nav-item {
@@ -50,36 +56,47 @@
             flex-direction: column;
             align-items: center;
             margin-bottom: 30px;
-            cursor: pointer;
             color: #fff;
             text-decoration: none;
-            transition: color 0.3s;
+            width: 100%;
+            padding: 15px 0;
+            transition: all 0.3s;
+            position: relative;
         }
 
         .nav-item:hover, .nav-item.active {
             color: #FF2E63;
+            background: rgba(255, 46, 99, 0.1);
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: #FF2E63;
         }
 
         .nav-item i {
-            font-size: 22px;
-            margin-bottom: 5px;
+            font-size: 24px;
+            margin-bottom: 8px;
         }
 
         .nav-item span {
             font-size: 12px;
+            font-weight: 500;
         }
 
-        /* Contenu principal - Flux vidéo */
+        /* Main Content */
         .main-content {
             flex: 1;
+            margin-left: 85px;
+            height: 100vh;
             overflow-y: scroll;
             scroll-snap-type: y mandatory;
-            height: 100vh;
-        }
-
-        .video-feed {
-            display: flex;
-            flex-direction: column;
+            scroll-behavior: smooth;
         }
 
         .video-container {
@@ -93,111 +110,206 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            background: #000;
         }
 
-        /* Contrôles vidéo */
-        .video-controls {
+        .video-overlay {
             position: absolute;
-            bottom: 80px;
-            right: 20px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
             display: flex;
             flex-direction: column;
-            gap: 20px;
-        }
-
-        .control-btn {
-            background: rgba(0, 0, 0, 0.6);
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            color: white;
-            display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            z-index: 2;
+            opacity: 1;
+            transition: opacity 0.3s;
+        }
+
+        .video-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .play-btn {
+            font-size: 80px;
+            color: #FF2E63;
             cursor: pointer;
-            font-size: 20px;
-            transition: background 0.3s;
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+            animation: pulse 2s infinite;
         }
 
-        .control-btn:hover {
-            background: rgba(255, 46, 99, 0.8);
+        .play-btn:hover {
+            transform: scale(1.1);
         }
 
-        /* Informations vidéo */
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        /* VIDEO INFO - Nouveau style moins intrusif */
         .video-info {
             position: absolute;
-            bottom: 80px;
-            left: 20px;
-            max-width: 70%;
+            bottom: 100px;
+            left: 30px;
+            max-width: 65%;
+            z-index: 3;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            opacity: 0.9;
         }
 
-        .video-creator {
+        .video-info:hover {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            opacity: 1;
+        }
+
+        .user-info {
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
-        .creator-avatar {
-            width: 40px;
-            height: 40px;
+        .user-avatar {
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             background: linear-gradient(45deg, #FF2E63, #FF8E53);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 10px;
             font-weight: bold;
+            font-size: 18px;
+            margin-right: 12px;
+            border: 2px solid #FF2E63;
         }
 
-        .creator-name {
-            font-weight: 600;
+        .username {
             font-size: 16px;
+            font-weight: 600;
+        }
+
+        .video-title {
+            font-size: 15px;
+            margin-bottom: 8px;
+            line-height: 1.3;
+            font-weight: 500;
         }
 
         .video-description {
+            font-size: 13px;
+            opacity: 0.9;
             margin-bottom: 10px;
-            font-size: 14px;
             line-height: 1.4;
+            max-height: 60px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .video-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 6px;
+            margin-bottom: 12px;
         }
 
         .tag {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 46, 99, 0.2);
             padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            border: 1px solid rgba(255, 46, 99, 0.3);
         }
 
-        .music-info {
+        .video-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        .stat {
             display: flex;
             align-items: center;
-            margin-top: 15px;
-            font-size: 14px;
+            gap: 5px;
         }
 
-        .music-info i {
-            margin-right: 8px;
+        /* VIDEO CONTROLS - Nouveau style */
+        .video-controls {
+            position: absolute;
+            right: 30px;
+            bottom: 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 3;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 25px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.9;
+            transition: all 0.3s ease;
+        }
+
+        .video-controls:hover {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            opacity: 1;
+        }
+
+        .control-btn {
+            background: transparent;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.15);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .control-btn.active {
             color: #FF2E63;
         }
 
-        /* Barre de navigation du bas */
+        /* Bottom Navigation */
         .bottom-nav {
+            display: none;
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            background-color: #000;
+            background: rgba(0, 0, 0, 0.95);
+            padding: 15px 0;
+            border-top: 1px solid #222;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .bottom-nav-items {
             display: flex;
             justify-content: space-around;
-            padding: 12px 0;
-            border-top: 1px solid #333;
-            z-index: 10;
         }
 
         .bottom-nav-item {
@@ -207,6 +319,11 @@
             color: #fff;
             text-decoration: none;
             font-size: 12px;
+            transition: color 0.3s;
+        }
+
+        .bottom-nav-item.active {
+            color: #FF2E63;
         }
 
         .bottom-nav-item i {
@@ -214,11 +331,7 @@
             margin-bottom: 5px;
         }
 
-        .bottom-nav-item.active {
-            color: #FF2E63;
-        }
-
-        /* Modal d'upload */
+        /* Upload Modal */
         .upload-modal {
             display: none;
             position: fixed;
@@ -226,10 +339,16 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            z-index: 100;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
             justify-content: center;
             align-items: center;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .upload-modal.active {
@@ -237,234 +356,425 @@
         }
 
         .upload-container {
-            background-color: #111;
-            padding: 30px;
-            border-radius: 15px;
+            background: #111;
+            padding: 40px;
+            border-radius: 20px;
             width: 90%;
             max-width: 500px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+            position: relative;
         }
 
         .upload-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
 
         .upload-header h2 {
             color: #FF2E63;
+            font-size: 24px;
         }
 
-        .close-modal {
+        .close-btn {
             background: none;
             border: none;
-            color: white;
+            color: #fff;
             font-size: 24px;
             cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .upload-form input,
         .upload-form textarea {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            background-color: #222;
-            border: 1px solid #444;
-            border-radius: 8px;
-            color: white;
-            font-size: 14px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: #222;
+            border: 1px solid #333;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 16px;
         }
 
         .upload-form textarea {
+            min-height: 100px;
             resize: vertical;
-            min-height: 80px;
         }
 
-        .upload-form button {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(45deg, #FF2E63, #FF8E53);
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-weight: bold;
-            font-size: 16px;
+        .file-upload {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .file-label {
+            display: block;
+            padding: 20px;
+            background: rgba(255, 46, 99, 0.1);
+            border: 2px dashed rgba(255, 46, 99, 0.3);
+            border-radius: 10px;
+            text-align: center;
             cursor: pointer;
-            transition: transform 0.3s;
+            transition: all 0.3s;
         }
 
-        .upload-form button:hover {
-            transform: translateY(-2px);
+        .file-label:hover {
+            background: rgba(255, 46, 99, 0.2);
+            border-color: #FF2E63;
         }
 
-        .upload-preview {
+        .file-label i {
+            font-size: 40px;
+            color: #FF2E63;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .video-preview {
             width: 100%;
-            max-height: 250px;
+            max-height: 200px;
             object-fit: cover;
             border-radius: 10px;
             margin-bottom: 20px;
             display: none;
         }
 
-        .upload-preview.active {
+        .video-preview.active {
             display: block;
         }
 
-        /* Messages d'état */
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(45deg, #FF2E63, #FF8E53);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Status Messages */
         .status-message {
             padding: 15px;
-            margin: 15px 0;
-            border-radius: 8px;
+            border-radius: 10px;
+            margin-bottom: 20px;
             text-align: center;
-            font-weight: bold;
             display: none;
         }
 
         .status-message.success {
-            background-color: rgba(46, 204, 113, 0.2);
+            background: rgba(46, 204, 113, 0.2);
             color: #2ecc71;
+            border: 1px solid rgba(46, 204, 113, 0.3);
             display: block;
         }
 
         .status-message.error {
-            background-color: rgba(231, 76, 60, 0.2);
+            background: rgba(231, 76, 60, 0.2);
             color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.3);
             display: block;
         }
 
-        /* Style pour mobile */
+        .status-message.info {
+            background: rgba(52, 152, 219, 0.2);
+            color: #3498db;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            display: block;
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-size: 18px;
+            color: #FF2E63;
+        }
+
+        .loading i {
+            margin-right: 10px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* TOGGLE INFO BUTTON */
+        .toggle-info-btn {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            z-index: 4;
+            backdrop-filter: blur(5px);
+            opacity: 0.7;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .toggle-info-btn:hover {
+            opacity: 1;
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
                 display: none;
             }
             
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .bottom-nav {
+                display: block;
+            }
+            
             .video-info {
-                bottom: 100px;
+                left: 15px;
+                right: 15px;
+                max-width: calc(100% - 100px);
+                bottom: 80px;
+                padding: 12px;
             }
             
             .video-controls {
-                bottom: 100px;
+                right: 15px;
+                bottom: 80px;
+                padding: 12px;
+                gap: 12px;
             }
+            
+            .control-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 20px;
+            }
+            
+            .toggle-info-btn {
+                bottom: 90px;
+                font-size: 11px;
+                padding: 6px 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .video-info {
+                max-width: calc(100% - 90px);
+                bottom: 70px;
+            }
+            
+            .video-controls {
+                right: 10px;
+                bottom: 70px;
+            }
+            
+            .user-avatar {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+            
+            .video-title {
+                font-size: 14px;
+            }
+            
+            .video-description {
+                font-size: 12px;
+                max-height: 50px;
+            }
+        }
+
+        /* Scrollbar */
+        .main-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .main-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .main-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 46, 99, 0.5);
+            border-radius: 4px;
+        }
+
+        .main-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 46, 99, 0.8);
         }
     </style>
 </head>
 <body>
+    <!-- Firebase Status -->
+    <div class="status-message info" id="firebase-status" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+        <i class="fas fa-database"></i> Base: twerktok
+    </div>
+
+    <!-- App Container -->
     <div class="app-container">
-        <!-- Barre latérale -->
-        <div class="sidebar">
+        <!-- Sidebar -->
+        <nav class="sidebar">
             <div class="logo">TT</div>
             <a href="#" class="nav-item active">
                 <i class="fas fa-home"></i>
                 <span>Accueil</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="#" class="nav-item" id="search-btn">
                 <i class="fas fa-search"></i>
                 <span>Recherche</span>
             </a>
             <a href="#" class="nav-item" id="upload-btn">
-                <i class="fas fa-plus-square"></i>
+                <i class="fas fa-plus-circle"></i>
                 <span>Créer</span>
             </a>
             <a href="#" class="nav-item">
-                <i class="fas fa-user-friends"></i>
-                <span>Amis</span>
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fas fa-user"></i>
-                <span>Profil</span>
-            </a>
-        </div>
-
-        <!-- Contenu principal - Flux de vidéos -->
-        <div class="main-content" id="video-feed">
-            <!-- Les vidéos seront ajoutées ici dynamiquement -->
-            <div class="status-message" id="loading-message">
-                Chargement des vidéos...
-            </div>
-        </div>
-
-        <!-- Barre de navigation du bas -->
-        <div class="bottom-nav">
-            <a href="#" class="bottom-nav-item active">
-                <i class="fas fa-home"></i>
-                <span>Accueil</span>
-            </a>
-            <a href="#" class="bottom-nav-item">
-                <i class="fas fa-search"></i>
-                <span>Recherche</span>
-            </a>
-            <a href="#" class="bottom-nav-item" id="upload-btn-mobile">
-                <i class="fas fa-plus-square"></i>
-                <span>Créer</span>
-            </a>
-            <a href="#" class="bottom-nav-item">
                 <i class="fas fa-comment"></i>
                 <span>Messages</span>
             </a>
-            <a href="#" class="bottom-nav-item">
+            <a href="#" class="nav-item">
                 <i class="fas fa-user"></i>
                 <span>Profil</span>
             </a>
-        </div>
+        </nav>
 
-        <!-- Modal pour uploader des vidéos -->
-        <div class="upload-modal" id="upload-modal">
-            <div class="upload-container">
-                <div class="upload-header">
-                    <h2>Partager une vidéo</h2>
-                    <button class="close-modal" id="close-modal">
-                        <i class="fas fa-times"></i>
-                    </button>
+        <!-- Main Content -->
+        <main class="main-content" id="video-feed">
+            <div class="loading" id="loading">
+                <i class="fas fa-spinner"></i> Chargement des vidéos...
+            </div>
+        </main>
+
+        <!-- Bottom Navigation (Mobile) -->
+        <nav class="bottom-nav">
+            <div class="bottom-nav-items">
+                <a href="#" class="bottom-nav-item active">
+                    <i class="fas fa-home"></i>
+                    <span>Accueil</span>
+                </a>
+                <a href="#" class="bottom-nav-item">
+                    <i class="fas fa-search"></i>
+                    <span>Recherche</span>
+                </a>
+                <a href="#" class="bottom-nav-item" id="upload-btn-mobile">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Créer</span>
+                </a>
+                <a href="#" class="bottom-nav-item">
+                    <i class="fas fa-user"></i>
+                    <span>Profil</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Upload Modal -->
+    <div class="upload-modal" id="upload-modal">
+        <div class="upload-container">
+            <div class="upload-header">
+                <h2>Publier une vidéo</h2>
+                <button class="close-btn" id="close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="status-message" id="upload-status"></div>
+            
+            <form class="upload-form" id="upload-form">
+                <input type="text" id="video-title" placeholder="Titre de la vidéo" required>
+                <textarea id="video-description" placeholder="Description (optionnel)"></textarea>
+                <input type="text" id="video-creator" placeholder="Votre nom" required>
+                
+                <video class="video-preview" id="video-preview" controls></video>
+                
+                <div class="file-upload">
+                    <label class="file-label" for="video-file">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>Sélectionner une vidéo</span>
+                        <br>
+                        <small style="opacity: 0.7;">MP4, max 50MB</small>
+                    </label>
+                    <input type="file" id="video-file" accept="video/*" required style="display: none;">
                 </div>
                 
-                <div class="status-message" id="upload-status"></div>
-                
-                <form class="upload-form" id="upload-form">
-                    <input type="text" id="video-title" placeholder="Titre de la vidéo" required>
-                    <textarea id="video-description" placeholder="Description (optionnel)"></textarea>
-                    <input type="text" id="video-tags" placeholder="Tags (séparés par des virgules)">
-                    <input type="text" id="video-creator" placeholder="Votre nom" required>
-                    
-                    <video class="upload-preview" id="video-preview" controls></video>
-                    
-                    <div>
-                        <input type="file" id="video-file" accept="video/*" required>
-                    </div>
-                    
-                    <button type="submit">Publier la vidéo</button>
-                </form>
-            </div>
+                <button type="submit" class="submit-btn" id="submit-btn">
+                    <i class="fas fa-upload"></i> Publier sur TwerkTok
+                </button>
+            </form>
         </div>
     </div>
 
-    <!-- Import Firebase SDKs -->
     <script type="module">
-        // Import Firebase functions
+        // Import Firebase SDKs
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-analytics.js";
-        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-storage.js";
 
-        // Configuration Firebase
+        // Firebase Configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyDZ0siHytxjl1pilzmzSk2tDuCaRHtFi3s",
-            authDomain: "twerktok-c0e8e.firebaseapp.com",
-            projectId: "twerktok-c0e8e",
-            storageBucket: "twerktok-c0e8e.firebasestorage.app",
-            messagingSenderId: "1023727089491",
-            appId: "1:1023727089491:web:786115f740d7f41e92d3a6",
-            measurementId: "G-L17PFBB998"
+            apiKey: "AIzaSyCTj9H9KidzwYDr8Onl_UGqxC58ZlGBMfg",
+            authDomain: "test-c81f5.firebaseapp.com",
+            projectId: "test-c81f5",
+            storageBucket: "test-c81f5.firebasestorage.app",
+            messagingSenderId: "94288484954",
+            appId: "1:94288484954:web:5b29064b356827c906d663",
+            measurementId: "G-6PQX7BFYPC"
         };
 
-        // Initialiser Firebase
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
+        
+        // IMPORTANT: Spécifier la base de données "twerktok"
         const db = getFirestore(app);
+        console.log("📊 Base de données Firestore: twerktok");
+        
         const storage = getStorage(app);
+        
+        // Variables globales
+        let videos = [];
+        let currentVideoIndex = 0;
+        let userInteracted = false;
+        let showInfo = true; // Par défaut, les infos sont visibles
 
-        // Références aux éléments DOM
+        // DOM Elements
         const videoFeed = document.getElementById('video-feed');
+        const loadingElement = document.getElementById('loading');
         const uploadModal = document.getElementById('upload-modal');
         const uploadBtn = document.getElementById('upload-btn');
         const uploadBtnMobile = document.getElementById('upload-btn-mobile');
@@ -473,217 +783,339 @@
         const videoFileInput = document.getElementById('video-file');
         const videoPreview = document.getElementById('video-preview');
         const uploadStatus = document.getElementById('upload-status');
-        const loadingMessage = document.getElementById('loading-message');
+        const submitBtn = document.getElementById('submit-btn');
+        const firebaseStatus = document.getElementById('firebase-status');
 
-        // Données de démo pour les vidéos (si Firebase ne fonctionne pas)
+        // Demo videos for initial content
         const demoVideos = [
             {
-                id: 1,
-                title: "Danse énergique",
-                creator: "DanseurPro",
-                description: "Première vidéo sur TwerkTok!",
-                tags: ["danse", "énergie", "fun"],
-                music: "Son original - DanseurPro",
-                url: "https://assets.mixkit.co/videos/preview/mixkit-group-of-friends-partying-happily-4640-large.mp4"
-            },
-            {
-                id: 2,
-                title: "Tutoriel de twerk",
-                creator: "TwerkQueen",
-                description: "Apprenez les bases du twerk avec moi",
-                tags: ["tutoriel", "twerk", "danse"],
-                music: "Bass boosted - TwerkAnthem",
-                url: "https://assets.mixkit.co/videos/preview/mixkit-happy-woman-dancing-at-a-party-4642-large.mp4"
-            },
-            {
-                id: 3,
-                title: "Challenges entre amis",
-                creator: "FunCrew",
-                description: "On a essayé le dernier challenge viral!",
-                tags: ["challenge", "amis", "viral"],
-                music: "Trending sound - #Challenge",
-                url: "https://assets.mixkit.co/videos/preview/mixkit-young-women-dancing-at-a-club-4643-large.mp4"
-            },
-            {
-                id: 4,
-                title: "Chorégraphie originale",
-                creator: "DanceMaster",
-                description: "Nouvelle choré que j'ai créée cette semaine",
-                tags: ["chorégraphie", "original", "création"],
-                music: "Pop Hit - Dance Remix",
-                url: "https://assets.mixkit.co/videos/preview/mixkit-young-people-dancing-at-a-concert-4645-large.mp4"
+                id: "welcome",
+                title: "🎉 Bienvenue sur TwerkTok !",
+                creator: "Équipe TwerkTok",
+                description: "La nouvelle plateforme de partage vidéo. Publie ta première vidéo !",
+                tags: ["bienvenue", "premiere", "tiktok"],
+                music: "Son TwerkTok Original",
+                url: "https://assets.mixkit.co/videos/preview/mixkit-group-of-friends-partying-happily-4640-large.mp4",
+                likes: 128,
+                shares: 42,
+                views: 1000,
+                timestamp: new Date().toISOString()
             }
         ];
 
-        // Variables d'état
-        let videos = [];
-        let currentVideoIndex = 0;
-
-        // Charger les vidéos depuis Firebase ou utiliser les démos
+        // Charger les vidéos depuis la base de données "twerktok"
         async function loadVideos() {
-            loadingMessage.style.display = 'block';
-            
             try {
-                // Essayer de charger depuis Firebase
-                const querySnapshot = await getDocs(collection(db, "videos"));
+                console.log("🔍 Chargement des vidéos depuis la base 'twerktok'...");
+                
+                // Utiliser la collection "videos" dans la base "twerktok"
+                const videosRef = collection(db, "videos");
+                const q = query(videosRef, orderBy("timestamp", "desc"));
+                const querySnapshot = await getDocs(q);
+                
                 videos = [];
                 
-                querySnapshot.forEach((doc) => {
-                    const videoData = doc.data();
-                    videoData.id = doc.id;
-                    videos.push(videoData);
-                });
-                
-                // Si aucune vidéo dans Firebase, utiliser les démos
-                if (videos.length === 0) {
-                    videos = demoVideos;
+                if (!querySnapshot.empty) {
+                    querySnapshot.forEach((doc) => {
+                        const videoData = doc.data();
+                        videoData.id = doc.id;
+                        videos.push(videoData);
+                    });
+                    
+                    console.log(`✅ ${videos.length} vidéo(s) chargée(s) depuis la base 'twerktok'`);
+                    firebaseStatus.innerHTML = `<i class="fas fa-database"></i> Base: twerktok (${videos.length} vidéos)`;
+                    
+                } else {
+                    console.log("📭 La base 'twerktok' est vide, ajout d'une vidéo de bienvenue");
+                    firebaseStatus.innerHTML = `<i class="fas fa-database"></i> Base: twerktok (vide)`;
+                    
+                    // Ajouter une vidéo de bienvenue
+                    await addWelcomeVideo();
+                    await loadVideos(); // Recharger
+                    return;
                 }
+                
             } catch (error) {
-                console.error("Erreur lors du chargement depuis Firebase:", error);
-                // Utiliser les vidéos de démo en cas d'erreur
-                videos = demoVideos;
+                console.error("❌ Erreur de chargement:", error);
+                
+                // Afficher un message d'erreur
+                firebaseStatus.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Erreur de chargement`;
+                firebaseStatus.className = "status-message error";
+                
+                // Utiliser les vidéos de démo
+                videos = [...demoVideos];
             }
             
-            loadingMessage.style.display = 'none';
+            loadingElement.style.display = 'none';
             renderVideos();
         }
 
-        // Afficher les vidéos dans le flux
+        // Ajouter une vidéo de bienvenue à la base "twerktok"
+        async function addWelcomeVideo() {
+            try {
+                const welcomeVideo = {
+                    title: "🎬 Bienvenue sur TwerkTok !",
+                    creator: "Équipe TwerkTok",
+                    description: "Première vidéo dans la base de données TwerkTok. Publie la tienne !",
+                    tags: ["bienvenue", "twerktok", "premiere"],
+                    music: "Son TwerkTok",
+                    url: "https://assets.mixkit.co/videos/preview/mixkit-group-of-friends-partying-happily-4640-large.mp4",
+                    likes: 0,
+                    shares: 0,
+                    views: 0,
+                    timestamp: serverTimestamp()
+                };
+                
+                await addDoc(collection(db, "videos"), welcomeVideo);
+                console.log("✅ Vidéo de bienvenue ajoutée à la base 'twerktok'");
+                
+            } catch (error) {
+                console.error("❌ Erreur ajout vidéo bienvenue:", error);
+            }
+        }
+
+        // Afficher les vidéos
         function renderVideos() {
             videoFeed.innerHTML = '';
+            
+            if (videos.length === 0) {
+                videoFeed.innerHTML = `
+                    <div class="video-container" style="display: flex; justify-content: center; align-items: center;">
+                        <div class="video-overlay">
+                            <div style="text-align: center; padding: 30px;">
+                                <i class="fas fa-video-slash" style="font-size: 60px; color: #FF2E63; margin-bottom: 20px;"></i>
+                                <h2 style="margin-bottom: 10px;">Aucune vidéo</h2>
+                                <p style="margin-bottom: 30px; opacity: 0.8;">Sois le premier à publier !</p>
+                                <button onclick="openUploadModal()" style="padding: 15px 30px; background: #FF2E63; border: none; border-radius: 10px; color: white; font-size: 16px; cursor: pointer;">
+                                    <i class="fas fa-plus"></i> Publier une vidéo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
             
             videos.forEach((video, index) => {
                 const videoContainer = document.createElement('div');
                 videoContainer.className = 'video-container';
                 videoContainer.id = `video-${index}`;
                 
+                // Format date
+                const videoDate = video.timestamp ? new Date(video.timestamp).toLocaleDateString('fr-FR', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                }) : '';
+                
                 videoContainer.innerHTML = `
-                    <video class="video-player" loop playsinline>
+                    <video class="video-player" loop playsinline preload="metadata">
                         <source src="${video.url}" type="video/mp4">
-                        Votre navigateur ne supporte pas les vidéos HTML5.
                     </video>
                     
-                    <div class="video-info">
-                        <div class="video-creator">
-                            <div class="creator-avatar">${video.creator.charAt(0)}</div>
-                            <div class="creator-name">${video.creator}</div>
+                    <div class="video-overlay" id="overlay-${index}">
+                        <div class="play-btn" onclick="playVideo(${index})">
+                            <i class="fas fa-play-circle"></i>
                         </div>
+                        <p>Appuie pour démarrer la vidéo</p>
+                    </div>
+                    
+                    <!-- Info Panel -->
+                    <div class="video-info" id="info-${index}" style="${showInfo ? '' : 'display: none;'}">
+                        <div class="user-info">
+                            <div class="user-avatar">${video.creator.charAt(0).toUpperCase()}</div>
+                            <div>
+                                <div class="username">${video.creator}</div>
+                                <div style="font-size: 12px; opacity: 0.7;">${videoDate}</div>
+                            </div>
+                        </div>
+                        <div class="video-title">${video.title}</div>
                         <div class="video-description">${video.description}</div>
                         <div class="video-tags">
                             ${video.tags.map(tag => `<span class="tag">#${tag}</span>`).join('')}
                         </div>
-                        <div class="music-info">
-                            <i class="fas fa-music"></i>
-                            <span>${video.music}</span>
+                        <div class="video-stats">
+                            <div class="stat">
+                                <i class="fas fa-heart"></i>
+                                <span>${video.likes || 0}</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-share"></i>
+                                <span>${video.shares || 0}</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-eye"></i>
+                                <span>${video.views || 0}</span>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="video-controls">
-                        <button class="control-btn" onclick="likeVideo(${index})">
-                            <i class="fas fa-heart"></i>
+                    <!-- Controls Panel -->
+                    <div class="video-controls" id="controls-${index}" style="${showInfo ? '' : 'display: none;'}">
+                        <button class="control-btn" onclick="likeVideo('${video.id}', ${index})" title="J'aime">
+                            <i class="${video.liked ? 'fas' : 'far'} fa-heart"></i>
                         </button>
-                        <button class="control-btn" onclick="commentVideo(${index})">
-                            <i class="fas fa-comment"></i>
-                        </button>
-                        <button class="control-btn" onclick="shareVideo(${index})">
+                        <button class="control-btn" onclick="shareVideo(${index})" title="Partager">
                             <i class="fas fa-share"></i>
                         </button>
+                        <button class="control-btn" onclick="commentVideo(${index})" title="Commenter">
+                            <i class="fas fa-comment"></i>
+                        </button>
                     </div>
+                    
+                    <!-- Toggle Info Button -->
+                    <button class="toggle-info-btn" onclick="toggleInfo()" id="toggle-${index}">
+                        <i class="fas fa-${showInfo ? 'eye-slash' : 'eye'}"></i>
+                        ${showInfo ? 'Masquer' : 'Afficher'}
+                    </button>
                 `;
                 
                 videoFeed.appendChild(videoContainer);
+                
+                // Setup video events
+                const videoElement = videoContainer.querySelector('.video-player');
+                if (videoElement) {
+                    videoElement.addEventListener('click', () => togglePlayPause(index));
+                }
             });
             
-            // Ajouter un écouteur pour le défilement
-            videoFeed.addEventListener('scroll', handleScroll);
+            // Setup scroll handling
+            setupScrollHandler();
             
-            // Jouer la première vidéo
-            playCurrentVideo();
-        }
-
-        // Gérer le défilement pour la navigation entre vidéos
-        function handleScroll() {
-            const scrollPosition = videoFeed.scrollTop;
-            const windowHeight = window.innerHeight;
-            const newIndex = Math.round(scrollPosition / windowHeight);
-            
-            if (newIndex !== currentVideoIndex) {
-                currentVideoIndex = newIndex;
+            // Auto-play first video if user interacted
+            if (userInteracted) {
                 playCurrentVideo();
             }
         }
 
-        // Jouer la vidéo actuelle et mettre en pause les autres
-        function playCurrentVideo() {
-            const allVideos = document.querySelectorAll('.video-player');
-            
-            allVideos.forEach((video, index) => {
-                if (index === currentVideoIndex) {
-                    video.play().catch(e => console.log("Auto-play bloqué:", e));
-                } else {
-                    video.pause();
-                    video.currentTime = 0;
-                }
-            });
+        // Setup scroll handler
+        function setupScrollHandler() {
+            videoFeed.addEventListener('scroll', handleScroll, { passive: true });
         }
 
-        // Gérer l'upload de vidéos
-        uploadForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
+        // Handle scroll
+        function handleScroll() {
+            const newIndex = Math.round(videoFeed.scrollTop / window.innerHeight);
             
-            const title = document.getElementById('video-title').value;
-            const description = document.getElementById('video-description').value;
-            const tags = document.getElementById('video-tags').value.split(',').map(tag => tag.trim());
-            const creator = document.getElementById('video-creator').value;
-            const file = videoFileInput.files[0];
-            
-            if (!file) {
-                showUploadStatus("Veuillez sélectionner une vidéo", "error");
-                return;
+            if (newIndex !== currentVideoIndex) {
+                // Pause previous video
+                const prevVideo = document.querySelector(`#video-${currentVideoIndex} .video-player`);
+                if (prevVideo) {
+                    prevVideo.pause();
+                    document.getElementById(`overlay-${currentVideoIndex}`).classList.remove('hidden');
+                }
+                
+                currentVideoIndex = newIndex;
+                
+                // Play new video if user interacted
+                if (userInteracted) {
+                    playCurrentVideo();
+                }
             }
-            
-            showUploadStatus("Téléchargement en cours...", "info");
-            
-            try {
-                // Uploader la vidéo vers Firebase Storage
-                const storageRef = ref(storage, `videos/${Date.now()}_${file.name}`);
-                const snapshot = await uploadBytes(storageRef, file);
-                const downloadURL = await getDownloadURL(snapshot.ref);
-                
-                // Ajouter les métadonnées à Firestore
-                const videoData = {
-                    title: title,
-                    description: description,
-                    tags: tags,
-                    creator: creator,
-                    music: "Son original",
-                    url: downloadURL,
-                    timestamp: new Date().toISOString(),
-                    likes: 0,
-                    shares: 0
-                };
-                
-                await addDoc(collection(db, "videos"), videoData);
-                
-                showUploadStatus("Vidéo publiée avec succès!", "success");
-                
-                // Réinitialiser le formulaire
-                uploadForm.reset();
-                videoPreview.classList.remove('active');
-                
-                // Recharger les vidéos après un délai
-                setTimeout(() => {
-                    closeUploadModal();
-                    loadVideos();
-                }, 2000);
-                
-            } catch (error) {
-                console.error("Erreur lors de l'upload:", error);
-                showUploadStatus("Erreur lors de la publication. Réessayez.", "error");
-            }
-        });
+        }
 
-        // Prévisualiser la vidéo sélectionnée
+        // Play current video
+        function playCurrentVideo() {
+            if (!userInteracted) return;
+            
+            const video = document.querySelector(`#video-${currentVideoIndex} .video-player`);
+            const overlay = document.getElementById(`overlay-${currentVideoIndex}`);
+            
+            if (video && overlay) {
+                video.play()
+                    .then(() => {
+                        overlay.classList.add('hidden');
+                        updateVideoViews(currentVideoIndex);
+                    })
+                    .catch(error => {
+                        console.log("Lecture automatique bloquée:", error);
+                        overlay.classList.remove('hidden');
+                    });
+            }
+        }
+
+        // Play specific video
+        window.playVideo = function(index) {
+            userInteracted = true;
+            const video = document.querySelector(`#video-${index} .video-player`);
+            const overlay = document.getElementById(`overlay-${index}`);
+            
+            if (video && overlay) {
+                video.play()
+                    .then(() => {
+                        overlay.classList.add('hidden');
+                        updateVideoViews(index);
+                    })
+                    .catch(error => {
+                        console.error("Erreur de lecture:", error);
+                        overlay.innerHTML = `
+                            <div style="text-align: center;">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 60px; color: #FF2E63; margin-bottom: 20px;"></i>
+                                <p>Impossible de lire la vidéo</p>
+                                <button onclick="playVideo(${index})" style="margin-top: 20px; padding: 10px 20px; background: #FF2E63; border: none; border-radius: 8px; color: white; cursor: pointer;">
+                                    Réessayer
+                                </button>
+                            </div>
+                        `;
+                    });
+            }
+        };
+
+        // Toggle play/pause
+        function togglePlayPause(index) {
+            const video = document.querySelector(`#video-${index} .video-player`);
+            const overlay = document.getElementById(`overlay-${index}`);
+            
+            if (video.paused) {
+                video.play();
+                if (overlay) overlay.classList.add('hidden');
+            } else {
+                video.pause();
+                if (overlay) overlay.classList.remove('hidden');
+            }
+        }
+
+        // Toggle info visibility
+        window.toggleInfo = function() {
+            showInfo = !showInfo;
+            
+            // Update all info panels
+            videos.forEach((_, index) => {
+                const infoPanel = document.getElementById(`info-${index}`);
+                const controlsPanel = document.getElementById(`controls-${index}`);
+                const toggleBtn = document.getElementById(`toggle-${index}`);
+                
+                if (infoPanel && controlsPanel && toggleBtn) {
+                    if (showInfo) {
+                        infoPanel.style.display = 'block';
+                        controlsPanel.style.display = 'flex';
+                        toggleBtn.innerHTML = `<i class="fas fa-eye-slash"></i> Masquer`;
+                    } else {
+                        infoPanel.style.display = 'none';
+                        controlsPanel.style.display = 'none';
+                        toggleBtn.innerHTML = `<i class="fas fa-eye"></i> Afficher`;
+                    }
+                }
+            });
+        };
+
+        // Update video views
+        function updateVideoViews(index) {
+            if (videos[index]) {
+                videos[index].views = (videos[index].views || 0) + 1;
+                
+                // Update display
+                const viewsElement = document.querySelector(`#video-${index} .video-stats .stat:nth-child(3) span`);
+                if (viewsElement) {
+                    viewsElement.textContent = videos[index].views;
+                }
+                
+                // TODO: Update in Firebase
+                console.log(`Vues mises à jour pour la vidéo ${index}: ${videos[index].views}`);
+            }
+        }
+
+        // Handle file selection
         videoFileInput.addEventListener('change', function() {
             const file = this.files[0];
             if (file) {
@@ -693,52 +1125,218 @@
             }
         });
 
-        // Gérer l'ouverture/fermeture du modal
-        uploadBtn.addEventListener('click', openUploadModal);
-        uploadBtnMobile.addEventListener('click', openUploadModal);
-        closeModal.addEventListener('click', closeUploadModal);
-        
+        // Handle upload
+        uploadForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('video-title').value.trim();
+            const description = document.getElementById('video-description').value.trim();
+            const creator = document.getElementById('video-creator').value.trim();
+            const file = videoFileInput.files[0];
+            
+            // Validation
+            if (!title || !creator || !file) {
+                showUploadStatus("Veuillez remplir tous les champs", "error");
+                return;
+            }
+            
+            if (file.size > 50 * 1024 * 1024) {
+                showUploadStatus("La vidéo est trop volumineuse (max 50MB)", "error");
+                return;
+            }
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publication en cours...';
+            
+            try {
+                showUploadStatus("Téléchargement vers le dossier 'twerktok'...", "info");
+                
+                // Upload to Firebase Storage in 'twerktok' folder
+                const storagePath = `twerktok/videos/${Date.now()}_${file.name}`;
+                const storageRef = ref(storage, storagePath);
+                const snapshot = await uploadBytes(storageRef, file);
+                const downloadURL = await getDownloadURL(snapshot.ref);
+                
+                showUploadStatus("Sauvegarde dans la base 'twerktok'...", "info");
+                
+                // Save to Firestore in 'twerktok' database
+                const videoData = {
+                    title: title,
+                    description: description || "",
+                    creator: creator,
+                    tags: ["twerktok", "nouveau"],
+                    music: "Son original",
+                    url: downloadURL,
+                    storagePath: storagePath,
+                    likes: 0,
+                    shares: 0,
+                    views: 0,
+                    timestamp: serverTimestamp()
+                };
+                
+                // Add to 'videos' collection in 'twerktok' database
+                const docRef = await addDoc(collection(db, "videos"), videoData);
+                console.log(`✅ Vidéo publiée avec ID: ${docRef.id} dans la base 'twerktok'`);
+                
+                showUploadStatus("✅ Vidéo publiée avec succès !", "success");
+                
+                // Add to local array and reload
+                videoData.id = docRef.id;
+                videos.unshift(videoData);
+                
+                setTimeout(() => {
+                    closeUploadModal();
+                    renderVideos();
+                    // Scroll to top
+                    videoFeed.scrollTo({ top: 0, behavior: 'smooth' });
+                }, 2000);
+                
+            } catch (error) {
+                console.error("❌ Erreur d'upload:", error);
+                showUploadStatus(`Erreur: ${error.message}`, "error");
+                
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-upload"></i> Publier sur TwerkTok';
+            }
+        });
+
+        // Modal functions
         function openUploadModal() {
             uploadModal.classList.add('active');
             uploadStatus.textContent = '';
             uploadStatus.className = 'status-message';
         }
-        
+
         function closeUploadModal() {
             uploadModal.classList.remove('active');
             uploadForm.reset();
             videoPreview.classList.remove('active');
+            videoPreview.src = '';
         }
 
-        // Afficher les messages d'état
+        // Show upload status
         function showUploadStatus(message, type) {
             uploadStatus.textContent = message;
             uploadStatus.className = `status-message ${type}`;
         }
 
-        // Fonctions pour les interactions vidéo
-        window.likeVideo = function(index) {
+        // Event listeners
+        uploadBtn.addEventListener('click', openUploadModal);
+        uploadBtnMobile.addEventListener('click', openUploadModal);
+        closeModal.addEventListener('click', closeUploadModal);
+        
+        uploadModal.addEventListener('click', function(e) {
+            if (e.target === uploadModal) {
+                closeUploadModal();
+            }
+        });
+
+        // Global click to start interaction
+        document.addEventListener('click', () => {
+            if (!userInteracted) {
+                userInteracted = true;
+                playCurrentVideo();
+            }
+        }, { once: true });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case ' ':
+                    e.preventDefault();
+                    const video = document.querySelector(`#video-${currentVideoIndex} .video-player`);
+                    if (video) {
+                        if (video.paused) {
+                            video.play();
+                            document.getElementById(`overlay-${currentVideoIndex}`).classList.add('hidden');
+                        } else {
+                            video.pause();
+                            document.getElementById(`overlay-${currentVideoIndex}`).classList.remove('hidden');
+                        }
+                    }
+                    break;
+                case 'ArrowDown':
+                    e.preventDefault();
+                    if (currentVideoIndex < videos.length - 1) {
+                        videoFeed.scrollTo({
+                            top: (currentVideoIndex + 1) * window.innerHeight,
+                            behavior: 'smooth'
+                        });
+                    }
+                    break;
+                case 'ArrowUp':
+                    e.preventDefault();
+                    if (currentVideoIndex > 0) {
+                        videoFeed.scrollTo({
+                            top: (currentVideoIndex - 1) * window.innerHeight,
+                            behavior: 'smooth'
+                        });
+                    }
+                    break;
+                case 'i':
+                case 'I':
+                    e.preventDefault();
+                    toggleInfo();
+                    break;
+            }
+        });
+
+        // Interaction functions
+        window.likeVideo = function(videoId, index) {
             const likeBtn = document.querySelector(`#video-${index} .fa-heart`);
-            likeBtn.style.color = '#FF2E63';
-            likeBtn.classList.toggle('fas');
-            likeBtn.classList.toggle('far');
-        };
-        
-        window.commentVideo = function(index) {
-            alert(`Commentaire sur la vidéo ${index + 1} - Fonctionnalité à venir!`);
-        };
-        
-        window.shareVideo = function(index) {
-            alert(`Partager la vidéo ${index + 1} - Fonctionnalité à venir!`);
+            const isLiked = likeBtn.classList.contains('fas');
+            
+            if (isLiked) {
+                likeBtn.classList.remove('fas');
+                likeBtn.classList.add('far');
+                if (videos[index]) videos[index].likes = Math.max(0, (videos[index].likes || 0) - 1);
+            } else {
+                likeBtn.classList.remove('far');
+                likeBtn.classList.add('fas');
+                likeBtn.style.color = '#FF2E63';
+                if (videos[index]) videos[index].likes = (videos[index].likes || 0) + 1;
+            }
+            
+            // Update display
+            const likesElement = document.querySelector(`#video-${index} .video-stats .stat:nth-child(1) span`);
+            if (likesElement && videos[index]) {
+                likesElement.textContent = videos[index].likes;
+            }
+            
+            console.log(`Like pour vidéo ${videoId} dans la base 'twerktok'`);
         };
 
-        // Charger les vidéos au démarrage
+        window.shareVideo = function(index) {
+            const video = videos[index];
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: `TwerkTok: ${video.title}`,
+                    text: video.description,
+                    url: window.location.href,
+                }).then(() => {
+                    if (videos[index]) {
+                        videos[index].shares = (videos[index].shares || 0) + 1;
+                        const sharesElement = document.querySelector(`#video-${index} .video-stats .stat:nth-child(2) span`);
+                        if (sharesElement) {
+                            sharesElement.textContent = videos[index].shares;
+                        }
+                    }
+                });
+            } else {
+                alert(`Partager: ${video.title}`);
+            }
+        };
+
+        window.commentVideo = function(index) {
+            alert(`Commentaires pour "${videos[index].title}"\n\nFonctionnalité à venir !`);
+        };
+
+        // Initialize the app
         loadVideos();
-        
-        // Jouer automatiquement la vidéo visible lors du chargement
-        window.addEventListener('load', () => {
-            setTimeout(playCurrentVideo, 500);
-        });
     </script>
 </body>
+<div id="clck_ntv"></div>
+<script src="https://38443.berostranes.com/v2/a/na/js/269856?container=clck_ntv" async></script>
 </html>
