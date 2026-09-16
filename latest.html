@@ -18,6 +18,7 @@
             background-color: #0a0a1a;
             color: #fff;
             line-height: 1.6;
+            padding-bottom: 70px;
         }
         
         /* Bottom Navigation Bar */
@@ -59,11 +60,6 @@
             margin-bottom: 4px;
             color: #666;
             transition: all 0.3s;
-        }
-
-        /* Ajouter un padding au body pour éviter que le contenu ne soit caché par la navigation */
-        body {
-            padding-bottom: 70px;
         }
         
         header {
@@ -135,7 +131,8 @@
             overflow: hidden;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
+            display: flex;
+            flex-direction: column;
         }
         
         .video-card:hover {
@@ -148,6 +145,7 @@
             width: 100%;
             padding-top: 56.25%; /* 16:9 Aspect Ratio */
             overflow: hidden;
+            cursor: pointer;
         }
         
         .video-thumbnail {
@@ -183,6 +181,7 @@
         
         .video-info {
             padding: 1.2rem;
+            cursor: pointer;
         }
         
         .video-title {
@@ -203,11 +202,46 @@
             font-size: 0.9rem;
         }
         
+        /* Ad containers */
+        .ad-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 6px 0;
+            background-color: rgba(10, 10, 26, 0.7);
+            border-top: 1px solid #252547;
+            min-height: 62px;
+            overflow: hidden;
+        }
+        
+        .ad-container iframe {
+            border: 0;
+            display: block;
+        }
+        
+        .social-banner-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4px 0;
+            background-color: rgba(10, 10, 26, 0.7);
+            border-top: 1px solid #252547;
+            min-height: 50px;
+            overflow: hidden;
+        }
+        
+        .social-banner-container iframe {
+            border: 0;
+            display: block;
+            width: 100%;
+        }
+        
         .loading {
             text-align: center;
             padding: 3rem;
             font-size: 1.2rem;
             color: #a0a0c0;
+            grid-column: 1 / -1;
         }
         
         .loading-spinner {
@@ -329,7 +363,7 @@
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         } else {
-            firebase.app(); // Si déjà initialisé, utilise l'instance existante
+            firebase.app();
         }
 
         const auth = firebase.auth();
@@ -349,12 +383,11 @@
         function loadVideos() {
             const videosContainer = document.getElementById('videos-container');
             
-            // Essayer d'abord avec le champ createdAt (votre structure actuelle)
             db.collection("videos")
                 .orderBy("createdAt", "desc")
                 .get()
                 .then((querySnapshot) => {
-                    videosContainer.innerHTML = ''; // Vider le conteneur
+                    videosContainer.innerHTML = '';
                     
                     if (querySnapshot.empty) {
                         videosContainer.innerHTML = `
@@ -368,14 +401,12 @@
                     querySnapshot.forEach((doc) => {
                         const videoData = doc.data();
                         const videoId = doc.id;
-                        
                         createVideoCard(videoData, videoId);
                     });
                 })
                 .catch((error) => {
                     console.error("Erreur avec createdAt, essai sans tri: ", error);
                     
-                    // Fallback: charger sans tri si createdAt n'existe pas
                     db.collection("videos")
                         .get()
                         .then((querySnapshot) => {
@@ -390,7 +421,6 @@
                                 return;
                             }
                             
-                            // Convertir en array pour pouvoir trier manuellement
                             const videos = [];
                             querySnapshot.forEach((doc) => {
                                 const videoData = doc.data();
@@ -398,14 +428,12 @@
                                 videos.push(videoData);
                             });
                             
-                            // Trier par date manuellement si possible
                             videos.sort((a, b) => {
                                 const dateA = a.createdAt ? (a.createdAt.seconds || a.createdAt.toDate().getTime() / 1000) : 0;
                                 const dateB = b.createdAt ? (b.createdAt.seconds || b.createdAt.toDate().getTime() / 1000) : 0;
-                                return dateB - dateA; // Tri décroissant
+                                return dateB - dateA;
                             });
                             
-                            // Afficher les vidéos triées
                             videos.forEach(videoData => {
                                 createVideoCard(videoData, videoData.id);
                             });
@@ -421,7 +449,7 @@
                 });
         }
         
-        // Créer une carte vidéo
+        // Créer une carte vidéo avec publicités intégrées
         function createVideoCard(videoData, videoId) {
             const videosContainer = document.getElementById('videos-container');
             
@@ -438,10 +466,13 @@
                 }
             }
             
+            // ID unique pour éviter les conflits entre pubs
+            const uniqueId = 'ad_' + videoId + '_' + Math.random().toString(36).substr(2, 9);
+            
             videoCard.innerHTML = `
                 <div class="thumbnail-container">
                     <img src="${videoData.thumbnailUrl || 'https://via.placeholder.com/300x169/1a1a2e/6e48aa?text=Thumbnail'}" 
-                         alt="${videoData.title}" class="video-thumbnail">
+                         alt="${videoData.title || 'Video'}" class="video-thumbnail">
                     <div class="play-icon">▶</div>
                 </div>
                 <div class="video-info">
@@ -451,14 +482,80 @@
                         <span>${videoData.views || 0} vues</span>
                     </div>
                 </div>
+                <!-- Bannière publicitaire 320x50 -->
+                <div class="ad-container">
+                    <div id="banner-${uniqueId}"></div>
+                </div>
+                <!-- Social Banner publicitaire -->
+                <div class="social-banner-container">
+                    <div id="social-${uniqueId}"></div>
+                </div>
             `;
             
-            // Ajouter un événement de clic pour lire la vidéo
-            videoCard.addEventListener('click', () => {
-                window.location.href = `video.html?id=${videoId}`;
-            });
+            // Clic pour ouvrir la vidéo (uniquement sur thumbnail et infos, pas sur les pubs)
+            const thumbnailContainer = videoCard.querySelector('.thumbnail-container');
+            const videoInfo = videoCard.querySelector('.video-info');
+            const goToVideo = () => { window.location.href = `video.html?id=${videoId}`; };
+            
+            thumbnailContainer.addEventListener('click', goToVideo);
+            videoInfo.addEventListener('click', goToVideo);
             
             videosContainer.appendChild(videoCard);
+            
+            // Charger les pubs APRÈS insertion dans le DOM (dans un try/catch pour ne rien bloquer)
+            loadAds(videoCard, uniqueId);
+        }
+        
+        // Charger les publicités dans des iframes isolés (ne bloque JAMAIS le reste)
+        function loadAds(videoCard, uniqueId) {
+            // === Bannière 320x50 ===
+            try {
+                const bannerDiv = videoCard.querySelector(`#banner-${uniqueId}`);
+                if (bannerDiv) {
+                    const iframe = document.createElement('iframe');
+                    iframe.style.width = '320px';
+                    iframe.style.height = '50px';
+                    iframe.style.border = '0';
+                    iframe.style.overflow = 'hidden';
+                    iframe.scrolling = 'no';
+                    iframe.setAttribute('title', 'Publicité');
+                    iframe.setAttribute('loading', 'lazy');
+                    
+                    iframe.srcdoc = '<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{margin:0;padding:0;display:flex;justify-content:center;align-items:center;background:transparent;overflow:hidden;}</style></head><body>'
+                        + '<script type="text/javascript">'
+                        + 'atOptions = {"key":"43c664000c5ba23ec64c44fca965d662","format":"iframe","height":50,"width":320,"params":{}};'
+                        + '<\/script>'
+                        + '<script type="text/javascript" src="https://injusticebakery.com/43c664000c5ba23ec64c44fca965d662/invoke.js"><\/script>'
+                        + '</body></html>';
+                    
+                    bannerDiv.appendChild(iframe);
+                }
+            } catch (err) {
+                console.warn('Erreur chargement bannière:', err);
+            }
+            
+            // === Social Banner ===
+            try {
+                const socialDiv = videoCard.querySelector(`#social-${uniqueId}`);
+                if (socialDiv) {
+                    const socialIframe = document.createElement('iframe');
+                    socialIframe.style.width = '100%';
+                    socialIframe.style.height = '50px';
+                    socialIframe.style.border = '0';
+                    socialIframe.style.overflow = 'hidden';
+                    socialIframe.scrolling = 'no';
+                    socialIframe.setAttribute('title', 'Publicité sociale');
+                    socialIframe.setAttribute('loading', 'lazy');
+                    
+                    socialIframe.srcdoc = '<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{margin:0;padding:0;display:flex;justify-content:center;align-items:center;background:transparent;overflow:hidden;}</style></head><body>'
+                        + '<script type="text/javascript" src="https://injusticebakery.com/d2/f6/54/d2f654e128ecdd2379a3e50add566b3d.js"><\/script>'
+                        + '</body></html>';
+                    
+                    socialDiv.appendChild(socialIframe);
+                }
+            } catch (err) {
+                console.warn('Erreur chargement social banner:', err);
+            }
         }
         
         // Formater la date
@@ -493,7 +590,6 @@
 
         // Fonction de navigation fluide
         function navigateTo(page) {
-            // Animation de transition
             document.body.style.opacity = "0.8";
             document.body.style.transition = "opacity 0.3s ease";
             
