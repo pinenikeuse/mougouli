@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pauline - Espace Admin</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  body { background: #f0f2f8; min-height: 100vh; display: flex; }
+  .sidebar { width: 340px; background: white; border-right: 1px solid #e5e7eb; display: flex; flex-direction: column; height: 100vh; }
+  .sidebar-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 18px 20px; display: flex; align-items: center; gap: 12px; }
+  .sidebar-header .avatar { width: 44px; height: 44px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .sidebar-header h1 { font-size: 16px; }
+  .sidebar-header p { font-size: 11px; opacity: 0.9; }
+  .sidebar-actions { padding: 10px 14px; border-bottom: 1px solid #e5e7eb; display: flex; gap: 8px; }
+  .tab-btn { flex: 1; padding: 8px; border-radius: 8px; border: none; background: #f0f2f8; font-size: 12px; font-weight: 600; cursor: pointer; color: #666; }
+  .tab-btn.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+  .search-box { padding: 10px 14px; border-bottom: 1px solid #e5e7eb; }
+  .search-box input { width: 100%; padding: 10px 14px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 13px; outline: none; }
+  .search-box input:focus { border-color: #667eea; }
+  .conv-list { flex: 1; overflow-y: auto; }
+  .conv-item { padding: 14px 18px; border-bottom: 1px solid #f0f0f5; cursor: pointer; transition: background 0.2s; }
+  .conv-item:hover { background: #f9fafb; }
+  .conv-item.active { background: #eef2ff; border-left: 3px solid #667eea; }
+  .conv-item.blocked { background: #fef2f2; }
+  .conv-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .conv-item-name { font-size: 14px; font-weight: 600; color: #333; display: flex; align-items: center; gap: 6px; }
+  .conv-item-time { font-size: 11px; color: #999; }
+  .conv-item-preview { font-size: 12px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .conv-item-badges { display: flex; gap: 4px; margin-top: 6px; }
+  .badge-mini { font-size: 10px; padding: 2px 6px; border-radius: 8px; font-weight: 700; }
+  .badge-warn { background: #fef3c7; color: #92400e; }
+  .badge-block { background: #fee2e2; color: #991b1b; }
+  .badge-unlock { background: #dbeafe; color: #1e40af; }
+  .main { flex: 1; display: flex; flex-direction: column; height: 100vh; }
+  .main-empty { flex: 1; display: flex; align-items: center; justify-content: center; flex-direction: column; color: #999; }
+  .main-empty .icon { font-size: 80px; margin-bottom: 15px; }
+  .chat-header { background: white; border-bottom: 1px solid #e5e7eb; padding: 14px 20px; display: flex; align-items: center; gap: 12px; }
+  .chat-header .avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .chat-header-info { flex: 1; }
+  .chat-header-info h2 { font-size: 15px; color: #333; }
+  .chat-header-info p { font-size: 12px; color: #666; }
+  .chat-header-actions { display: flex; gap: 8px; }
+  .action-btn { padding: 8px 14px; border-radius: 20px; border: none; font-size: 12px; font-weight: 600; cursor: pointer; }
+  .action-btn.warn { background: #fef3c7; color: #92400e; }
+  .action-btn.warn:hover { background: #fde68a; }
+  .action-btn.block { background: #fee2e2; color: #991b1b; }
+  .action-btn.block:hover { background: #fecaca; }
+  .action-btn.unblock { background: #d1fae5; color: #065f46; }
+  .action-btn.unblock:hover { background: #a7f3d0; }
+  .messages { flex: 1; overflow-y: auto; padding: 20px; background: #f9fafb; display: flex; flex-direction: column; gap: 10px; }
+  .msg { max-width: 70%; padding: 10px 14px; border-radius: 15px; font-size: 14px; line-height: 1.4; word-wrap: break-word; }
+  .msg.me { align-self: flex-end; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-bottom-right-radius: 4px; }
+  .msg.other { align-self: flex-start; background: white; color: #333; border-bottom-left-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .msg .time { font-size: 10px; opacity: 0.7; margin-top: 4px; }
+  .msg img, .msg video { max-width: 100%; border-radius: 10px; margin-bottom: 5px; display: block; }
+  .msg.system { align-self: center; background: #fff3cd; color: #856404; border: 1px solid #ffc107; font-size: 12px; text-align: center; max-width: 90%; border-radius: 12px; padding: 10px 14px; }
+  .msg.system.warn { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+  .msg.system.block { background: #fee2e2; border-color: #dc2626; color: #991b1b; }
+  .msg.system .title { font-weight: 700; margin-bottom: 5px; font-size: 13px; }
+  .input-area { padding: 12px 20px; background: white; border-top: 1px solid #e5e7eb; display: flex; gap: 10px; align-items: center; }
+  .input-area input[type="text"] { flex: 1; padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 25px; outline: none; font-size: 14px; }
+  .input-area input[type="text"]:focus { border-color: #667eea; }
+  .icon-btn { width: 44px; height: 44px; border-radius: 50%; border: none; background: #f0f2f8; color: #667eea; font-size: 18px; cursor: pointer; }
+  .icon-btn:hover { background: #e0e5f0; }
+  .icon-btn.send { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+  .hidden { display: none !important; }
+  .unlock-panel { background: #eef2ff; border-bottom: 1px solid #c7d2fe; padding: 14px 20px; }
+  .unlock-panel h3 { font-size: 14px; color: #3730a3; margin-bottom: 8px; }
+  .unlock-req { background: white; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .unlock-req-info { flex: 1; font-size: 12px; color: #333; }
+  .unlock-req-info strong { color: #1e40af; }
+  .unlock-req button { padding: 6px 12px; border-radius: 15px; border: none; font-size: 11px; font-weight: 700; cursor: pointer; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+  .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 999; padding: 20px; }
+  .modal-content { background: white; border-radius: 16px; max-width: 450px; width: 100%; padding: 25px; animation: pop 0.2s ease; max-height: 90vh; overflow-y: auto; }
+  @keyframes pop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .modal-content h3 { color: #333; margin-bottom: 15px; font-size: 19px; }
+  .modal-content p { color: #666; font-size: 14px; line-height: 1.5; margin-bottom: 12px; }
+  .modal-content input, .modal-content textarea { width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 14px; outline: none; font-family: inherit; margin-bottom: 10px; }
+  .modal-content textarea { min-height: 80px; resize: vertical; }
+  .modal-content .btn { width: 100%; padding: 12px; border-radius: 10px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 6px; }
+  .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+  .btn-success { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; }
+  .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; }
+  .btn-secondary { background: #e5e7eb; color: #333; }
+  .login-screen { flex: 1; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+  .login-box { background: white; border-radius: 20px; padding: 40px; max-width: 400px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+  .login-box h2 { text-align: center; color: #333; margin-bottom: 8px; font-size: 24px; }
+  .login-box p { text-align: center; color: #666; font-size: 14px; margin-bottom: 25px; }
+  .login-box input { width: 100%; padding: 14px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 15px; outline: none; margin-bottom: 12px; }
+  .login-box input:focus { border-color: #667eea; }
+  .login-box .btn { width: 100%; padding: 14px; border-radius: 25px; border: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+  .login-error { color: #dc2626; font-size: 13px; text-align: center; margin-bottom: 10px; }
+  .stats { display: flex; gap: 10px; padding: 10px 14px; border-bottom: 1px solid #e5e7eb; }
+  .stat-box { flex: 1; background: #f0f2f8; border-radius: 10px; padding: 10px; text-align: center; }
+  .stat-box .num { font-size: 20px; font-weight: 700; color: #667eea; }
+  .stat-box .label { font-size: 10px; color: #666; text-transform: uppercase; }
+  @media (max-width: 768px) {
+    .sidebar { width: 100%; position: absolute; z-index: 10; }
+    .sidebar.hidden-mobile { display: none; }
+    .main { width: 100%; }
+    .back-btn { display: flex !important; }
+  }
+  .back-btn { display: none; width: 36px; height: 36px; border-radius: 50%; border: none; background: #f0f2f8; cursor: pointer; align-items: center; justify-content: center; font-size: 18px; }
+</style>
+</head>
+<body>
+
+<!-- ÉCRAN DE CONNEXION -->
+<div id="loginScreen" class="login-screen" style="position:fixed;inset:0;z-index:100">
+  <div class="login-box">
+    <div style="font-size:50px;text-align:center;margin-bottom:15px">👩‍💼</div>
+    <h2>Espace Pauline</h2>
+    <p>Connectez-vous pour gérer vos conversations</p>
+    <input type="email" id="loginEmail" placeholder="Email admin">
+    <input type="password" id="loginPassword" placeholder="Mot de passe">
+    <p id="loginError" class="login-error hidden"></p>
+    <button class="btn" id="loginBtn" onclick="doLogin()">Se connecter</button>
+  </div>
+</div>
+
+<!-- APPLICATION -->
+<div id="app" style="display:none;width:100%;height:100vh">
+
+  <!-- SIDEBAR : Liste des conversations -->
+  <div id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <div class="avatar">👩‍💼</div>
+      <div style="flex:1">
+        <h1>Pauline <span style="background:#ffc107;color:#333;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;margin-left:5px">ADMIN</span></h1>
+        <p>Espace de gestion</p>
+      </div>
+      <span style="cursor:pointer;font-size:12px;text-decoration:underline" onclick="doLogout()">Déconnexion</span>
+    </div>
+
+    <div class="stats">
+      <div class="stat-box">
+        <div class="num" id="statConv">0</div>
+        <div class="label">Conversations</div>
+      </div>
+      <div class="stat-box">
+        <div class="num" id="statBlocked">0</div>
+        <div class="label">Bloqués</div>
+      </div>
+      <div class="stat-box">
+        <div class="num" id="statPending">0</div>
+        <div class="label">Demandes</div>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="🔍 Rechercher un utilisateur..." oninput="renderConversations()">
+    </div>
+
+    <div class="conv-list" id="convList"></div>
+  </div>
+
+  <!-- MAIN : Chat -->
+  <div class="main">
+    <!-- Écran vide -->
+    <div id="emptyState" class="main-empty">
+      <div class="icon">💬</div>
+      <h2 style="color:#333;margin-bottom:8px">Bienvenue Pauline</h2>
+      <p>Sélectionnez une conversation pour commencer</p>
+    </div>
+
+    <!-- Chat actif -->
+    <div id="chatPanel" class="hidden" style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+      <div class="chat-header">
+        <button class="back-btn" onclick="toggleSidebarMobile()">←</button>
+        <div class="avatar" id="chatAvatar">👤</div>
+        <div class="chat-header-info">
+          <h2 id="chatName">Utilisateur</h2>
+          <p id="chatStatus">En ligne</p>
+        </div>
+        <div class="chat-header-actions">
+          <button class="action-btn warn" id="warnBtn" onclick="warnUser()">⚠️ Avertir</button>
+          <button class="action-btn block" id="blockBtn" onclick="blockUser()">🚫 Bloquer</button>
+          <button class="action-btn unblock hidden" id="unblockBtn" onclick="unblockUser()">✅ Débloquer</button>
+        </div>
+      </div>
+
+      <!-- Panneau des demandes de déblocage -->
+      <div id="unlockPanel" class="unlock-panel hidden">
+        <h3>🔓 Demandes de déblocage en attente</h3>
+        <div id="unlockList"></div>
+      </div>
+
+      <!-- Zone de messages -->
+      <div class="messages" id="messages"></div>
+
+      <!-- Zone de saisie -->
+      <div class="input-area">
+        <button class="icon-btn" onclick="pickFile('image')" title="Photo">📷</button>
+        <input type="text" id="msgInput" placeholder="Répondre à l'utilisateur..." onkeypress="if(event.key==='Enter')sendMessage()">
+        <button class="icon-btn send" onclick="sendMessage()">➤</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="imageInput" accept="image/*" style="display:none" onchange="handleFile(event,'image')">
+<input type="file" id="videoInput" accept="video/*" style="display:none" onchange="handleFile(event,'video')">
+
+<!-- Modal avertissement -->
+<div id="warnModal" class="modal hidden">
+  <div class="modal-content">
+    <h3>⚠️ Avertir l'utilisateur</h3>
+    <p>Choisissez un motif (facultatif) :</p>
+    <textarea id="warnReason" placeholder="Ex: langage irrespectueux, spam..."></textarea>
+    <p style="font-size:13px;color:#dc2626">Rappel : à 3 avertissements, le compte est automatiquement bloqué.</p>
+    <button class="btn btn-danger" onclick="confirmWarn()">Envoyer l'avertissement</button>
+    <button class="btn btn-secondary" onclick="document.getElementById('warnModal').classList.add('hidden')">Annuler</button>
+  </div>
+</div>
+
+<!-- Modal déblocage -->
+<div id="unlockModal" class="modal hidden">
+  <div class="modal-content">
+    <h3>🔓 Traiter la demande</h3>
+    <div id="unlockDetail" style="background:#f7f7fc;padding:12px;border-radius:10px;margin-bottom:15px;font-size:13px;color:#333"></div>
+    <p style="font-size:13px;color:#666">Conditions à envoyer à l'utilisateur :</p>
+    <textarea id="unlockConditions" placeholder="Ex: Respecter les règles, ne pas spammer, etc.">Conditions : respecter les règles du chat, ne pas spammer, rester courtois. À la prochaine infraction, blocage définitif.</textarea>
+    <button class="btn btn-success" onclick="acceptUnlock()">✅ Débloquer + envoyer les conditions</button>
+    <button class="btn btn-danger" onclick="rejectUnlock()">❌ Refuser la demande</button>
+    <button class="btn btn-secondary" onclick="closeUnlockModal()">Fermer</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAO8xJvF7RQcCvLUh9xHJ2MRHRLDSOstKs",
+  authDomain: "meet-46dee.firebaseapp.com",
+  projectId: "meet-46dee",
+  storageBucket: "meet-46dee.firebasestorage.app",
+  messagingSenderId: "404441032035",
+  appId: "1:404441032035:web:76231546c8932ab6159f56"
+};
+
+// ⚠️ DOIT être le même que dans le site principal
+const ADMIN_EMAIL = "pauline@admin.com";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+let currentUser = null;
+let activeConversationId = null;
+let allMessagesCache = [];
+let userProfiles = {};
+let allUnlockRequests = [];
+let unsubscribeMessages = null;
+let unsubscribeUsers = null;
+let unsubscribeUnlocks = null;
+let activeUnlockReq = null;
+
+const $ = id => document.getElementById(id);
+
+// ========== CONNEXION ==========
+window.doLogin = async () => {
+  const email = $('loginEmail').value.trim();
+  const password = $('loginPassword').value;
+  const err = $('loginError');
+  err.classList.add('hidden');
+
+  if (!email || !password) {
+    err.textContent = 'Remplissez tous les champs';
+    err.classList.remove('hidden');
+    return;
+  }
+
+  if (email !== ADMIN_EMAIL) {
+    err.textContent = 'Cet email n\'est pas autorisé en tant qu\'admin';
+    err.classList.remove('hidden');
+    return;
+  }
+
+  $('loginBtn').disabled = true;
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (e) {
+    let msg = 'Erreur de connexion';
+    if (e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password') msg = 'Email ou mot de passe incorrect';
+    else if (e.code === 'auth/user-not-found') msg = 'Compte introuvable';
+    else if (e.code === 'auth/invalid-email') msg = 'Email invalide';
+    err.textContent = msg;
+    err.classList.remove('hidden');
+  }
+  $('loginBtn').disabled = false;
+};
+
+window.doLogout = async () => {
+  if (confirm('Se déconnecter ?')) await signOut(auth);
+};
+
+// ========== AUTH ==========
+onAuthStateChanged(auth, (user) => {
+  if (unsubscribeMessages) { unsubscribeMessages(); unsubscribeMessages = null; }
+  if (unsubscribeUsers) { unsubscribeUsers(); unsubscribeUsers = null; }
+  if (unsubscribeUnlocks) { unsubscribeUnlocks(); unsubscribeUnlocks = null; }
+
+  currentUser = user;
+
+  if (user && user.email === ADMIN_EMAIL) {
+    $('loginScreen').style.display = 'none';
+    $('app').style.display = 'flex';
+    listenAll();
+  } else {
+    if (user) {
+      // Mauvais compte connecté → déconnexion auto
+      signOut(auth);
+    }
+    $('loginScreen').style.display = 'flex';
+    $('app').style.display = 'none';
+  }
+});
+
+// ========== ÉCOUTE GLOBALE ==========
+function listenAll() {
+  // Messages
+  unsubscribeMessages = onSnapshot(collection(db, 'messages'), (snap) => {
+    allMessagesCache = [];
+    snap.forEach(d => allMessagesCache.push({ id: d.id, ...d.data() }));
+    allMessagesCache.sort((a, b) => {
+      const ta = a.createdAt?.toMillis?.() || 0;
+      const tb = b.createdAt?.toMillis?.() || 0;
+      return ta - tb;
+    });
+    renderConversations();
+    renderMessages();
+  });
+
+  // Profils utilisateurs
+  unsubscribeUsers = onSnapshot(collection(db, 'users'), (snap) => {
+    userProfiles = {};
+    snap.forEach(d => userProfiles[d.id] = d.data());
+    renderConversations();
+    updateChatHeader();
+    renderUnlockRequests();
+  });
+
+  // Demandes de déblocage
+  unsubscribeUnlocks = onSnapshot(query(collection(db, 'unlockRequests'), orderBy('createdAt', 'desc')), (snap) => {
+    allUnlockRequests = [];
+    snap.forEach(d => allUnlockRequests.push({ id: d.id, ...d.data() }));
+    renderUnlockRequests();
+    updateStats();
+  }, (err) => console.warn('unlockRequests:', err.message));
+}
+
+// ========== STATS ==========
+function updateStats() {
+  const convIds = new Set(allMessagesCache.map(m => m.conversationId));
+  $('statConv').textContent = convIds.size;
+  $('statBlocked').textContent = Object.values(userProfiles).filter(p => p.blocked).length;
+  $('statPending').textContent = allUnlockRequests.filter(r => r.status === 'pending').length;
+}
+
+// ========== LISTE CONVERSATIONS ==========
+function renderConversations() {
+  const convMap = new Map();
+  allMessagesCache.forEach(m => {
+    if (!convMap.has(m.conversationId)) {
+      convMap.set(m.conversationId, { id: m.conversationId, last: m, count: 0 });
+    }
+    convMap.get(m.conversationId).count++;
+    convMap.get(m.conversationId).last = m;
+  });
+
+  const search = ($('searchInput').value || '').toLowerCase();
+  const container = $('convList');
+  container.innerHTML = '';
+
+  const list = Array.from(convMap.values()).sort((a, b) => {
+    const ta = a.last.createdAt?.toMillis?.() || 0;
+    const tb = b.last.createdAt?.toMillis?.() || 0;
+    return tb - ta;
+  });
+
+  if (list.length === 0) {
+    container.innerHTML = '<div style="text-align:center;color:#999;padding:30px;font-size:13px">Aucune conversation pour l\'instant</div>';
+    updateStats();
+    return;
+  }
+
+  list.forEach(conv => {
+    const p = userProfiles[conv.id] || {};
+    const name = p.pseudo || conv.id.substring(0, 10);
+    if (search && !name.toLowerCase().includes(search) && !conv.id.includes(search)) return;
+
+    const last = conv.last || {};
+    let preview = last.text || '';
+    if (last.type === 'image') preview = '📷 Photo';
+    if (last.type === 'video') preview = '🎥 Vidéo';
+    if (last.isSystem) preview = '🔔 ' + (last.text || '').replace(/\[[^\]]+\]/, '').substring(0, 40);
+
+    const time = last.createdAt ? new Date(last.createdAt.toMillis()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '';
+
+    const el = document.createElement('div');
+    el.className = 'conv-item' + (conv.id === activeConversationId ? ' active' : '') + (p.blocked ? ' blocked' : '');
+    el.onclick = () => selectConversation(conv.id);
+
+    let badges = '';
+    if (p.blocked) badges += '<span class="badge-mini badge-block">🚫 Bloqué</span>';
+    if (p.warns > 0) badges += `<span class="badge-mini badge-warn">⚠️ ${p.warns}/3</span>`;
+    if (allUnlockRequests.some(r => r.userId === conv.id && r.status === 'pending')) {
+      badges += '<span class="badge-mini badge-unlock">🔓 Demande</span>';
+    }
+
+    el.innerHTML = `
+      <div class="conv-item-header">
+        <span class="conv-item-name">${escapeHtml(name)}</span>
+        <span class="conv-item-time">${time}</span>
+      </div>
+      <div class="conv-item-preview">${escapeHtml(preview.substring(0, 60))}</div>
+      ${badges ? `<div class="conv-item-badges">${badges}</div>` : ''}
+    `;
+    container.appendChild(el);
+  });
+
+  updateStats();
+}
+
+// ========== SÉLECTION CONVERSATION ==========
+window.selectConversation = (convId) => {
+  activeConversationId = convId;
+  $('emptyState').classList.add('hidden');
+  $('chatPanel').classList.remove('hidden');
+  if (window.innerWidth <= 768) $('sidebar').classList.add('hidden-mobile');
+
+  updateChatHeader();
+  renderMessages();
+  renderConversations();
+};
+
+function updateChatHeader() {
+  if (!activeConversationId) return;
+  const p = userProfiles[activeConversationId] || {};
+  $('chatName').textContent = p.pseudo || activeConversationId.substring(0, 10);
+  $('chatAvatar').textContent = p.pseudo ? p.pseudo[0].toUpperCase() : '👤';
+
+  let status = 'En ligne';
+  if (p.blocked) status = '🚫 Bloqué';
+  else if (p.warns) status = `⚠️ ${p.warns}/3 avertissement${p.warns > 1 ? 's' : ''}`;
+  $('chatStatus').textContent = status;
+
+  $('blockBtn').classList.toggle('hidden', !!p.blocked);
+  $('unblockBtn').classList.toggle('hidden', !p.blocked);
+  $('warnBtn').disabled = !!p.blocked;
+
+  // Vérifie s'il y a une demande de déblocage en attente pour cet utilisateur
+  const pending = allUnlockRequests.find(r => r.userId === activeConversationId && r.status === 'pending');
+  if (pending) {
+    $('unlockPanel').classList.remove('hidden');
+    $('unlockList').innerHTML = `
+      <div class="unlock-req">
+        <div class="unlock-req-info">
+          <strong>${escapeHtml(pending.pseudo || 'Utilisateur')}</strong><br>
+          ${escapeHtml((pending.message || '').substring(0, 100))}
+        </div>
+        <button onclick="openUnlockModal('${pending.id}')">Traiter</button>
+      </div>
+    `;
+  } else {
+    $('unlockPanel').classList.add('hidden');
+  }
+}
+
+// ========== MESSAGES ==========
+function renderMessages() {
+  if (!activeConversationId) return;
+  const msgsEl = $('messages');
+  msgsEl.innerHTML = '';
+
+  const filtered = allMessagesCache.filter(m => m.conversationId === activeConversationId);
+
+  if (filtered.length === 0) {
+    msgsEl.innerHTML = '<div style="text-align:center;color:#999;font-size:13px;padding:20px">Aucun message</div>';
+    return;
+  }
+
+  filtered.forEach(m => {
+    const div = document.createElement('div');
+
+    if (m.isSystem || m.type === 'system') {
+      let cls = 'msg system';
+      if (m.isWarning) cls += ' warn';
+      if (m.isBlock) cls += ' block';
+
+      div.className = cls;
+      let title = '🔔 Info';
+      if (m.isWarning) title = `⚠️ Avertissement ${m.warnNumber || ''}/3`;
+      if (m.isBlock) title = '🚫 Blocage';
+      if (m.isUnlockRequest) title = '🔓 Demande de déblocage';
+      if (m.text && m.text.includes('[DÉBLOCAGE]')) title = '🔓 Déblocage';
+
+      const cleanText = (m.text || '').replace(/\[SYSTÈME\]|\[AVERTISSEMENT\]|\[BLOCAGE\]|\[DÉBLOCAGE\]/g, '').trim();
+      div.innerHTML = `<div class="title">${title}</div>${escapeHtml(cleanText).replace(/\n/g, '<br>')}<div class="time">${formatTime(m.createdAt)}</div>`;
+    } else {
+      div.className = 'msg ' + (m.isAdmin ? 'me' : 'other');
+      let content = '';
+      if (m.type === 'image' && m.mediaUrl) content += `<img src="${m.mediaUrl}" loading="lazy">`;
+      else if (m.type === 'video' && m.mediaUrl) content += `<video src="${m.mediaUrl}" controls preload="metadata"></video>`;
+      if (m.text) content += `<div>${escapeHtml(m.text)}</div>`;
+      div.innerHTML = content + `<div class="time">${formatTime(m.createdAt)}</div>`;
+    }
+    msgsEl.appendChild(div);
+  });
+  msgsEl.scrollTop = msgsEl.scrollHeight;
+}
+
+// ========== ENVOI ==========
+window.sendMessage = async () => {
+  const input = $('msgInput');
+  const text = input.value.trim();
+  if (!text || !activeConversationId) return;
+  input.value = '';
+
+  try {
+    await addDoc(collection(db, 'messages'), {
+      text, type: 'text',
+      conversationId: activeConversationId,
+      senderId: currentUser.uid,
+      senderEmail: currentUser.email,
+      isAdmin: true,
+      createdAt: serverTimestamp()
+    });
+  } catch (e) { alert('Erreur : ' + e.message); }
+};
+
+window.pickFile = (type) => {
+  if (type === 'image') $('imageInput').click();
+  else $('videoInput').click();
+};
+
+window.handleFile = async (event, type) => {
+  const file = event.target.files[0];
+  if (!file || !activeConversationId) return;
+  if (file.size > 20 * 1024 * 1024) { alert('Fichier trop lourd (max 20 Mo)'); return; }
+
+  try {
+    const ext = file.name.split('.').pop();
+    const path = `chat/${activeConversationId}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+    const storageRef = ref(storage, path);
+    await uploadBytes(storageRef, file);
+    const url = await getDownloadURL(storageRef);
+
+    await addDoc(collection(db, 'messages'), {
+      text: '', type,
+      mediaUrl: url, mediaPath: path,
+      conversationId: activeConversationId,
+      senderId: currentUser.uid,
+      senderEmail: currentUser.email,
+      isAdmin: true,
+      createdAt: serverTimestamp()
+    });
+  } catch (e) { alert('Erreur : ' + e.message); }
+  event.target.value = '';
+};
+
+// ========== AVERTIR ==========
+window.warnUser = () => {
+  if (!activeConversationId) return;
+  $('warnReason').value = '';
+  $('warnModal').classList.remove('hidden');
+};
+
+window.confirmWarn = async () => {
+  const reason = $('warnReason').value.trim() || 'Comportement inapproprié';
+  const p = userProfiles[activeConversationId] || {};
+  const newWarns = (p.warns || 0) + 1;
+
+  try {
+    await updateDoc(doc(db, 'users', activeConversationId), {
+      warns: newWarns,
+      blocked: newWarns >= 3 ? true : (p.blocked || false)
+    });
+
+    await addDoc(collection(db, 'messages'), {
+      text: newWarns >= 3
+        ? `[AVERTISSEMENT] ⚠️ 3ème avertissement atteint. Compte bloqué automatiquement. Motif : ${reason}`
+        : `[AVERTISSEMENT] ⚠️ Avertissement ${newWarns}/3 de Pauline. Motif : ${reason}`,
+      type: 'system',
+      conversationId: activeConversationId,
+      senderId: currentUser.uid,
+      senderEmail: currentUser.email,
+      isAdmin: true,
+      isSystem: true,
+      isWarning: true,
+      warnNumber: newWarns,
+      createdAt: serverTimestamp()
+    });
+
+    $('warnModal').classList.add('hidden');
+    if (newWarns >= 3) alert('⚠️ L\'utilisateur a reçu 3 avertissements. Il est maintenant bloqué.');
+  } catch (e) { alert('Erreur : ' + e.message); }
+};
+
+// ========== BLOQUER / DÉBLOQUER ==========
+window.blockUser = async () => {
+  if (!activeConversationId) return;
+  if (!confirm('Bloquer cet utilisateur ? Il ne pourra plus écrire.')) return;
+
+  try {
+    await updateDoc(doc(db, 'users', activeConversationId), { blocked: true });
+    await addDoc(collection(db, 'messages'), {
+      text: `[BLOCAGE] 🚫 Votre compte a été bloqué par Pauline. Vous ne pouvez plus envoyer de messages.`,
+      type: 'system',
+      conversationId: activeConversationId,
+      senderId: currentUser.uid,
+      senderEmail: currentUser.email,
+      isAdmin: true, isSystem: true, isBlock: true,
+      createdAt: serverTimestamp()
+    });
+  } catch (e) { alert('Erreur : ' + e.message); }
+};
+
+window.unblockUser = async () => {
+  if (!activeConversationId) return;
+  try {
+    await updateDoc(doc(db, 'users', activeConversationId), { blocked: false, warns: 0 });
+    await addDoc(collection(db, 'messages'), {
+      text: `[DÉBLOCAGE] ✅ Votre compte a été débloqué. Vos avertissements sont remis à zéro.`,
+      type: 'system',
+      conversationId: activeConversationId,
+      senderId: currentUser.uid,
+      senderEmail: currentUser.email,
+      isAdmin: true, isSystem: true,
+      createdAt: serverTimestamp()
+    });
+  } catch (e) { alert('Erreur : ' + e.message); }
+};
+
+// ========== DEMANDES DE DÉBLOCAGE ==========
+function renderUnlockRequests() {
+  const pending = allUnlockRequests.filter(r => r.status === 'pending');
+  if (activeConversationId) updateChatHeader();
+  updateStats();
+}
+
+window.openUnlockModal = (reqId) => {
+  const req = allUnlockRequests.find(r => r.id === reqId);
+  if (!req) return;
+  activeUnlockReq = req;
+
+  $('unlockDetail').innerHTML = `
+    <p><strong>Pseudo :</strong> ${escapeHtml(req.pseudo || '-')}</p>
+    <p><strong>Email :</strong> ${escapeHtml(req.email || '-')}</p>
+    <p style="margin-top:8px"><strong>Message :</strong></p>
+    <p style="background:white;padding:8px;border-radius:6px;margin-top:4px">${escapeHtml(req.message || '')}</p>
+  `;
+  $('unlockModal').classList.remove('hidden');
+};
+
+window.closeUnlockModal = () => {
+  $('unlockModal').classList.add('hidden');
+  activeUnlockReq = null;
+};
+
+window.acceptUnlock = async () => {
+  if (!activeUnlockReq) return;
+  const req = activeUnlockReq;
+  const conditions = $('unlockConditions').value.trim();
+
+  try {
+    await updateDoc(doc(db, 'users', req.userId), { blocked: false, warns: 0 });
+    await updateDoc(doc(db, 'unlockRequests', req.id), { status: 'accepted', resolvedAt: serverTimestamp() });
+
+    await addDoc(collection(db, 'messages'), {
+      text: `[DÉBLOCAGE] ✅ Votre demande a été ACCEPTÉE. Votre compte est débloqué.\n\n${conditions}\n\nBienvenue ! 🎉`,
+      type: 'system',
+      conversationId: req.userId,
+      senderId: currentUser.uid, senderEmail: currentUser.email,
+      isAdmin: true, isSystem: true,
+      createdAt: serverTimestamp()
+    });
+
+    closeUnlockModal();
+    alert('✅ Utilisateur débloqué et conditions envoyées');
+  } catch (e) { alert('Erreur : ' + e.message); }
+};
+
+window.rejectUnlock = async () => {
+  if (!activeUnlockReq) return;
+  const req = activeUnlockReq;
+  const reason = prompt('Raison du refus (envoyée à l\'utilisateur) :') || 'Conditions non remplies';
+
+  try {
+    await updateDoc(doc(db, 'unlockRequests', req.id), { status: 'rejected', resolvedAt: serverTimestamp(), reason });
+    await addDoc(collection(db, 'messages'), {
+      text: `[DÉBLOCAGE] ❌ Votre demande a été REFUSÉE.\n\nRaison : ${reason}`,
+      type: 'system',
+      conversationId: req.userId,
+      senderId: currentUser.uid, senderEmail: currentUser.email,
+      isAdmin: true, isSystem: true,
+      createdAt: serverTimestamp()
+    });
+
+    closeUnlockModal();
+    alert('❌ Demande refusée');
+  } catch (e) { alert('Erreur : ' + e.message); }
+};
+
+// ========== MOBILE ==========
+window.toggleSidebarMobile = () => {
+  $('sidebar').classList.toggle('hidden-mobile');
+};
+
+// ========== UTILS ==========
+function formatTime(ts) {
+  if (!ts) return '';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+}
+
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+</script>
+</body>
+</html>
