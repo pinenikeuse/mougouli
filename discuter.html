@@ -107,19 +107,20 @@
       <p>Une question ? Envie d'échanger ?<br>Créez un compte pour commencer la conversation.</p>
       <button class="btn" onclick="showAuth()">Discuter avec Pauline</button>
       <div class="ad-slot" style="width:100%;margin-top:15px">
-        <script>
-          atOptions = { 'key' : 'e492c05019ddcd31c8d24311259d4bcc', 'format' : 'iframe', 'height' : 60, 'width' : 468, 'params' : {} };
-        </script>
-        <script src="https://injusticebakery.com/e492c05019ddcd31c8d24311259d4bcc/invoke.js"></script>
-      </div>
-    </div>
-
-    <!-- Auth -->
-    <div id="authScreen" class="hidden" style="flex:1;overflow-y:auto">
-      <div class="ad-slot">
         <script async="async" data-cfasync="false" src="https://injusticebakery.com/3a829a68e73fdd3fd446fec2e8eae8d0/invoke.js"></script>
         <div id="container-3a829a68e73fdd3fd446fec2e8eae8d0"></div>
       </div>
+    </div>
+
+    <!-- Auth : AVEC ANNONCES EN HAUT ET EN BAS -->
+    <div id="authScreen" class="hidden" style="flex:1;overflow-y:auto">
+      
+      <!-- 📢 Annonce native EN HAUT -->
+      <div class="ad-slot" style="width:100%">
+        <script async="async" data-cfasync="false" src="https://injusticebakery.com/3a829a68e73fdd3fd446fec2e8eae8d0/invoke.js"></script>
+        <div id="container-3a829a68e73fdd3fd446fec2e8eae8d0"></div>
+      </div>
+
       <div class="form">
         <h3 style="text-align:center;margin-bottom:10px;color:#333" id="authTitle">Créer un compte</h3>
         <input type="text" id="pseudo" placeholder="Votre pseudo" maxlength="20">
@@ -128,6 +129,12 @@
         <p id="authError" class="error hidden"></p>
         <button class="btn" id="authBtn" onclick="handleAuth()">S'inscrire</button>
         <div class="toggle" onclick="toggleAuth()" id="toggleText">Déjà un compte ? Se connecter</div>
+      </div>
+
+      <!-- 📢 Annonce native EN BAS -->
+      <div class="ad-slot" style="width:100%">
+        <script async="async" data-cfasync="false" src="https://injusticebakery.com/3a829a68e73fdd3fd446fec2e8eae8d0/invoke.js"></script>
+        <div id="container-3a829a68e73fdd3fd446fec2e8eae8d0"></div>
       </div>
     </div>
 
@@ -183,10 +190,8 @@
       </div>
 
       <div class="ad-slot">
-        <script>
-          atOptions = { 'key' : 'e492c05019ddcd31c8d24311259d4bcc', 'format' : 'iframe', 'height' : 60, 'width' : 468, 'params' : {} };
-        </script>
-        <script src="https://injusticebakery.com/e492c05019ddcd31c8d24311259d4bcc/invoke.js"></script>
+        <script async="async" data-cfasync="false" src="https://injusticebakery.com/3a829a68e73fdd3fd446fec2e8eae8d0/invoke.js"></script>
+        <div id="container-3a829a68e73fdd3fd446fec2e8eae8d0"></div>
       </div>
 
       <div class="input-area" id="inputArea" style="position:relative">
@@ -275,7 +280,7 @@ let unsubscribe = null;
 let unsubscribeUnlock = null;
 let activeConversationId = null;
 let allMessagesCache = [];
-let userProfiles = {}; // uid -> {pseudo, email, blocked, warns}
+let userProfiles = {};
 let activeUnlockRequest = null;
 
 const $ = id => document.getElementById(id);
@@ -343,7 +348,6 @@ window.sendMessage = async () => {
   const text = input.value.trim();
   if (!text || !currentUser) return;
 
-  // Vérifie si bloqué (seulement pour non-admin)
   if (!isAdmin) {
     const profile = userProfiles[currentUser.uid];
     if (profile && profile.blocked) {
@@ -396,7 +400,6 @@ window.handleFile = async (event, type) => {
   const convId = isAdmin ? activeConversationId : currentUser.uid;
   if (!convId) { alert('Sélectionnez une conversation'); return; }
 
-  // Limite 20 Mo
   if (file.size > 20 * 1024 * 1024) {
     alert('Fichier trop lourd (max 20 Mo)');
     event.target.value = '';
@@ -415,7 +418,7 @@ window.handleFile = async (event, type) => {
 
     await addDoc(collection(db, 'messages'), {
       text: '',
-      type: type, // 'image' ou 'video'
+      type: type,
       mediaUrl: url,
       mediaPath: path,
       conversationId: convId,
@@ -480,13 +483,11 @@ window.warnUser = async () => {
   const newWarns = (profile.warns || 0) + 1;
 
   try {
-    // Mise à jour du profil
     await updateDoc(doc(db, 'users', activeConversationId), {
       warns: newWarns,
       blocked: newWarns >= 3 ? true : profile.blocked
     });
 
-    // Message système d'avertissement
     await addDoc(collection(db, 'messages'), {
       text: newWarns >= 3
         ? `[AVERTISSEMENT] ⚠️ Vous avez reçu 3 avertissements. Votre compte est maintenant BLOQUÉ.`
@@ -583,7 +584,6 @@ window.submitUnlockRequest = async () => {
       createdAt: serverTimestamp()
     });
 
-    // Message dans la conversation
     await addDoc(collection(db, 'messages'), {
       text: `[DÉBLOCAGE] 📩 L'utilisateur a envoyé une demande de déblocage.\n\nPseudo : ${pseudo}\nEmail : ${email}\n\nMessage : ${message}`,
       type: 'system',
@@ -630,7 +630,6 @@ window.adminAcceptUnlock = async () => {
     await updateDoc(doc(db, 'users', req.userId), { blocked: false, warns: 0 });
     await updateDoc(doc(db, 'unlockRequests', req.id), { status: 'accepted', resolvedAt: serverTimestamp() });
 
-    // Message à l'utilisateur
     await addDoc(collection(db, 'messages'), {
       text: `[DÉBLOCAGE] ✅ Votre demande a été ACCEPTÉE. Votre compte est débloqué.\n\nConditions à respecter :\n- Rester courtois\n- Pas de spam\n- Respecter Pauline\n\nBienvenue ! 🎉`,
       type: 'system', conversationId: req.userId,
@@ -696,7 +695,6 @@ function showScreen(name) {
     $('adminActions').classList.toggle('hidden', !isAdmin);
     $('unlockRequestsList').classList.toggle('hidden', !isAdmin);
 
-    // Vérifier si l'utilisateur est bloqué
     if (!isAdmin) {
       const p = userProfiles[currentUser.uid];
       if (p && p.blocked) {
@@ -740,7 +738,6 @@ function listenProfiles() {
     userProfiles = {};
     snapshot.forEach(d => userProfiles[d.id] = d.data());
 
-    // Mise à jour du badge bloqué + écran
     if (!isAdmin) {
       const p = userProfiles[currentUser.uid];
       const blocked = p && p.blocked;
@@ -758,7 +755,6 @@ function listenProfiles() {
       }
     }
 
-    // Mise à jour actions admin
     if (isAdmin && activeConversationId) updateAdminActions();
   });
 }
@@ -886,7 +882,6 @@ function renderMessages() {
   filtered.forEach(m => {
     const div = document.createElement('div');
 
-    // Système / avertissement / blocage / déblocage
     if (m.isSystem || m.type === 'system') {
       let cls = 'msg system';
       if (m.isWarning) cls += ' warn';
@@ -902,7 +897,6 @@ function renderMessages() {
       const cleanText = (m.text || '').replace(/\[SYSTÈME\]|\[AVERTISSEMENT\]|\[BLOCAGE\]|\[DÉBLOCAGE\]/g, '').trim();
       div.innerHTML = `<div class="title">${title}</div>${escapeHtml(cleanText).replace(/\n/g, '<br>')}<div class="time">${formatTime(m.createdAt)}</div>`;
     } else {
-      // Message normal (texte ou média)
       div.className = 'msg ' + (m.senderId === currentUser.uid ? 'me' : 'other');
       let content = '';
 
