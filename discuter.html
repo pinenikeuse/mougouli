@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discuter avec Pauline</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 10px; }
+  .container { background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); width: 100%; max-width: 520px; height: 92vh; max-height: 850px; display: flex; flex-direction: column; overflow: hidden; }
+  .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+  .avatar { width: 46px; height: 46px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+  .header-info { flex: 1; min-width: 0; }
+  .header-info h2 { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .header-info p { font-size: 11px; opacity: 0.9; }
+  .status { display: inline-block; width: 8px; height: 8px; background: #4ade80; border-radius: 50%; margin-right: 4px; }
+  .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .welcome { padding: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; overflow-y: auto; }
+  .welcome h3 { font-size: 22px; margin-bottom: 10px; color: #333; }
+  .welcome p { color: #666; margin-bottom: 20px; line-height: 1.5; }
+  .btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 14px 30px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; transition: transform 0.2s; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .btn.danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+  .btn.success { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+  .form { padding: 20px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+  .form input, .form textarea { padding: 14px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 15px; outline: none; transition: border 0.2s; font-family: inherit; }
+  .form input:focus, .form textarea:focus { border-color: #667eea; }
+  .form .btn { width: 100%; }
+  .toggle { text-align: center; padding: 10px; color: #667eea; cursor: pointer; font-size: 14px; }
+  .messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; background: #f7f8fc; min-height: 120px; }
+  .msg { max-width: 78%; padding: 10px 14px; border-radius: 15px; font-size: 14px; line-height: 1.4; word-wrap: break-word; }
+  .msg.me { align-self: flex-end; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-bottom-right-radius: 4px; }
+  .msg.other { align-self: flex-start; background: white; color: #333; border-bottom-left-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .msg .time { font-size: 10px; opacity: 0.7; margin-top: 4px; }
+  .msg img, .msg video { max-width: 100%; border-radius: 10px; margin-bottom: 5px; display: block; }
+  .input-area { padding: 10px; background: white; border-top: 1px solid #eee; display: flex; gap: 8px; align-items: center; }
+  .input-area input[type="text"] { flex: 1; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 25px; outline: none; font-size: 15px; }
+  .input-area input[type="text"]:focus { border-color: #667eea; }
+  .icon-btn { width: 42px; height: 42px; border-radius: 50%; border: none; background: #f0f0f5; color: #667eea; font-size: 18px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+  .icon-btn:hover { background: #e0e0ea; }
+  .icon-btn.send { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+  .ad-slot { background: #fafafa; border-top: 1px solid #eee; border-bottom: 1px solid #eee; display: flex; justify-content: center; align-items: center; padding: 6px; min-height: 62px; overflow: hidden; }
+  .logout { color: white; cursor: pointer; font-size: 12px; text-decoration: underline; }
+  .error { color: #dc2626; font-size: 13px; text-align: center; }
+  .hidden { display: none !important; }
+  .admin-badge { background: #ffc107; color: #333; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; margin-left: 5px; }
+  .blocked-badge { background: #dc2626; color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; margin-left: 5px; }
+  .conv-list { padding: 10px; background: white; border-bottom: 1px solid #eee; max-height: 130px; overflow-y: auto; }
+  .conv-list h4 { font-size: 12px; color: #666; margin-bottom: 6px; }
+  .conv-item { display: inline-block; padding: 6px 12px; margin: 3px; background: #f0f0f5; border-radius: 15px; font-size: 12px; cursor: pointer; }
+  .conv-item.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+  .conv-item.blocked { background: #fee2e2; color: #991b1b; }
+  .call-bar { background: white; border-bottom: 1px solid #eee; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .call-bar-label { font-size: 13px; color: #666; font-weight: 600; }
+  .call-btns { display: flex; gap: 8px; }
+  .call-btn { display: flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 20px; border: none; color: white; font-size: 12px; font-weight: 600; cursor: pointer; transition: transform 0.2s; }
+  .call-btn:hover { transform: translateY(-2px); }
+  .call-btn.audio { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+  .call-btn.video { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+  .msg.system { align-self: center; background: #fff3cd; color: #856404; border: 1px solid #ffc107; font-size: 12px; text-align: center; max-width: 90%; border-radius: 12px; padding: 10px 14px; }
+  .msg.system.warn { background: #fff3cd; border-color: #ffc107; color: #856404; }
+  .msg.system.block { background: #fee2e2; border-color: #dc2626; color: #991b1b; }
+  .msg.system .title { font-weight: 700; margin-bottom: 5px; font-size: 13px; }
+  .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 999; padding: 20px; }
+  .modal-content { background: white; border-radius: 16px; max-width: 420px; width: 100%; padding: 25px; text-align: center; animation: pop 0.2s ease; max-height: 90vh; overflow-y: auto; }
+  @keyframes pop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .modal-content h3 { color: #333; margin-bottom: 12px; font-size: 20px; }
+  .modal-content p { color: #666; font-size: 14px; line-height: 1.5; margin-bottom: 20px; }
+  .modal-content .btn { width: 100%; margin-top: 8px; }
+  .admin-actions { display: flex; gap: 8px; padding: 10px 14px; background: #fff8e1; border-bottom: 1px solid #ffc107; flex-wrap: wrap; }
+  .admin-actions button { padding: 8px 14px; border-radius: 18px; border: none; font-size: 12px; font-weight: 600; cursor: pointer; }
+  .admin-actions .warn { background: #ffc107; color: #333; }
+  .admin-actions .block { background: #dc2626; color: white; }
+  .admin-actions .unblock { background: #10b981; color: white; }
+  .admin-actions .info { background: #e0e7ff; color: #3730a3; cursor: default; }
+  .attach-menu { position: absolute; bottom: 70px; left: 15px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); padding: 8px; z-index: 100; display: flex; flex-direction: column; gap: 4px; }
+  .attach-menu button { padding: 10px 16px; border: none; background: transparent; text-align: left; font-size: 14px; cursor: pointer; border-radius: 8px; }
+  .attach-menu button:hover { background: #f0f0f5; }
+  .upload-preview { padding: 8px 14px; background: #f0f7ff; border-top: 1px solid #cce5ff; font-size: 12px; color: #0066cc; display: flex; justify-content: space-between; align-items: center; }
+  .unlock-form { text-align: left; }
+  .unlock-form label { display: block; font-size: 13px; color: #333; font-weight: 600; margin-bottom: 6px; margin-top: 12px; }
+  .unlock-form textarea { width: 100%; min-height: 90px; resize: vertical; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="avatar">👩</div>
+    <div class="header-info">
+      <h2>Pauline <span id="adminBadge" class="admin-badge hidden">ADMIN</span><span id="blockedBadge" class="blocked-badge hidden">BLOQUÉ</span></h2>
+      <p><span class="status"></span><span id="userStatus">En ligne</span></p>
+    </div>
+    <span id="logoutBtn" class="logout hidden">Déconnexion</span>
+  </div>
+
+  <div class="content">
+    <!-- Accueil -->
+    <div id="welcomeScreen" class="welcome">
+      <div class="ad-slot" style="width:100%;margin-bottom:15px">
+        <script async="async" data-cfasync="false" src="https://injusticebakery.com/3a829a68e73fdd3fd446fec2e8eae8d0/invoke.js"></script>
+        <div id="container-3a829a68e73fdd3fd446fec2e8eae8d0"></div>
+      </div>
+      <div style="font-size:60px;margin-bottom:15px">💬</div>
+      <h3>Discutez avec Pauline</h3>
+      <p>Une question ? Envie d'échanger ?<br>Créez un compte pour commencer la conversation.</p>
+      <button class="btn" onclick="showAuth()">Discuter avec Pauline</button>
+      <div class="ad-slot" style="width:100%;margin-top:15px">
+        <script>
+          atOptions = { 'key' : 'e492c05019ddcd31c8d24311259d4bcc', 'format' : 'iframe', 'height' : 60, 'width' : 468, 'params' : {} };
+        </script>
+        <script src="https://injusticebakery.com/e492c05019ddcd31c8d24311259d4bcc/invoke.js"></script>
+      </div>
+    </div>
+
+    <!-- Auth -->
+    <div id="authScreen" class="hidden" style="flex:1;overflow-y:auto">
+      <div class="ad-slot">
+        <script async="async" data-cfasync="false" src="https://injusticebakery.com/3a829a68e73fdd3fd446fec2e8eae8d0/invoke.js"></script>
+        <div id="container-3a829a68e73fdd3fd446fec2e8eae8d0"></div>
+      </div>
+      <div class="form">
+        <h3 style="text-align:center;margin-bottom:10px;color:#333" id="authTitle">Créer un compte</h3>
+        <input type="text" id="pseudo" placeholder="Votre pseudo" maxlength="20">
+        <input type="email" id="email" placeholder="Votre email">
+        <input type="password" id="password" placeholder="Mot de passe (6+ caractères)">
+        <p id="authError" class="error hidden"></p>
+        <button class="btn" id="authBtn" onclick="handleAuth()">S'inscrire</button>
+        <div class="toggle" onclick="toggleAuth()" id="toggleText">Déjà un compte ? Se connecter</div>
+      </div>
+    </div>
+
+    <!-- Chat -->
+    <div id="chatScreen" class="hidden" style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+      <div class="ad-slot">
+        <script async="async" data-cfasync="false" src="https://injusticebakery.com/3a829a68e73fdd3fd446fec2e8eae8d0/invoke.js"></script>
+        <div id="container-3a829a68e73fdd3fd446fec2e8eae8d0"></div>
+      </div>
+
+      <!-- Boutons d'appel -->
+      <div id="callBar" class="call-bar hidden">
+        <div class="call-bar-label">📞 Appeler Pauline</div>
+        <div class="call-btns">
+          <button class="call-btn audio" onclick="requestCall('audio')">📞 Appel</button>
+          <button class="call-btn video" onclick="requestCall('video')">📹 Vidéo</button>
+        </div>
+      </div>
+
+      <!-- Conversations (admin) -->
+      <div id="convList" class="conv-list hidden">
+        <h4>💬 Conversations</h4>
+        <div id="convItems"></div>
+      </div>
+
+      <!-- Actions admin sur la conversation active -->
+      <div id="adminActions" class="admin-actions hidden">
+        <button class="info" id="warnCount">⚠️ 0 avertissement</button>
+        <button class="warn" onclick="warnUser()">⚠️ Avertir</button>
+        <button class="block" id="blockBtn" onclick="blockUser()">🚫 Bloquer</button>
+        <button class="unblock hidden" id="unblockBtn" onclick="unblockUser()">✅ Débloquer</button>
+      </div>
+
+      <!-- Demandes de déblocage (admin) -->
+      <div id="unlockRequestsList" class="conv-list hidden" style="background:#e0e7ff;border-bottom:1px solid #6366f1">
+        <h4>🔓 Demandes de déblocage</h4>
+        <div id="unlockReqItems"></div>
+      </div>
+
+      <div class="messages" id="messages"></div>
+
+      <!-- Blocage utilisateur -->
+      <div id="blockedScreen" class="hidden" style="padding:30px 20px;text-align:center;background:#fee2e2;border-top:1px solid #dc2626">
+        <div style="font-size:50px;margin-bottom:10px">🚫</div>
+        <h3 style="color:#991b1b;margin-bottom:10px">Votre compte est bloqué</h3>
+        <p style="color:#7f1d1d;font-size:14px;margin-bottom:15px">Vous ne pouvez plus envoyer de messages.</p>
+        <button class="btn danger" onclick="showUnlockForm()">Demander le déblocage</button>
+      </div>
+
+      <div id="uploadPreview" class="upload-preview hidden">
+        <span id="uploadText">📎 Envoi en cours...</span>
+        <span style="cursor:pointer" onclick="cancelUpload()">✖</span>
+      </div>
+
+      <div class="ad-slot">
+        <script>
+          atOptions = { 'key' : 'e492c05019ddcd31c8d24311259d4bcc', 'format' : 'iframe', 'height' : 60, 'width' : 468, 'params' : {} };
+        </script>
+        <script src="https://injusticebakery.com/e492c05019ddcd31c8d24311259d4bcc/invoke.js"></script>
+      </div>
+
+      <div class="input-area" id="inputArea" style="position:relative">
+        <button class="icon-btn" onclick="toggleAttachMenu()" title="Joindre">📎</button>
+        <input type="text" id="msgInput" placeholder="Écrivez votre message..." onkeypress="if(event.key==='Enter')sendMessage()">
+        <button class="icon-btn send" onclick="sendMessage()">➤</button>
+        
+        <div id="attachMenu" class="attach-menu hidden">
+          <button onclick="pickFile('image')">🖼️ Photo</button>
+          <button onclick="pickFile('video')">🎥 Vidéo</button>
+        </div>
+      </div>
+
+      <input type="file" id="imageInput" accept="image/*" style="display:none" onchange="handleFile(event,'image')">
+      <input type="file" id="videoInput" accept="video/*" style="display:none" onchange="handleFile(event,'video')">
+    </div>
+  </div>
+</div>
+
+<!-- Modal appel -->
+<div id="callModal" class="modal hidden">
+  <div class="modal-content">
+    <div style="font-size:50px;margin-bottom:10px" id="callIcon">📞</div>
+    <h3 id="callTitle">Appel simple</h3>
+    <p>Pour passer un appel, il y a <strong>des conditions à remplir</strong>.<br><br>Merci de <strong>demander les conditions à Pauline</strong> dans le chat.<br><br>Une fois les conditions remplies, vous pourrez appeler Pauline <strong>gratuitement</strong> ! 🎉</p>
+    <button class="btn" onclick="closeCallModal()">Compris</button>
+  </div>
+</div>
+
+<!-- Modal déblocage -->
+<div id="unlockModal" class="modal hidden">
+  <div class="modal-content">
+    <h3>🔓 Demander le déblocage</h3>
+    <p style="color:#666;font-size:13px;margin-bottom:5px">Expliquez pourquoi votre compte devrait être débloqué.</p>
+    <div class="unlock-form">
+      <label>Pseudo</label>
+      <input type="text" id="unlockPseudo" placeholder="Votre pseudo" readonly style="width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:10px;background:#f7f7f7">
+      <label>Email</label>
+      <input type="email" id="unlockEmail" placeholder="Votre email" style="width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:10px">
+      <label>Message / Justification</label>
+      <textarea id="unlockMessage" placeholder="Expliquez votre situation..."></textarea>
+    </div>
+    <button class="btn success" onclick="submitUnlockRequest()">Envoyer la demande</button>
+    <button class="btn" style="background:#e0e0e0;color:#333" onclick="closeUnlockModal()">Annuler</button>
+  </div>
+</div>
+
+<!-- Modal admin - réponse déblocage -->
+<div id="adminUnlockModal" class="modal hidden">
+  <div class="modal-content">
+    <h3>🔓 Demande de déblocage</h3>
+    <div id="adminUnlockContent" style="text-align:left;font-size:13px;color:#333;background:#f7f7fc;padding:12px;border-radius:10px;margin-bottom:15px;max-height:200px;overflow-y:auto"></div>
+    <button class="btn success" onclick="adminAcceptUnlock()">✅ Débloquer + répondre</button>
+    <button class="btn danger" onclick="adminRejectUnlock()">❌ Refuser</button>
+    <button class="btn" style="background:#e0e0e0;color:#333" onclick="closeAdminUnlockModal()">Fermer</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp, doc, setDoc, getDoc, updateDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAO8xJvF7RQcCvLUh9xHJ2MRHRLDSOstKs",
+  authDomain: "meet-46dee.firebaseapp.com",
+  projectId: "meet-46dee",
+  storageBucket: "meet-46dee.firebasestorage.app",
+  messagingSenderId: "404441032035",
+  appId: "1:404441032035:web:76231546c8932ab6159f56"
+};
+
+// ⚠️ VOTRE EMAIL ADMIN
+const ADMIN_EMAIL = "pauline@admin.com";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+let currentUser = null;
+let isAdmin = false;
+let isSignup = true;
+let unsubscribe = null;
+let unsubscribeUnlock = null;
+let activeConversationId = null;
+let allMessagesCache = [];
+let userProfiles = {}; // uid -> {pseudo, email, blocked, warns}
+let activeUnlockRequest = null;
+
+const $ = id => document.getElementById(id);
+
+// ========== NAVIGATION ==========
+window.showAuth = () => {
+  $('welcomeScreen').classList.add('hidden');
+  $('authScreen').classList.remove('hidden');
+};
+
+window.toggleAuth = () => {
+  isSignup = !isSignup;
+  $('authTitle').textContent = isSignup ? 'Créer un compte' : 'Se connecter';
+  $('authBtn').textContent = isSignup ? "S'inscrire" : 'Se connecter';
+  $('toggleText').textContent = isSignup ? 'Déjà un compte ? Se connecter' : "Pas de compte ? S'inscrire";
+  $('pseudo').classList.toggle('hidden', !isSignup);
+  $('authError').classList.add('hidden');
+};
+
+// ========== AUTH ==========
+window.handleAuth = async () => {
+  const email = $('email').value.trim();
+  const password = $('password').value;
+  const pseudo = $('pseudo').value.trim();
+  const err = $('authError');
+  err.classList.add('hidden');
+
+  if (!email || !password) return showError('Remplissez tous les champs');
+  if (isSignup && !pseudo) return showError('Choisissez un pseudo');
+  if (isSignup && password.length < 6) return showError('Mot de passe : 6 caractères minimum');
+
+  $('authBtn').disabled = true;
+  try {
+    if (isSignup) {
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      try {
+        await setDoc(doc(db, 'users', cred.user.uid), {
+          pseudo, email, warns: 0, blocked: false, createdAt: serverTimestamp()
+        });
+      } catch (e) { console.warn('Profil:', e.message); }
+    } else {
+      await signInWithEmailAndPassword(auth, email, password);
+    }
+  } catch (e) {
+    let msg = e.message;
+    if (e.code === 'auth/email-already-in-use') msg = 'Cet email est déjà utilisé';
+    else if (e.code === 'auth/invalid-email') msg = 'Email invalide';
+    else if (e.code === 'auth/weak-password') msg = 'Mot de passe trop faible';
+    else if (e.code === 'auth/invalid-credential') msg = 'Email ou mot de passe incorrect';
+    else if (e.code === 'auth/user-not-found') msg = 'Compte introuvable';
+    showError(msg);
+  }
+  $('authBtn').disabled = false;
+};
+
+function showError(msg) {
+  const err = $('authError');
+  err.textContent = msg;
+  err.classList.remove('hidden');
+}
+
+// ========== ENVOI MESSAGE TEXTE ==========
+window.sendMessage = async () => {
+  const input = $('msgInput');
+  const text = input.value.trim();
+  if (!text || !currentUser) return;
+
+  // Vérifie si bloqué (seulement pour non-admin)
+  if (!isAdmin) {
+    const profile = userProfiles[currentUser.uid];
+    if (profile && profile.blocked) {
+      alert('Votre compte est bloqué. Demandez le déblocage.');
+      return;
+    }
+  }
+
+  input.value = '';
+  const convId = isAdmin ? activeConversationId : currentUser.uid;
+  if (!convId) { alert('Sélectionnez une conversation'); return; }
+
+  try {
+    await addDoc(collection(db, 'messages'), {
+      text, type: 'text',
+      conversationId: convId,
+      senderId: currentUser.uid,
+      senderEmail: currentUser.email,
+      isAdmin: isAdmin,
+      createdAt: serverTimestamp()
+    });
+  } catch (e) {
+    console.error(e);
+    alert('Erreur : ' + e.message);
+  }
+};
+
+// ========== PIÈCES JOINTES ==========
+window.toggleAttachMenu = () => {
+  if (!isAdmin) {
+    const profile = userProfiles[currentUser.uid];
+    if (profile && profile.blocked) {
+      alert('Votre compte est bloqué.');
+      return;
+    }
+  }
+  $('attachMenu').classList.toggle('hidden');
+};
+
+window.pickFile = (type) => {
+  $('attachMenu').classList.add('hidden');
+  if (type === 'image') $('imageInput').click();
+  else $('videoInput').click();
+};
+
+window.handleFile = async (event, type) => {
+  const file = event.target.files[0];
+  if (!file || !currentUser) return;
+
+  const convId = isAdmin ? activeConversationId : currentUser.uid;
+  if (!convId) { alert('Sélectionnez une conversation'); return; }
+
+  // Limite 20 Mo
+  if (file.size > 20 * 1024 * 1024) {
+    alert('Fichier trop lourd (max 20 Mo)');
+    event.target.value = '';
+    return;
+  }
+
+  $('uploadPreview').classList.remove('hidden');
+  $('uploadText').textContent = '📎 Envoi de ' + (type === 'image' ? 'la photo' : 'la vidéo') + '...';
+
+  try {
+    const ext = file.name.split('.').pop();
+    const path = `chat/${currentUser.uid}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+    const storageRef = ref(storage, path);
+    await uploadBytes(storageRef, file);
+    const url = await getDownloadURL(storageRef);
+
+    await addDoc(collection(db, 'messages'), {
+      text: '',
+      type: type, // 'image' ou 'video'
+      mediaUrl: url,
+      mediaPath: path,
+      conversationId: convId,
+      senderId: currentUser.uid,
+      senderEmail: currentUser.email,
+      isAdmin: isAdmin,
+      createdAt: serverTimestamp()
+    });
+
+    $('uploadPreview').classList.add('hidden');
+  } catch (e) {
+    console.error('Upload error:', e);
+    alert('Erreur d\'envoi : ' + e.message);
+    $('uploadPreview').classList.add('hidden');
+  }
+  event.target.value = '';
+};
+
+window.cancelUpload = () => {
+  $('uploadPreview').classList.add('hidden');
+};
+
+// ========== APPELS ==========
+window.requestCall = (type) => {
+  if (!currentUser || isAdmin) return;
+  const isVideo = type === 'video';
+  $('callIcon').textContent = isVideo ? '📹' : '📞';
+  $('callTitle').textContent = isVideo ? 'Appel vidéo' : 'Appel simple';
+  $('callModal').classList.remove('hidden');
+};
+
+window.closeCallModal = () => {
+  const wasVideo = $('callIcon').textContent === '📹';
+  $('callModal').classList.add('hidden');
+  sendSystemMessage(wasVideo ? 'video' : 'audio');
+};
+
+async function sendSystemMessage(type) {
+  if (!currentUser || isAdmin) return;
+  const label = type === 'video' ? "📹 Demande d'appel vidéo" : "📞 Demande d'appel simple";
+  const text = `[SYSTÈME] ${label} — L'utilisateur souhaite connaître les conditions pour appeler Pauline gratuitement.`;
+  try {
+    await addDoc(collection(db, 'messages'), {
+      text, type: 'system',
+      conversationId: currentUser.uid,
+      senderId: currentUser.uid,
+      senderEmail: currentUser.email,
+      isAdmin: false,
+      isSystem: true,
+      callType: type,
+      createdAt: serverTimestamp()
+    });
+  } catch (e) { console.error(e); }
+}
+
+// ========== ADMIN : AVERTIR / BLOQUER ==========
+window.warnUser = async () => {
+  if (!isAdmin || !activeConversationId) return;
+  const profile = userProfiles[activeConversationId];
+  if (!profile) return;
+
+  const newWarns = (profile.warns || 0) + 1;
+
+  try {
+    // Mise à jour du profil
+    await updateDoc(doc(db, 'users', activeConversationId), {
+      warns: newWarns,
+      blocked: newWarns >= 3 ? true : profile.blocked
+    });
+
+    // Message système d'avertissement
+    await addDoc(collection(db, 'messages'), {
+      text: newWarns >= 3
+        ? `[AVERTISSEMENT] ⚠️ Vous avez reçu 3 avertissements. Votre compte est maintenant BLOQUÉ.`
+        : `[AVERTISSEMENT] ⚠️ Avertissement ${newWarns}/3 de Pauline. Merci de respecter les règles.`,
+      type: 'system',
+      conversationId: activeConversationId,
+      senderId: currentUser.uid,
+      senderEmail: currentUser.email,
+      isAdmin: true,
+      isSystem: true,
+      isWarning: true,
+      warnNumber: newWarns,
+      createdAt: serverTimestamp()
+    });
+
+    if (newWarns >= 3) {
+      alert('⚠️ L\'utilisateur a reçu 3 avertissements. Il est maintenant bloqué.');
+    }
+  } catch (e) {
+    console.error(e);
+    alert('Erreur : ' + e.message);
+  }
+};
+
+window.blockUser = async () => {
+  if (!isAdmin || !activeConversationId) return;
+  if (!confirm('Bloquer cet utilisateur ? Il ne pourra plus écrire.')) return;
+
+  try {
+    await updateDoc(doc(db, 'users', activeConversationId), { blocked: true });
+    await addDoc(collection(db, 'messages'), {
+      text: `[BLOCAGE] 🚫 Votre compte a été bloqué par Pauline. Vous ne pouvez plus envoyer de messages.`,
+      type: 'system',
+      conversationId: activeConversationId,
+      senderId: currentUser.uid,
+      senderEmail: currentUser.email,
+      isAdmin: true,
+      isSystem: true,
+      isBlock: true,
+      createdAt: serverTimestamp()
+    });
+  } catch (e) { alert('Erreur : ' + e.message); }
+};
+
+window.unblockUser = async () => {
+  if (!isAdmin || !activeConversationId) return;
+
+  try {
+    await updateDoc(doc(db, 'users', activeConversationId), { blocked: false, warns: 0 });
+    await addDoc(collection(db, 'messages'), {
+      text: `[DÉBLOCAGE] ✅ Votre compte a été débloqué. Vos avertissements sont remis à zéro.`,
+      type: 'system',
+      conversationId: activeConversationId,
+      senderId: currentUser.uid,
+      senderEmail: currentUser.email,
+      isAdmin: true,
+      isSystem: true,
+      createdAt: serverTimestamp()
+    });
+    alert('✅ Utilisateur débloqué');
+  } catch (e) { alert('Erreur : ' + e.message); }
+};
+
+// ========== UTILISATEUR BLOQUÉ : FORMULAIRE ==========
+window.showUnlockForm = () => {
+  if (!currentUser) return;
+  const profile = userProfiles[currentUser.uid] || {};
+  $('unlockPseudo').value = profile.pseudo || '';
+  $('unlockEmail').value = currentUser.email || '';
+  $('unlockMessage').value = '';
+  $('unlockModal').classList.remove('hidden');
+};
+
+window.closeUnlockModal = () => {
+  $('unlockModal').classList.add('hidden');
+};
+
+window.submitUnlockRequest = async () => {
+  if (!currentUser) return;
+  const pseudo = $('unlockPseudo').value.trim();
+  const email = $('unlockEmail').value.trim();
+  const message = $('unlockMessage').value.trim();
+
+  if (!email || !message) {
+    alert('Remplissez tous les champs');
+    return;
+  }
+
+  try {
+    await addDoc(collection(db, 'unlockRequests'), {
+      userId: currentUser.uid,
+      pseudo, email, message,
+      status: 'pending',
+      createdAt: serverTimestamp()
+    });
+
+    // Message dans la conversation
+    await addDoc(collection(db, 'messages'), {
+      text: `[DÉBLOCAGE] 📩 L'utilisateur a envoyé une demande de déblocage.\n\nPseudo : ${pseudo}\nEmail : ${email}\n\nMessage : ${message}`,
+      type: 'system',
+      conversationId: currentUser.uid,
+      senderId: currentUser.uid,
+      senderEmail: currentUser.email,
+      isAdmin: false,
+      isSystem: true,
+      isUnlockRequest: true,
+      createdAt: serverTimestamp()
+    });
+
+    $('unlockModal').classList.add('hidden');
+    alert('✅ Demande envoyée à Pauline. Vous recevrez une réponse ici.');
+  } catch (e) {
+    alert('Erreur : ' + e.message);
+  }
+};
+
+// ========== ADMIN : TRAITEMENT DEMANDES DÉBLOCAGE ==========
+window.openAdminUnlock = (reqId) => {
+  const req = allUnlockRequests.find(r => r.id === reqId);
+  if (!req) return;
+  activeUnlockRequest = req;
+
+  $('adminUnlockContent').innerHTML = `
+    <p><strong>Pseudo :</strong> ${escapeHtml(req.pseudo || '-')}</p>
+    <p><strong>Email :</strong> ${escapeHtml(req.email || '-')}</p>
+    <p style="margin-top:8px"><strong>Message :</strong></p>
+    <p style="background:white;padding:8px;border-radius:6px;margin-top:4px">${escapeHtml(req.message || '')}</p>
+  `;
+  $('adminUnlockModal').classList.remove('hidden');
+};
+
+window.closeAdminUnlockModal = () => {
+  $('adminUnlockModal').classList.add('hidden');
+  activeUnlockRequest = null;
+};
+
+window.adminAcceptUnlock = async () => {
+  if (!activeUnlockRequest) return;
+  const req = activeUnlockRequest;
+  try {
+    await updateDoc(doc(db, 'users', req.userId), { blocked: false, warns: 0 });
+    await updateDoc(doc(db, 'unlockRequests', req.id), { status: 'accepted', resolvedAt: serverTimestamp() });
+
+    // Message à l'utilisateur
+    await addDoc(collection(db, 'messages'), {
+      text: `[DÉBLOCAGE] ✅ Votre demande a été ACCEPTÉE. Votre compte est débloqué.\n\nConditions à respecter :\n- Rester courtois\n- Pas de spam\n- Respecter Pauline\n\nBienvenue ! 🎉`,
+      type: 'system', conversationId: req.userId,
+      senderId: currentUser.uid, senderEmail: currentUser.email,
+      isAdmin: true, isSystem: true,
+      createdAt: serverTimestamp()
+    });
+
+    $('adminUnlockModal').classList.add('hidden');
+    activeUnlockRequest = null;
+    alert('✅ Utilisateur débloqué et notifié');
+  } catch (e) { alert('Erreur : ' + e.message); }
+};
+
+window.adminRejectUnlock = async () => {
+  if (!activeUnlockRequest) return;
+  const req = activeUnlockRequest;
+  const reason = prompt('Raison du refus (sera envoyée à l\'utilisateur) :') || 'Conditions non remplies';
+  try {
+    await updateDoc(doc(db, 'unlockRequests', req.id), { status: 'rejected', resolvedAt: serverTimestamp(), reason });
+    await addDoc(collection(db, 'messages'), {
+      text: `[DÉBLOCAGE] ❌ Votre demande a été REFUSÉE.\n\nRaison : ${reason}`,
+      type: 'system', conversationId: req.userId,
+      senderId: currentUser.uid, senderEmail: currentUser.email,
+      isAdmin: true, isSystem: true,
+      createdAt: serverTimestamp()
+    });
+    $('adminUnlockModal').classList.add('hidden');
+    activeUnlockRequest = null;
+    alert('❌ Demande refusée');
+  } catch (e) { alert('Erreur : ' + e.message); }
+};
+
+// ========== DÉCONNEXION ==========
+$('logoutBtn').onclick = () => signOut(auth);
+
+// ========== UTILS ==========
+function formatTime(ts) {
+  if (!ts) return '';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+}
+
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function showScreen(name) {
+  ['welcomeScreen','authScreen','chatScreen'].forEach(id => $(id).classList.add('hidden'));
+  $('logoutBtn').classList.add('hidden');
+  $('convList').classList.add('hidden');
+  $('callBar').classList.add('hidden');
+  $('adminActions').classList.add('hidden');
+  $('unlockRequestsList').classList.add('hidden');
+  $('blockedScreen').classList.add('hidden');
+
+  if (name === 'welcome') $('welcomeScreen').classList.remove('hidden');
+  if (name === 'auth') $('authScreen').classList.remove('hidden');
+  if (name === 'chat') {
+    $('chatScreen').classList.remove('hidden');
+    $('logoutBtn').classList.remove('hidden');
+    $('callBar').classList.toggle('hidden', isAdmin);
+    $('adminActions').classList.toggle('hidden', !isAdmin);
+    $('unlockRequestsList').classList.toggle('hidden', !isAdmin);
+
+    // Vérifier si l'utilisateur est bloqué
+    if (!isAdmin) {
+      const p = userProfiles[currentUser.uid];
+      if (p && p.blocked) {
+        $('blockedScreen').classList.remove('hidden');
+        $('inputArea').classList.add('hidden');
+      } else {
+        $('blockedScreen').classList.add('hidden');
+        $('inputArea').classList.remove('hidden');
+      }
+    }
+  }
+}
+
+// ========== ÉCOUTE AUTH ==========
+onAuthStateChanged(auth, (user) => {
+  if (unsubscribe) { unsubscribe(); unsubscribe = null; }
+  if (unsubscribeUnlock) { unsubscribeUnlock(); unsubscribeUnlock = null; }
+  currentUser = user;
+
+  if (user) {
+    isAdmin = user.email === ADMIN_EMAIL;
+    $('adminBadge').classList.toggle('hidden', !isAdmin);
+    $('convList').classList.toggle('hidden', !isAdmin);
+    showScreen('chat');
+    listenProfiles();
+    startListening();
+    if (isAdmin) listenUnlockRequests();
+  } else {
+    isAdmin = false;
+    activeConversationId = null;
+    allMessagesCache = [];
+    userProfiles = {};
+    showScreen('welcome');
+  }
+});
+
+// ========== ÉCOUTE PROFILS UTILISATEURS ==========
+function listenProfiles() {
+  const q = isAdmin ? collection(db, 'users') : query(collection(db, 'users'), where('__name__', '==', currentUser.uid));
+  onSnapshot(q, (snapshot) => {
+    userProfiles = {};
+    snapshot.forEach(d => userProfiles[d.id] = d.data());
+
+    // Mise à jour du badge bloqué + écran
+    if (!isAdmin) {
+      const p = userProfiles[currentUser.uid];
+      const blocked = p && p.blocked;
+      $('blockedBadge').classList.toggle('hidden', !blocked);
+      $('userStatus').textContent = blocked ? 'Bloqué' : 'En ligne';
+
+      if (blocked) {
+        $('blockedScreen').classList.remove('hidden');
+        $('inputArea').classList.add('hidden');
+      } else {
+        $('blockedScreen').classList.add('hidden');
+        if ($('chatScreen').classList.contains('hidden') === false) {
+          $('inputArea').classList.remove('hidden');
+        }
+      }
+    }
+
+    // Mise à jour actions admin
+    if (isAdmin && activeConversationId) updateAdminActions();
+  });
+}
+
+function updateAdminActions() {
+  const p = userProfiles[activeConversationId];
+  if (!p) return;
+  $('warnCount').textContent = `⚠️ ${p.warns || 0}/3 avertissements`;
+  $('blockBtn').classList.toggle('hidden', !!p.blocked);
+  $('unblockBtn').classList.toggle('hidden', !p.blocked);
+}
+
+// ========== ÉCOUTE MESSAGES ==========
+function startListening() {
+  const msgsEl = $('messages');
+  msgsEl.innerHTML = '<div style="text-align:center;color:#999;font-size:13px">Chargement...</div>';
+
+  const q = isAdmin
+    ? collection(db, 'messages')
+    : query(collection(db, 'messages'), where('conversationId', '==', currentUser.uid));
+
+  unsubscribe = onSnapshot(q, (snapshot) => {
+    allMessagesCache = [];
+    snapshot.forEach(d => allMessagesCache.push({ id: d.id, ...d.data() }));
+    allMessagesCache.sort((a, b) => {
+      const ta = a.createdAt?.toMillis?.() || 0;
+      const tb = b.createdAt?.toMillis?.() || 0;
+      return ta - tb;
+    });
+    if (isAdmin) buildConversationList();
+    renderMessages();
+  }, (err) => {
+    console.error('Snapshot error:', err);
+    msgsEl.innerHTML = `<div style="text-align:center;color:#dc2626;font-size:13px;padding:20px">
+      Erreur : ${err.code}<br><small>${err.message}</small>
+    </div>`;
+  });
+}
+
+// ========== ÉCOUTE DEMANDES DÉBLOCAGE (ADMIN) ==========
+let allUnlockRequests = [];
+function listenUnlockRequests() {
+  const q = query(collection(db, 'unlockRequests'), orderBy('createdAt', 'desc'));
+  unsubscribeUnlock = onSnapshot(q, (snapshot) => {
+    allUnlockRequests = [];
+    snapshot.forEach(d => allUnlockRequests.push({ id: d.id, ...d.data() }));
+    renderUnlockRequests();
+  }, (err) => console.warn('Unlock requests:', err.message));
+}
+
+function renderUnlockRequests() {
+  const container = $('unlockReqItems');
+  const pending = allUnlockRequests.filter(r => r.status === 'pending');
+  container.innerHTML = '';
+  if (pending.length === 0) {
+    container.innerHTML = '<div style="color:#6366f1;font-size:12px;padding:5px">Aucune demande en attente</div>';
+    return;
+  }
+  pending.forEach(r => {
+    const el = document.createElement('div');
+    el.className = 'conv-item';
+    el.style.background = '#fff';
+    el.style.border = '1px solid #6366f1';
+    el.innerHTML = `🔓 ${escapeHtml(r.pseudo || r.email || 'User')}`;
+    el.onclick = () => openAdminUnlock(r.id);
+    container.appendChild(el);
+  });
+}
+
+// ========== LISTE CONVERSATIONS (ADMIN) ==========
+function buildConversationList() {
+  const convMap = new Map();
+  allMessagesCache.forEach(m => {
+    if (!convMap.has(m.conversationId)) {
+      convMap.set(m.conversationId, { id: m.conversationId, last: m.text || '', count: 0 });
+    }
+    convMap.get(m.conversationId).count++;
+  });
+
+  const container = $('convItems');
+  container.innerHTML = '';
+  if (convMap.size === 0) {
+    container.innerHTML = '<div style="color:#999;font-size:12px;padding:5px">Aucune conversation</div>';
+    return;
+  }
+
+  convMap.forEach((conv) => {
+    const p = userProfiles[conv.id] || {};
+    const el = document.createElement('div');
+    el.className = 'conv-item' + (conv.id === activeConversationId ? ' active' : '') + (p.blocked ? ' blocked' : '');
+    el.textContent = (p.pseudo || conv.id.substring(0, 8)) + (p.blocked ? ' 🚫' : (p.warns ? ` ⚠️${p.warns}` : ''));
+    el.onclick = () => {
+      activeConversationId = conv.id;
+      buildConversationList();
+      updateAdminActions();
+      renderMessages();
+    };
+    container.appendChild(el);
+  });
+
+  if (!activeConversationId && convMap.size > 0) {
+    activeConversationId = convMap.keys().next().value;
+    buildConversationList();
+    updateAdminActions();
+    renderMessages();
+  }
+}
+
+// ========== AFFICHAGE MESSAGES ==========
+function renderMessages() {
+  const msgsEl = $('messages');
+  msgsEl.innerHTML = '';
+
+  const filtered = isAdmin
+    ? allMessagesCache.filter(m => m.conversationId === activeConversationId)
+    : allMessagesCache;
+
+  if (filtered.length === 0) {
+    msgsEl.innerHTML = `<div style="text-align:center;color:#999;font-size:13px;padding:20px">
+      ${isAdmin ? 'Sélectionnez une conversation' : 'Dites bonjour à Pauline 👋'}
+    </div>`;
+    return;
+  }
+
+  filtered.forEach(m => {
+    const div = document.createElement('div');
+
+    // Système / avertissement / blocage / déblocage
+    if (m.isSystem || m.type === 'system') {
+      let cls = 'msg system';
+      if (m.isWarning) cls += ' warn';
+      if (m.isBlock) cls += ' block';
+
+      div.className = cls;
+      let title = '🔔 Information';
+      if (m.isWarning) title = `⚠️ Avertissement ${m.warnNumber || ''}/3`;
+      if (m.isBlock) title = '🚫 Compte bloqué';
+      if (m.isUnlockRequest) title = '🔓 Demande de déblocage';
+      if (m.text && m.text.includes('[DÉBLOCAGE]')) title = '🔓 Déblocage';
+
+      const cleanText = (m.text || '').replace(/\[SYSTÈME\]|\[AVERTISSEMENT\]|\[BLOCAGE\]|\[DÉBLOCAGE\]/g, '').trim();
+      div.innerHTML = `<div class="title">${title}</div>${escapeHtml(cleanText).replace(/\n/g, '<br>')}<div class="time">${formatTime(m.createdAt)}</div>`;
+    } else {
+      // Message normal (texte ou média)
+      div.className = 'msg ' + (m.senderId === currentUser.uid ? 'me' : 'other');
+      let content = '';
+
+      if (m.type === 'image' && m.mediaUrl) {
+        content += `<img src="${m.mediaUrl}" alt="photo" loading="lazy">`;
+      } else if (m.type === 'video' && m.mediaUrl) {
+        content += `<video src="${m.mediaUrl}" controls preload="metadata"></video>`;
+      }
+      if (m.text) content += `<div>${escapeHtml(m.text)}</div>`;
+
+      div.innerHTML = content + `<div class="time">${formatTime(m.createdAt)}${m.isAdmin ? ' • Pauline' : ''}</div>`;
+    }
+    msgsEl.appendChild(div);
+  });
+  msgsEl.scrollTop = msgsEl.scrollHeight;
+}
+
+// Fermer le menu pièce jointe si clic ailleurs
+document.addEventListener('click', (e) => {
+  const menu = $('attachMenu');
+  if (menu && !menu.contains(e.target) && !e.target.closest('.icon-btn')) {
+    menu.classList.add('hidden');
+  }
+});
+</script>
+</body>
+</html>
