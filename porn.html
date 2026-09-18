@@ -40,6 +40,35 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             text-align: center;
         }
+
+        /* Styles pour les annonces natives */
+        .native-ad-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .native-ad-container.bottom {
+            border-bottom: none;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        /* Styles pour les annonces bannière */
+        .banner-ad-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 8px 0;
+            margin: 10px 0;
+            background: #f1f1f1;
+            min-height: 50px;
+            border-radius: 8px;
+        }
         
         header {
             background: #2c3e50;
@@ -137,6 +166,12 @@
 </head>
 <body>
     <div class="container">
+        <!-- ✅ ANNONCE NATIVE - HAUT DE PAGE -->
+        <div class="native-ad-container">
+            <script async="async" data-cfasync="false" src="https://injusticebakery.com/3a829a68e73fdd3fd446fec2e8eae8d0/invoke.js"></script>
+            <div id="container-3a829a68e73fdd3fd446fec2e8eae8d0"></div>
+        </div>
+
         <header>
             <h1>🎬 Vidéo Exclusive</h1>
             <p>Découvrez ce contenu spécial</p>
@@ -145,28 +180,82 @@
         <div class="content">
             <div class="cta-text">CLIQUEZ SUR L'IMAGE POUR ACCÉDER À LA VIDÉO</div>
             
+            <!-- ✅ ANNONCE BANNIÈRE - AVANT LA VIDÉO -->
+            <div class="banner-ad-container">
+                <script type="text/javascript">
+                    atOptions = {
+                        'key' : '43c664000c5ba23ec64c44fca965d662',
+                        'format' : 'iframe',
+                        'height' : 50,
+                        'width' : 320,
+                        'params' : {}
+                    };
+                </script>
+                <script src="https://injusticebakery.com/43c664000c5ba23ec64c44fca965d662/invoke.js"></script>
+            </div>
+
             <div class="video-container" id="videoRedirect">
                 <img src="https://raw.githubusercontent.com/pinenikeuse/mougouli/main/IMG-20250823-WA0076.jpg" alt="Vidéo exclusive" class="video-thumbnail">
                 <div class="play-button-overlay">
                     <div class="play-button"></div>
                 </div>
             </div>
+
+            <!-- ✅ ANNONCE BANNIÈRE - SOUS LA VIDÉO -->
+            <div class="banner-ad-container">
+                <script type="text/javascript">
+                    atOptions = {
+                        'key' : '43c664000c5ba23ec64c44fca965d662',
+                        'format' : 'iframe',
+                        'height' : 50,
+                        'width' : 320,
+                        'params' : {}
+                    };
+                </script>
+                <script src="https://injusticebakery.com/43c664000c5ba23ec64c44fca965d662/invoke.js"></script>
+            </div>
             
             <button class="button" id="textRedirect">▶️ Regarder la Vidéo</button>
+
+            <!-- ✅ ANNONCE BANNIÈRE - SOUS LE BOUTON -->
+            <div class="banner-ad-container">
+                <script type="text/javascript">
+                    atOptions = {
+                        'key' : '43c664000c5ba23ec64c44fca965d662',
+                        'format' : 'iframe',
+                        'height' : 50,
+                        'width' : 320,
+                        'params' : {}
+                    };
+                </script>
+                <script src="https://injusticebakery.com/43c664000c5ba23ec64c44fca965d662/invoke.js"></script>
+            </div>
         </div>
         
+        <!-- ✅ ANNONCE NATIVE - BAS DE PAGE -->
+        <div class="native-ad-container bottom">
+            <script async="async" data-cfasync="false" src="https://injusticebakery.com/3a829a68e73fdd3fd446fec2e8eae8d0/invoke.js"></script>
+            <div id="container-3a829a68e73fdd3fd446fec2e8eae8d0"></div>
+        </div>
+
         <footer>
             <p>© 2024 - Tous droits réservés</p>
         </footer>
     </div>
 
     <script>
-        function redirectToVideo() {
-            window.location.href = "https://hedwigflooredventure.com/uf868bcft2?key=e8c8806d43592d84d110a00142dc05e8";
+        // ✅ Fonction de redirection vers le SMARTLINK
+        function redirectToSmartlink() {
+            window.location.href = "https://injusticebakery.com/msumx5ria?key=61f6fcc0b50b23f77c53f935a7c14d5c";
         }
         
-        document.getElementById('videoRedirect').addEventListener('click', redirectToVideo);
-        document.getElementById('textRedirect').addEventListener('click', redirectToVideo);
+        // Redirection sur clic du play (image + overlay)
+        document.getElementById('videoRedirect').addEventListener('click', redirectToSmartlink);
+        // Redirection sur clic du bouton "Regarder la Vidéo"
+        document.getElementById('textRedirect').addEventListener('click', redirectToSmartlink);
     </script>
+
+    <!-- ✅ ANNONCE SOCIAL BAR -->
+    <script src="https://injusticebakery.com/d2/f6/54/d2f654e128ecdd2379a3e50add566b3d.js"></script>
 </body>
 </html>
