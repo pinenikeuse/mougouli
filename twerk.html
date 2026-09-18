@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<script src="https://38443.berostranes.com/4/js/269858" async></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TwerkTok - La plateforme de vidéos</title>
@@ -98,6 +97,28 @@
             overflow-y: scroll;
             scroll-snap-type: y mandatory;
             scroll-behavior: smooth;
+        }
+
+        /* Conteneur pour l'annonce native en haut du feed */
+        .native-ad-top {
+            min-height: 100vh;
+            width: 100%;
+            scroll-snap-align: start;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #0a0a0a;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .native-ad-top .native-wrapper {
+            width: 100%;
+            max-width: 600px;
+            background: #111;
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid #222;
         }
 
         .video-container {
@@ -643,7 +664,6 @@
     </style>
 </head>
 <body>
-<script src="https://38443.berostranes.com/v2/a/vsl/js/269877" async></script>
     <!-- Firebase Status -->
     <div class="status-message info" id="firebase-status" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
         <i class="fas fa-database"></i> : twerktok
@@ -741,8 +761,9 @@
             </form>
         </div>
     </div>
-   <div id="clck_ntv"></div>
-<script src="https://38443.berostranes.com/v2/a/na/js/269856?container=clck_ntv" async></script>
+
+    <!-- ✅ ANNONCE NATIVE - CONTENEUR (sera injecté en haut du feed) -->
+    <div id="clck_ntv" style="display: none;"></div>
 
     <script type="module">
         // Import Firebase SDKs
@@ -764,7 +785,6 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         
-        // IMPORTANT: Spécifier la base de données "twerktok"
         const db = getFirestore(app);
         console.log("📊 Base de données Firestore: twerktok");
         
@@ -774,7 +794,8 @@
         let videos = [];
         let currentVideoIndex = 0;
         let userInteracted = false;
-        let showInfo = true; // Par défaut, les infos sont visibles
+        let showInfo = true;
+        let hasNativeAd = true; // Décalage d'index si annonce native en haut
 
         // DOM Elements
         const videoFeed = document.getElementById('video-feed');
@@ -790,7 +811,7 @@
         const submitBtn = document.getElementById('submit-btn');
         const firebaseStatus = document.getElementById('firebase-status');
 
-        // Demo videos for initial content
+        // Demo videos
         const demoVideos = [
             {
                 id: "welcome",
@@ -807,12 +828,32 @@
             }
         ];
 
-        // Charger les vidéos depuis la base de données "twerktok"
+        // ✅ INSÉRER L'ANNONCE NATIVE EN HAUT DU FEED
+        function insertNativeAd() {
+            const nativeAdContainer = document.createElement('div');
+            nativeAdContainer.className = 'native-ad-top';
+            nativeAdContainer.id = 'native-ad-container';
+            nativeAdContainer.innerHTML = `
+                <div class="native-wrapper">
+                    <div id="clck_ntv_inner"></div>
+                </div>
+            `;
+
+            // Insérer AVANT le loading (en premier dans le feed)
+            videoFeed.insertBefore(nativeAdContainer, videoFeed.firstChild);
+
+            // Charger le script natif dans le conteneur
+            const nativeScript = document.createElement('script');
+            nativeScript.src = "https://38443.berostranes.com/v2/a/na/js/269856?container=clck_ntv_inner";
+            nativeScript.async = true;
+            nativeAdContainer.querySelector('.native-wrapper').appendChild(nativeScript);
+        }
+
+        // Charger les vidéos
         async function loadVideos() {
             try {
                 console.log("🔍 Chargement des vidéos depuis la base 'twerktok'...");
                 
-                // Utiliser la collection "videos" dans la base "twerktok"
                 const videosRef = collection(db, "videos");
                 const q = query(videosRef, orderBy("timestamp", "desc"));
                 const querySnapshot = await getDocs(q);
@@ -833,20 +874,15 @@
                     console.log("📭 La base 'twerktok' est vide, ajout d'une vidéo de bienvenue");
                     firebaseStatus.innerHTML = `<i class="fas fa-database"></i> Base: twerktok (vide)`;
                     
-                    // Ajouter une vidéo de bienvenue
                     await addWelcomeVideo();
-                    await loadVideos(); // Recharger
+                    await loadVideos();
                     return;
                 }
                 
             } catch (error) {
                 console.error("❌ Erreur de chargement:", error);
-                
-                // Afficher un message d'erreur
                 firebaseStatus.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Erreur de chargement`;
                 firebaseStatus.className = "status-message error";
-                
-                // Utiliser les vidéos de démo
                 videos = [...demoVideos];
             }
             
@@ -854,7 +890,6 @@
             renderVideos();
         }
 
-        // Ajouter une vidéo de bienvenue à la base "twerktok"
         async function addWelcomeVideo() {
             try {
                 const welcomeVideo = {
@@ -880,23 +915,33 @@
 
         // Afficher les vidéos
         function renderVideos() {
-            videoFeed.innerHTML = '';
+            // Supprimer uniquement les containers vidéo (garder l'annonce native)
+            const videoContainers = videoFeed.querySelectorAll('.video-container');
+            videoContainers.forEach(c => c.remove());
+            
+            // Supprimer aussi le message "aucune vidéo" s'il existe
+            const emptyContainer = videoFeed.querySelector('.video-container.empty');
+            if (emptyContainer) emptyContainer.remove();
             
             if (videos.length === 0) {
-                videoFeed.innerHTML = `
-                    <div class="video-container" style="display: flex; justify-content: center; align-items: center;">
-                        <div class="video-overlay">
-                            <div style="text-align: center; padding: 30px;">
-                                <i class="fas fa-video-slash" style="font-size: 60px; color: #FF2E63; margin-bottom: 20px;"></i>
-                                <h2 style="margin-bottom: 10px;">Aucune vidéo</h2>
-                                <p style="margin-bottom: 30px; opacity: 0.8;">Sois le premier à publier !</p>
-                                <button onclick="openUploadModal()" style="padding: 15px 30px; background: #FF2E63; border: none; border-radius: 10px; color: white; font-size: 16px; cursor: pointer;">
-                                    <i class="fas fa-plus"></i> Publier une vidéo
-                                </button>
-                            </div>
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = 'video-container empty';
+                emptyDiv.style.display = 'flex';
+                emptyDiv.style.justifyContent = 'center';
+                emptyDiv.style.alignItems = 'center';
+                emptyDiv.innerHTML = `
+                    <div class="video-overlay">
+                        <div style="text-align: center; padding: 30px;">
+                            <i class="fas fa-video-slash" style="font-size: 60px; color: #FF2E63; margin-bottom: 20px;"></i>
+                            <h2 style="margin-bottom: 10px;">Aucune vidéo</h2>
+                            <p style="margin-bottom: 30px; opacity: 0.8;">Sois le premier à publier !</p>
+                            <button onclick="openUploadModal()" style="padding: 15px 30px; background: #FF2E63; border: none; border-radius: 10px; color: white; font-size: 16px; cursor: pointer;">
+                                <i class="fas fa-plus"></i> Publier une vidéo
+                            </button>
                         </div>
                     </div>
                 `;
+                videoFeed.appendChild(emptyDiv);
                 return;
             }
             
@@ -905,7 +950,6 @@
                 videoContainer.className = 'video-container';
                 videoContainer.id = `video-${index}`;
                 
-                // Format date
                 const videoDate = video.timestamp ? new Date(video.timestamp).toLocaleDateString('fr-FR', {
                     day: 'numeric',
                     month: 'short',
@@ -924,7 +968,6 @@
                         <p>Appuie pour démarrer la vidéo</p>
                     </div>
                     
-                    <!-- Info Panel -->
                     <div class="video-info" id="info-${index}" style="${showInfo ? '' : 'display: none;'}">
                         <div class="user-info">
                             <div class="user-avatar">${video.creator.charAt(0).toUpperCase()}</div>
@@ -954,7 +997,6 @@
                         </div>
                     </div>
                     
-                    <!-- Controls Panel -->
                     <div class="video-controls" id="controls-${index}" style="${showInfo ? '' : 'display: none;'}">
                         <button class="control-btn" onclick="likeVideo('${video.id}', ${index})" title="J'aime">
                             <i class="${video.liked ? 'fas' : 'far'} fa-heart"></i>
@@ -967,7 +1009,6 @@
                         </button>
                     </div>
                     
-                    <!-- Toggle Info Button -->
                     <button class="toggle-info-btn" onclick="toggleInfo()" id="toggle-${index}">
                         <i class="fas fa-${showInfo ? 'eye-slash' : 'eye'}"></i>
                         ${showInfo ? 'Masquer' : 'Afficher'}
@@ -976,49 +1017,42 @@
                 
                 videoFeed.appendChild(videoContainer);
                 
-                // Setup video events
                 const videoElement = videoContainer.querySelector('.video-player');
                 if (videoElement) {
                     videoElement.addEventListener('click', () => togglePlayPause(index));
                 }
             });
             
-            // Setup scroll handling
             setupScrollHandler();
             
-            // Auto-play first video if user interacted
             if (userInteracted) {
                 playCurrentVideo();
             }
         }
 
-        // Setup scroll handler
         function setupScrollHandler() {
             videoFeed.addEventListener('scroll', handleScroll, { passive: true });
         }
 
-        // Handle scroll
         function handleScroll() {
             const newIndex = Math.round(videoFeed.scrollTop / window.innerHeight);
             
             if (newIndex !== currentVideoIndex) {
-                // Pause previous video
                 const prevVideo = document.querySelector(`#video-${currentVideoIndex} .video-player`);
                 if (prevVideo) {
                     prevVideo.pause();
-                    document.getElementById(`overlay-${currentVideoIndex}`).classList.remove('hidden');
+                    const prevOverlay = document.getElementById(`overlay-${currentVideoIndex}`);
+                    if (prevOverlay) prevOverlay.classList.remove('hidden');
                 }
                 
                 currentVideoIndex = newIndex;
                 
-                // Play new video if user interacted
                 if (userInteracted) {
                     playCurrentVideo();
                 }
             }
         }
 
-        // Play current video
         function playCurrentVideo() {
             if (!userInteracted) return;
             
@@ -1038,7 +1072,6 @@
             }
         }
 
-        // Play specific video
         window.playVideo = function(index) {
             userInteracted = true;
             const video = document.querySelector(`#video-${index} .video-player`);
@@ -1065,7 +1098,6 @@
             }
         };
 
-        // Toggle play/pause
         function togglePlayPause(index) {
             const video = document.querySelector(`#video-${index} .video-player`);
             const overlay = document.getElementById(`overlay-${index}`);
@@ -1079,11 +1111,9 @@
             }
         }
 
-        // Toggle info visibility
         window.toggleInfo = function() {
             showInfo = !showInfo;
             
-            // Update all info panels
             videos.forEach((_, index) => {
                 const infoPanel = document.getElementById(`info-${index}`);
                 const controlsPanel = document.getElementById(`controls-${index}`);
@@ -1103,23 +1133,17 @@
             });
         };
 
-        // Update video views
         function updateVideoViews(index) {
             if (videos[index]) {
                 videos[index].views = (videos[index].views || 0) + 1;
                 
-                // Update display
                 const viewsElement = document.querySelector(`#video-${index} .video-stats .stat:nth-child(3) span`);
                 if (viewsElement) {
                     viewsElement.textContent = videos[index].views;
                 }
-                
-                // TODO: Update in Firebase
-                console.log(`Vues mises à jour pour la vidéo ${index}: ${videos[index].views}`);
             }
         }
 
-        // Handle file selection
         videoFileInput.addEventListener('change', function() {
             const file = this.files[0];
             if (file) {
@@ -1129,7 +1153,6 @@
             }
         });
 
-        // Handle upload
         uploadForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -1138,7 +1161,6 @@
             const creator = document.getElementById('video-creator').value.trim();
             const file = videoFileInput.files[0];
             
-            // Validation
             if (!title || !creator || !file) {
                 showUploadStatus("Veuillez remplir tous les champs", "error");
                 return;
@@ -1155,7 +1177,6 @@
             try {
                 showUploadStatus("Téléchargement vers le dossier 'twerktok'...", "info");
                 
-                // Upload to Firebase Storage in 'twerktok' folder
                 const storagePath = `twerktok/videos/${Date.now()}_${file.name}`;
                 const storageRef = ref(storage, storagePath);
                 const snapshot = await uploadBytes(storageRef, file);
@@ -1163,7 +1184,6 @@
                 
                 showUploadStatus("Sauvegarde dans la base 'twerktok'...", "info");
                 
-                // Save to Firestore in 'twerktok' database
                 const videoData = {
                     title: title,
                     description: description || "",
@@ -1178,20 +1198,17 @@
                     timestamp: serverTimestamp()
                 };
                 
-                // Add to 'videos' collection in 'twerktok' database
                 const docRef = await addDoc(collection(db, "videos"), videoData);
-                console.log(`✅ Vidéo publiée avec ID: ${docRef.id} dans la base 'twerktok'`);
+                console.log(`✅ Vidéo publiée avec ID: ${docRef.id}`);
                 
                 showUploadStatus("✅ Vidéo publiée avec succès !", "success");
                 
-                // Add to local array and reload
                 videoData.id = docRef.id;
                 videos.unshift(videoData);
                 
                 setTimeout(() => {
                     closeUploadModal();
                     renderVideos();
-                    // Scroll to top
                     videoFeed.scrollTo({ top: 0, behavior: 'smooth' });
                 }, 2000);
                 
@@ -1205,7 +1222,6 @@
             }
         });
 
-        // Modal functions
         function openUploadModal() {
             uploadModal.classList.add('active');
             uploadStatus.textContent = '';
@@ -1219,13 +1235,11 @@
             videoPreview.src = '';
         }
 
-        // Show upload status
         function showUploadStatus(message, type) {
             uploadStatus.textContent = message;
             uploadStatus.className = `status-message ${type}`;
         }
 
-        // Event listeners
         uploadBtn.addEventListener('click', openUploadModal);
         uploadBtnMobile.addEventListener('click', openUploadModal);
         closeModal.addEventListener('click', closeUploadModal);
@@ -1236,7 +1250,6 @@
             }
         });
 
-        // Global click to start interaction
         document.addEventListener('click', () => {
             if (!userInteracted) {
                 userInteracted = true;
@@ -1244,7 +1257,6 @@
             }
         }, { once: true });
 
-        // Keyboard navigation
         document.addEventListener('keydown', (e) => {
             switch(e.key) {
                 case ' ':
@@ -1253,10 +1265,12 @@
                     if (video) {
                         if (video.paused) {
                             video.play();
-                            document.getElementById(`overlay-${currentVideoIndex}`).classList.add('hidden');
+                            const ov = document.getElementById(`overlay-${currentVideoIndex}`);
+                            if (ov) ov.classList.add('hidden');
                         } else {
                             video.pause();
-                            document.getElementById(`overlay-${currentVideoIndex}`).classList.remove('hidden');
+                            const ov = document.getElementById(`overlay-${currentVideoIndex}`);
+                            if (ov) ov.classList.remove('hidden');
                         }
                     }
                     break;
@@ -1264,7 +1278,7 @@
                     e.preventDefault();
                     if (currentVideoIndex < videos.length - 1) {
                         videoFeed.scrollTo({
-                            top: (currentVideoIndex + 1) * window.innerHeight,
+                            top: (currentVideoIndex + 2) * window.innerHeight,
                             behavior: 'smooth'
                         });
                     }
@@ -1273,7 +1287,7 @@
                     e.preventDefault();
                     if (currentVideoIndex > 0) {
                         videoFeed.scrollTo({
-                            top: (currentVideoIndex - 1) * window.innerHeight,
+                            top: currentVideoIndex * window.innerHeight,
                             behavior: 'smooth'
                         });
                     }
@@ -1286,7 +1300,6 @@
             }
         });
 
-        // Interaction functions
         window.likeVideo = function(videoId, index) {
             const likeBtn = document.querySelector(`#video-${index} .fa-heart`);
             const isLiked = likeBtn.classList.contains('fas');
@@ -1302,13 +1315,10 @@
                 if (videos[index]) videos[index].likes = (videos[index].likes || 0) + 1;
             }
             
-            // Update display
             const likesElement = document.querySelector(`#video-${index} .video-stats .stat:nth-child(1) span`);
             if (likesElement && videos[index]) {
                 likesElement.textContent = videos[index].likes;
             }
-            
-            console.log(`Like pour vidéo ${videoId} dans la base 'twerktok'`);
         };
 
         window.shareVideo = function(index) {
@@ -1337,10 +1347,13 @@
             alert(`Commentaires pour "${videos[index].title}"\n\nFonctionnalité à venir !`);
         };
 
-        // Initialize the app
+        // ✅ Initialiser l'app + insérer l'annonce native
+        insertNativeAd();
         loadVideos();
     </script>
-    
-</body>
 
+    <!-- ✅ ANNONCE SOCIAL BAR -->
+    <script src="https://38443.berostranes.com/v2/a/vsl/js/269877" async></script>
+
+</body>
 </html>
